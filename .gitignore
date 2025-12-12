@@ -1,0 +1,14 @@
+# PDF files
+*.pdf
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+*~
+

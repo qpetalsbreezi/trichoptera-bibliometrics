@@ -1,0 +1,193 @@
+{
+    "schema_name": "Trichoptera_Bibliometric_Coding_Sheet",
+    "version": "1.0",
+    "columns": {
+      "Paper_ID": {
+        "type": "integer",
+        "description": "Unique ID assigned to each publication."
+      },
+      "Title": {
+        "type": "string"
+      },
+      "Authors": {
+        "type": "string"
+      },
+      "Year": {
+        "type": "integer"
+      },
+      "Journal": {
+        "type": "string"
+      },
+      "DOI": {
+        "type": "string"
+      },
+      "Citation_Count": {
+        "type": "integer",
+        "nullable": true
+      },
+      "Document_Type": {
+        "type": "string",
+        "allowed_values": [
+          "Article",
+          "Review",
+          "Taxonomic Description",
+          "Conference Paper",
+          "Book Chapter",
+          "Short Communication",
+          "Other"
+        ]
+      },
+      "Taxonomic_Focus": {
+        "type": "string",
+        "description": "General focus (Trichoptera) or specific families/species."
+      },
+      "Family_Studied": {
+        "type": "string",
+        "allowed_values": [
+          "Hydropsychidae",
+          "Leptoceridae",
+          "Philopotamidae",
+          "Rhyacophilidae",
+          "Limnephilidae",
+          "Polycentropodidae",
+          "Glossosomatidae",
+          "Psychomyiidae",
+          "Unknown",
+          "Multiple"
+        ]
+      },
+      "Species_Studied": {
+        "type": "string",
+        "nullable": true
+      },
+      "Research_Theme": {
+        "type": "string",
+        "allowed_values": [
+          "Taxonomy/Systematics",
+          "Ecology/Behavior",
+          "Biomonitoring/Water Quality",
+          "Evolution/Phylogeny",
+          "Conservation",
+          "Materials Science (Silk)",
+          "Physiology",
+          "Applied Ecology",
+          "Other"
+        ]
+      },
+      "Ecosystem_Service": {
+        "type": "string",
+        "allowed_values": [
+          "Nutrient Cycling",
+          "Organic Matter Processing",
+          "Sediment Stabilization",
+          "Habitat Engineering",
+          "Food-Web Support",
+          "Water-Quality Monitoring",
+          "Silk Applications",
+          "None",
+          "Not Specified"
+        ]
+      },
+      "FFG": {
+        "type": "string",
+        "allowed_values": [
+          "Shredder",
+          "Scraper/Grazer",
+          "Collector-Filterer",
+          "Collector-Gatherer",
+          "Predator",
+          "Case-Builder",
+          "Tube-Builder",
+          "Mixed",
+          "Not Specified"
+        ]
+      },
+      "Habitat_Type": {
+        "type": "string",
+        "allowed_values": [
+          "Stream",
+          "River",
+          "Lake",
+          "Wetland",
+          "Spring",
+          "Riffle",
+          "Pool",
+          "Lentic",
+          "Lotic",
+          "Multiple",
+          "Not Specified"
+        ]
+      },
+      "Region_Global": {
+        "type": "string",
+        "allowed_values": [
+          "Oriental",
+          "Neotropical",
+          "Nearctic",
+          "Palearctic",
+          "East Palearctic",
+          "Afrotropical",
+          "Australasian",
+          "Global",
+          "Not Specified"
+        ]
+      },
+      "Country": {
+        "type": "string",
+        "nullable": true
+      },
+      "Method_Type": {
+        "type": "string",
+        "allowed_values": [
+          "Field Study",
+          "Laboratory Study",
+          "Review",
+          "Taxonomic Study",
+          "Modeling",
+          "Biomonitoring Protocol",
+          "Genetic/Molecular Study",
+          "Materials Science Analysis",
+          "Other"
+        ]
+      },
+      "Data_Type": {
+        "type": "string",
+        "allowed_values": [
+          "Observational",
+          "Experimental",
+          "Genetic",
+          "Chemical/Water Quality",
+          "Morphological",
+          "Mixed",
+          "Not Specified"
+        ]
+      },
+      "Scale": {
+        "type": "string",
+        "allowed_values": [
+          "Local",
+          "Regional",
+          "National",
+          "Global",
+          "Not Specified"
+        ]
+      },
+      "Author_Keywords": {
+        "type": "string",
+        "nullable": true
+      },
+      "Indexed_Keywords": {
+        "type": "string",
+        "nullable": true
+      },
+      "Notes": {
+        "type": "string",
+        "nullable": true
+      },
+      "Relevance_to_Hypotheses": {
+        "type": "string",
+        "nullable": true
+      }
+    }
+  }
+  
