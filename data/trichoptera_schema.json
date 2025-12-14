@@ -187,6 +187,16 @@
       "Relevance_to_Hypotheses": {
         "type": "string",
         "nullable": true
+      },
+      "Trichoptera_Relevance": {
+        "type": "string",
+        "allowed_values": [
+          "Primary focus",
+          "Secondary mention",
+          "Peripheral",
+          "Not Trichoptera-focused"
+        ],
+        "description": "Degree to which Trichoptera are the primary taxonomic focus of the paper."
       }
     }
   }
