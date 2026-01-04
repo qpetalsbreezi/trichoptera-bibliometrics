@@ -4,7 +4,7 @@ from tqdm import tqdm
 import time
 
 # Load your Scopus CSV
-df = pd.read_csv("data/trichoptera_scopus_raw.csv")
+df = pd.read_csv("data/processed/trichoptera_scopus_raw_2010_2025.csv")
 
 # Ensure Abstract column exists
 if "Abstract" not in df.columns:
@@ -68,4 +68,4 @@ for idx, row in tqdm(df.iterrows(), total=len(df)):
     time.sleep(0.2)  # be polite to APIs
 
 # Save enriched file
-df.to_csv("data/trichoptera_scopus_with_abstracts.csv", index=False)
+df.to_csv("data/processed/trichoptera_scopus_with_abstracts.csv", index=False)

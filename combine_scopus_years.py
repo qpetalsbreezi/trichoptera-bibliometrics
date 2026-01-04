@@ -9,9 +9,9 @@ import os
 from pathlib import Path
 
 # Configuration
-DATA_DIR = "data"
+DATA_DIR = "data/raw/scopus_years"
 PATTERN = "trichoptera_scopus_raw_*.csv"
-OUTPUT_FILE = "data/trichoptera_scopus_raw_2010_2025.csv"
+OUTPUT_FILE = "data/processed/trichoptera_scopus_raw_2010_2025.csv"
 
 def combine_scopus_exports():
     """Combine all year-specific Scopus exports into one dataset"""
@@ -20,9 +20,8 @@ def combine_scopus_exports():
     pattern = os.path.join(DATA_DIR, PATTERN)
     files = sorted(glob.glob(pattern))
     
-    # Filter out the generic raw file and combined file if they exist
-    files = [f for f in files if f != "data/trichoptera_scopus_raw.csv" 
-             and f != OUTPUT_FILE and not f.endswith("_2010_2025.csv")]
+    # Filter out the combined file if it exists
+    files = [f for f in files if f != OUTPUT_FILE and not f.endswith("_2010_2025.csv")]
     
     if not files:
         print(f"No files found matching pattern: {pattern}")

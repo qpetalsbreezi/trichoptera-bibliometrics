@@ -11,9 +11,9 @@ if not os.getenv("OPENAI_API_KEY"):
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-INPUT_CSV = "data/trichoptera_scopus_with_abstracts.csv"
+INPUT_CSV = "data/processed/trichoptera_scopus_with_abstracts.csv"
 SCHEMA_FILE = "data/trichoptera_schema.json"
-OUTPUT_CSV = "data/trichoptera_scopus_coded.csv"
+OUTPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
 
 MODEL = "gpt-4o-mini"
 TEMPERATURE = 0

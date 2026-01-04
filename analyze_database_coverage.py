@@ -9,8 +9,8 @@ from difflib import SequenceMatcher
 import re
 
 # File paths
-SCOPUS_FILE = "data/trichoptera_scopus_raw_2023.csv"
-GS_FILE = "data/trichoptera_google_scholar_raw_2023.csv"
+SCOPUS_FILE = "data/raw/scopus_years/trichoptera_scopus_raw_2023.csv"
+GS_FILE = "data/raw/google_scholar/trichoptera_google_scholar_raw_2023.csv"
 OUTPUT_DIR = "analysis/rq1_coverage"
 
 # Create output directory
