@@ -1,0 +1,82 @@
+
+DATABASE COVERAGE ANALYSIS REPORT (RQ1)
+========================================
+
+Research Question: Do Scopus and Google Scholar provide comparable coverage of 
+Trichoptera literature, or are there significant gaps?
+
+Year: 2023
+Date: 2026-01-04
+
+BASIC STATISTICS
+----------------
+Total Papers:
+  - Scopus: 200
+  - Google Scholar: 993
+  - Ratio (GS/Scopus): 4.96
+
+OVERLAP ANALYSIS
+----------------
+Papers in both databases: 177
+  - Matched by DOI: 75
+  - Matched by Title: 102
+
+Unique Papers:
+  - Scopus only: 23 (11.5% of Scopus)
+  - Google Scholar only: 816 (82.2% of Google Scholar)
+
+JOURNAL TYPE DISTRIBUTION
+--------------------------
+Scopus:
+  - Unknown: 107 (53.5%)
+  - International: 53 (26.5%)
+  - Regional: 40 (20.0%)
+
+Google Scholar:
+  - Unknown: 728 (73.3%)
+  - Regional: 137 (13.8%)
+  - International: 128 (12.9%)
+
+LANGUAGE DISTRIBUTION
+---------------------
+Scopus:
+  - English: 190 (95.0%)
+  - Non-English: 10 (5.0%)
+
+Google Scholar:
+  - English: 842 (84.8%)
+  - Non-English: 151 (15.2%)
+
+CITATION STATISTICS
+-------------------
+Scopus:
+  - Mean citations: 5.75
+  - Median citations: 4.00
+  - Total citations: 1150
+
+Google Scholar:
+  - Mean citations: 7.32
+  - Median citations: 1.00
+  - Total citations: 7272
+
+KEY FINDINGS
+------------
+1. Coverage Ratio: Google Scholar has 5.0x more papers than Scopus for 2023
+
+2. Overlap: 177 papers (88.5% of smaller database) appear in both databases
+
+3. Unique Coverage:
+   - Scopus captures 23 papers not in Google Scholar
+   - Google Scholar captures 816 papers not in Scopus
+
+4. Journal Types: 
+   - Scopus Regional: 40 (20.0%)
+   - Google Scholar Regional: 137 (13.8%)
+
+LIMITATIONS
+-----------
+- Scopus sample limited to 200 results due to API constraints
+- Google Scholar sample limited to 1000 results (export limit)
+- Language detection is basic and may miss some non-English papers
+- Journal type classification is heuristic-based
+
