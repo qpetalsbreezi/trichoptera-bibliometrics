@@ -36,9 +36,82 @@ def analyze_temporal_geographic():
     
     print(f"Analyzing {len(df)} papers from 2010-2025")
     
-    # Define time periods
-    early_period = df[df['Year'].between(2010, 2015)]
-    recent_period = df[df['Year'].between(2020, 2025)]
+    # Normalize country names
+    def normalize_country(country_str):
+        """Normalize country names to standard format"""
+        if pd.isna(country_str) or country_str == 'Not Specified' or not str(country_str).strip():
+            return 'Not Specified'
+        
+        country_str = str(country_str).strip()
+        
+        # Common normalizations
+        country_mapping = {
+            'USA': 'United States',
+            'US': 'United States',
+            'U.S.': 'United States',
+            'U.S.A.': 'United States',
+            'United States of America': 'United States',
+            'UK': 'United Kingdom',
+            'U.K.': 'United Kingdom',
+            'Czechia': 'Czech Republic',
+            'Czech Republic': 'Czech Republic',
+        }
+        
+        # Check for exact match first
+        if country_str in country_mapping:
+            return country_mapping[country_str]
+        
+        # Handle multi-country entries (comma, semicolon, or "and" separated)
+        separators = [',', ';', ' and ', ' & ']
+        for sep in separators:
+            if sep in country_str:
+                # Take the first country mentioned
+                first_country = country_str.split(sep)[0].strip()
+                # Normalize the first country
+                if first_country in country_mapping:
+                    return country_mapping[first_country]
+                return first_country
+        
+        # Handle regions/provinces - map to countries where possible
+        region_mapping = {
+            'Iberian Peninsula': 'Spain',  # Primary country, though could be Portugal too
+            'Southern Ontario': 'Canada',
+            'Kosovo': 'Kosovo',  # Keep as is (disputed but recognized by many)
+            'Republic of Kosovo': 'Kosovo',
+            'Republic of North Macedonia': 'North Macedonia',
+            'Democratic Republic of the Congo': 'Congo (DRC)',
+            'Papua New Guinea': 'Papua New Guinea',  # Keep as is
+        }
+        
+        if country_str in region_mapping:
+            return region_mapping[country_str]
+        
+        # Check if it contains region keywords - mark as uncertain
+        region_keywords = ['peninsula', 'region', 'basin', 'province', 'state', 'county', 'territory']
+        if any(keyword in country_str.lower() for keyword in region_keywords):
+            # Try to extract country name if possible
+            # For now, return as-is but could be improved
+            return country_str
+        
+        # Return normalized version
+        return country_str
+    
+    # Apply normalization
+    print("Normalizing country names...")
+    df['Country_Normalized'] = df['Country'].apply(normalize_country)
+    
+    # Show normalization stats
+    original_countries = df['Country'].value_counts()
+    normalized_countries = df['Country_Normalized'].value_counts()
+    print(f"  Original unique countries: {len(original_countries)}")
+    print(f"  Normalized unique countries: {len(normalized_countries)}")
+    
+    # Use normalized country for analysis
+    df['Country'] = df['Country_Normalized']
+    
+    # Define time periods (after normalization)
+    early_period = df[df['Year'].between(2010, 2015)].copy()
+    recent_period = df[df['Year'].between(2020, 2025)].copy()
     
     # Define regions for analysis
     regions_of_interest = {
@@ -72,6 +145,24 @@ def analyze_temporal_geographic():
     # Year-by-year analysis
     yearly_region = df.groupby(['Year', 'Region_Category']).size().unstack(fill_value=0)
     yearly_props = yearly_region.div(yearly_region.sum(axis=1), axis=0) * 100
+    
+    # Create comprehensive geographic distribution table
+    geo_dist_table = pd.DataFrame()
+    for year in sorted(yearly_region.index):
+        year_data = {
+            'Year': year,
+            'Total_Papers': int(yearly_region.loc[year].sum())
+        }
+        for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
+            if region in yearly_region.columns:
+                count = int(yearly_region.loc[year, region])
+                prop = yearly_props.loc[year, region]
+                year_data[f'{region}_Count'] = count
+                year_data[f'{region}_Percent'] = prop
+            else:
+                year_data[f'{region}_Count'] = 0
+                year_data[f'{region}_Percent'] = 0.0
+        geo_dist_table = pd.concat([geo_dist_table, pd.DataFrame([year_data])], ignore_index=True)
     
     # Country-level analysis (top countries)
     country_counts = df['Country'].value_counts().head(20)
@@ -147,17 +238,41 @@ TOP COUNTRIES - COMPARISON
         report += f"  {country}: {early} → {recent} papers ({change_str})\n"
     
     report += f"""
-YEAR-BY-YEAR REGIONAL TRENDS
------------------------------
+YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
+------------------------------------------
+"""
+    
+    # Create formatted table
+    report += f"{'Year':<6} {'Total':<8} "
+    for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
+        report += f"{region[:12]:<15} "
+    report += "\n" + "-" * 100 + "\n"
+    
+    for _, row in geo_dist_table.iterrows():
+        report += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} "
+        for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
+            count = int(row[f'{region}_Count'])
+            pct = row[f'{region}_Percent']
+            report += f"{count:>3} ({pct:>5.1f}%)  "
+        report += "\n"
+    
+    report += "\n"
+    
+    # Also show detailed breakdown
+    report += f"""
+DETAILED YEAR-BY-YEAR BREAKDOWN
+-------------------------------
 """
     
     for year in sorted(yearly_props.index):
-        report += f"\n{year}:\n"
-        for region in ['South America', 'Asia', 'Europe', 'North America']:
+        total = int(yearly_region.loc[year].sum())
+        report += f"\n{year} (Total: {total} papers):\n"
+        for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
             if region in yearly_props.columns:
                 prop = yearly_props.loc[year, region]
                 count = yearly_region.loc[year, region]
-                report += f"  {region}: {count} papers ({prop:.1f}%)\n"
+                if count > 0:
+                    report += f"  {region}: {count} papers ({prop:.1f}%)\n"
     
     report += f"""
 KEY FINDINGS
@@ -209,12 +324,14 @@ LIMITATIONS
     # Save detailed data
     yearly_props.to_csv(f"{OUTPUT_DIR}/yearly_regional_proportions.csv")
     country_by_period.to_csv(f"{OUTPUT_DIR}/country_comparison.csv")
+    geo_dist_table.to_csv(f"{OUTPUT_DIR}/geographic_distribution_by_year.csv", index=False)
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
     print(f"\nAnalysis complete! Files saved to {OUTPUT_DIR}/")
     print(f"  - rq2_temporal_geographic_report.txt")
+    print(f"  - geographic_distribution_by_year.csv (main table)")
     print(f"  - yearly_regional_proportions.csv")
     print(f"  - country_comparison.csv")
 
