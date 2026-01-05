@@ -5,10 +5,20 @@ from tqdm import tqdm
 from openai import OpenAI
 import os
 
-if not os.getenv("OPENAI_API_KEY"):
-    raise ValueError("OPENAI_API_KEY not set")
+# Load environment variables from .env file if it exists
+if os.path.exists(".env"):
+    with open(".env", "r") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, value = line.split("=", 1)
+                os.environ[key.strip()] = value.strip()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("OPENAI_API_KEY not set. Please set it in .env file or environment variable.")
+
+client = OpenAI(api_key=api_key)
 
 
 INPUT_CSV = "data/processed/trichoptera_scopus_with_abstracts.csv"

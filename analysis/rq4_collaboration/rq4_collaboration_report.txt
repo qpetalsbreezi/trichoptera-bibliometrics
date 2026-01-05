@@ -1,0 +1,158 @@
+
+COLLABORATION AND AUTHORSHIP PATTERNS ANALYSIS (RQ4)
+=====================================================
+
+Research Question: How have collaboration patterns changed? Are applied studies 
+more collaborative than taxonomic studies?
+
+Date: 2026-01-04
+Dataset: 2776 papers (2010-2025)
+
+OVERALL AUTHORSHIP STATISTICS
+------------------------------
+Mean authors per paper: 1.00
+Median authors per paper: 1.0
+Standard deviation: 0.00
+Range: 1 - 1 authors
+
+AUTHORSHIP TRENDS OVER TIME
+----------------------------
+Early Period (2010-2015):
+  Mean: 1.00 authors
+  Median: 1.0 authors
+  Papers: 1009
+
+Recent Period (2020-2025):
+  Mean: 1.00 authors
+  Median: 1.0 authors
+  Papers: 1071
+
+Change: Mean DECREASED 
+        by 0.00 authors
+
+AUTHORSHIP BY STUDY TYPE
+-------------------------
+Applied Studies (307 papers):
+  Mean: 1.00 authors
+  Median: 1.0 authors
+
+Taxonomic Studies (710 papers):
+  Mean: 1.00 authors
+  Median: 1.0 authors
+
+Difference: Applied studies have FEWER 
+            authors on average (0.00 difference)
+
+COLLABORATION DISTRIBUTION
+---------------------------
+  Single author: 2776 papers (100.0%)
+
+COLLABORATION BY STUDY TYPE
+---------------------------
+
+Applied Studies:
+  Single author: 100.0%
+
+Taxonomic Studies:
+  Single author: 100.0%
+
+Other Studies:
+  Single author: 100.0%
+
+YEAR-BY-YEAR AUTHORSHIP TRENDS
+-------------------------------
+  2010: Mean 1.00, Median 1.0 (167 papers)
+  2011: Mean 1.00, Median 1.0 (165 papers)
+  2012: Mean 1.00, Median 1.0 (158 papers)
+  2013: Mean 1.00, Median 1.0 (168 papers)
+  2014: Mean 1.00, Median 1.0 (174 papers)
+  2015: Mean 1.00, Median 1.0 (177 papers)
+  2016: Mean 1.00, Median 1.0 (174 papers)
+  2017: Mean 1.00, Median 1.0 (173 papers)
+  2018: Mean 1.00, Median 1.0 (172 papers)
+  2019: Mean 1.00, Median 1.0 (177 papers)
+  2020: Mean 1.00, Median 1.0 (170 papers)
+  2021: Mean 1.00, Median 1.0 (175 papers)
+  2022: Mean 1.00, Median 1.0 (183 papers)
+  2023: Mean 1.00, Median 1.0 (175 papers)
+  2024: Mean 1.00, Median 1.0 (180 papers)
+  2025: Mean 1.00, Median 1.0 (188 papers)
+
+COLLABORATION TRENDS OVER TIME
+-------------------------------
+
+2010:
+  Single author: 167 papers (100.0%)
+
+2011:
+  Single author: 165 papers (100.0%)
+
+2012:
+  Single author: 158 papers (100.0%)
+
+2013:
+  Single author: 168 papers (100.0%)
+
+2014:
+  Single author: 174 papers (100.0%)
+
+2015:
+  Single author: 177 papers (100.0%)
+
+2016:
+  Single author: 174 papers (100.0%)
+
+2017:
+  Single author: 173 papers (100.0%)
+
+2018:
+  Single author: 172 papers (100.0%)
+
+2019:
+  Single author: 177 papers (100.0%)
+
+2020:
+  Single author: 170 papers (100.0%)
+
+2021:
+  Single author: 175 papers (100.0%)
+
+2022:
+  Single author: 183 papers (100.0%)
+
+2023:
+  Single author: 175 papers (100.0%)
+
+2024:
+  Single author: 180 papers (100.0%)
+
+2025:
+  Single author: 188 papers (100.0%)
+
+KEY FINDINGS
+------------
+
+1. Applied vs Taxonomic Collaboration:
+   Applied studies: 1.00 authors (mean)
+   Taxonomic studies: 1.00 authors (mean)
+   Hypothesis NOT SUPPORTED: 
+   Applied studies are less collaborative
+
+2. Temporal Trend:
+   Authorship has decreased 
+   from 1.00 to 1.00 authors per paper
+
+3. Collaboration Patterns:
+   0.0% 
+   of papers have 3+ authors (multi-author collaboration)
+
+LIMITATIONS
+-----------
+- **CRITICAL**: Publish or Perish export only includes FIRST AUTHOR in Authors field
+- AuthorCount field in export is unreliable (shows 1 for all papers)
+- Collaboration analysis severely limited - cannot accurately determine multi-author papers
+- International collaboration analysis limited by country data availability
+- Study type classification based on Research_Theme field
+- **RECOMMENDATION**: For proper collaboration analysis, use Scopus API or full export 
+  that includes all authors, not just first author
+

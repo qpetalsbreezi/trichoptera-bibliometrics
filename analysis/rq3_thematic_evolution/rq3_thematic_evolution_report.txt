@@ -1,0 +1,297 @@
+
+THEMATIC EVOLUTION ANALYSIS (RQ3)
+==================================
+
+Research Question: How have research themes in Trichoptera studies evolved 
+over time? What are the dominant themes and how have they shifted?
+
+Date: 2026-01-04
+Dataset: 2776 papers (2010-2025)
+
+OVERALL THEME DISTRIBUTION
+---------------------------
+  Not Specified: 984 papers (35.4%)
+  Taxonomy/Systematics: 710 papers (25.6%)
+  Ecology/Behavior: 664 papers (23.9%)
+  Biomonitoring/Water Quality: 267 papers (9.6%)
+  Evolution/Phylogeny: 101 papers (3.6%)
+  Materials Science (Silk): 38 papers (1.4%)
+  Physiology: 5 papers (0.2%)
+  Other: 4 papers (0.1%)
+  Conservation: 2 papers (0.1%)
+  Genetic/Molecular Study: 1 papers (0.0%)
+
+THEME DISTRIBUTION BY TIME PERIOD
+----------------------------------
+Early Period (2010-2015): 1009 papers
+  Biomonitoring/Water Quality: 88 papers (8.7%)
+  Ecology/Behavior: 242 papers (24.0%)
+  Evolution/Phylogeny: 33 papers (3.3%)
+  Genetic/Molecular Study: 1 papers (0.1%)
+  Materials Science (Silk): 18 papers (1.8%)
+  Not Specified: 367 papers (36.4%)
+  Physiology: 3 papers (0.3%)
+  Taxonomy/Systematics: 257 papers (25.5%)
+
+Mid Period (2016-2020): 866 papers
+  Biomonitoring/Water Quality: 61 papers (7.0%)
+  Conservation: 1 papers (0.1%)
+  Ecology/Behavior: 207 papers (23.9%)
+  Evolution/Phylogeny: 27 papers (3.1%)
+  Materials Science (Silk): 11 papers (1.3%)
+  Not Specified: 319 papers (36.8%)
+  Other: 1 papers (0.1%)
+  Physiology: 1 papers (0.1%)
+  Taxonomy/Systematics: 238 papers (27.5%)
+
+Recent Period (2021-2025): 901 papers
+  Biomonitoring/Water Quality: 118 papers (13.1%)
+  Conservation: 1 papers (0.1%)
+  Ecology/Behavior: 215 papers (23.9%)
+  Evolution/Phylogeny: 41 papers (4.5%)
+  Materials Science (Silk): 9 papers (1.0%)
+  Not Specified: 298 papers (33.1%)
+  Other: 3 papers (0.3%)
+  Physiology: 1 papers (0.1%)
+  Taxonomy/Systematics: 215 papers (23.9%)
+
+THEME SHIFTS (Early → Recent)
+-----------------------------
+  Biomonitoring/Water Quality: 8.7% → 13.1% (+4.4%) ↑
+  Conservation: 0.0% → 0.1% (+0.1%) →
+  Ecology/Behavior: 24.0% → 23.9% (-0.1%) →
+  Evolution/Phylogeny: 3.3% → 4.5% (+1.3%) →
+  Genetic/Molecular Study: 0.1% → 0.0% (-0.1%) →
+  Materials Science (Silk): 1.8% → 1.0% (-0.8%) →
+  Other: 0.0% → 0.3% (+0.3%) →
+  Physiology: 0.3% → 0.1% (-0.2%) →
+  Taxonomy/Systematics: 25.5% → 23.9% (-1.6%) →
+
+YEAR-BY-YEAR THEME TRENDS
+--------------------------
+
+2010:
+  Not Specified: 59 papers (35.3%)
+  Taxonomy/Systematics: 52 papers (31.1%)
+  Ecology/Behavior: 29 papers (17.4%)
+  Biomonitoring/Water Quality: 13 papers (7.8%)
+  Evolution/Phylogeny: 10 papers (6.0%)
+
+2011:
+  Not Specified: 59 papers (35.8%)
+  Taxonomy/Systematics: 40 papers (24.2%)
+  Ecology/Behavior: 38 papers (23.0%)
+  Biomonitoring/Water Quality: 18 papers (10.9%)
+  Evolution/Phylogeny: 6 papers (3.6%)
+
+2012:
+  Not Specified: 60 papers (38.0%)
+  Ecology/Behavior: 43 papers (27.2%)
+  Taxonomy/Systematics: 34 papers (21.5%)
+  Biomonitoring/Water Quality: 13 papers (8.2%)
+  Evolution/Phylogeny: 5 papers (3.2%)
+
+2013:
+  Not Specified: 64 papers (38.1%)
+  Taxonomy/Systematics: 45 papers (26.8%)
+  Ecology/Behavior: 40 papers (23.8%)
+  Biomonitoring/Water Quality: 14 papers (8.3%)
+  Evolution/Phylogeny: 3 papers (1.8%)
+
+2014:
+  Not Specified: 63 papers (36.2%)
+  Ecology/Behavior: 48 papers (27.6%)
+  Taxonomy/Systematics: 46 papers (26.4%)
+  Biomonitoring/Water Quality: 9 papers (5.2%)
+  Evolution/Phylogeny: 4 papers (2.3%)
+
+2015:
+  Not Specified: 62 papers (35.0%)
+  Ecology/Behavior: 44 papers (24.9%)
+  Taxonomy/Systematics: 40 papers (22.6%)
+  Biomonitoring/Water Quality: 21 papers (11.9%)
+  Evolution/Phylogeny: 5 papers (2.8%)
+
+2016:
+  Not Specified: 66 papers (37.9%)
+  Taxonomy/Systematics: 42 papers (24.1%)
+  Ecology/Behavior: 41 papers (23.6%)
+  Biomonitoring/Water Quality: 12 papers (6.9%)
+  Evolution/Phylogeny: 8 papers (4.6%)
+
+2017:
+  Not Specified: 54 papers (31.2%)
+  Ecology/Behavior: 49 papers (28.3%)
+  Taxonomy/Systematics: 49 papers (28.3%)
+  Biomonitoring/Water Quality: 11 papers (6.4%)
+  Evolution/Phylogeny: 7 papers (4.0%)
+
+2018:
+  Taxonomy/Systematics: 60 papers (34.9%)
+  Not Specified: 52 papers (30.2%)
+  Ecology/Behavior: 41 papers (23.8%)
+  Biomonitoring/Water Quality: 11 papers (6.4%)
+  Evolution/Phylogeny: 7 papers (4.1%)
+
+2019:
+  Not Specified: 78 papers (44.1%)
+  Taxonomy/Systematics: 52 papers (29.4%)
+  Ecology/Behavior: 29 papers (16.4%)
+  Biomonitoring/Water Quality: 11 papers (6.2%)
+  Evolution/Phylogeny: 4 papers (2.3%)
+
+2020:
+  Not Specified: 69 papers (40.6%)
+  Ecology/Behavior: 47 papers (27.6%)
+  Taxonomy/Systematics: 35 papers (20.6%)
+  Biomonitoring/Water Quality: 16 papers (9.4%)
+  Materials Science (Silk): 2 papers (1.2%)
+
+2021:
+  Not Specified: 73 papers (41.7%)
+  Ecology/Behavior: 45 papers (25.7%)
+  Taxonomy/Systematics: 30 papers (17.1%)
+  Biomonitoring/Water Quality: 22 papers (12.6%)
+  Evolution/Phylogeny: 4 papers (2.3%)
+
+2022:
+  Not Specified: 66 papers (36.1%)
+  Ecology/Behavior: 41 papers (22.4%)
+  Taxonomy/Systematics: 39 papers (21.3%)
+  Biomonitoring/Water Quality: 27 papers (14.8%)
+  Evolution/Phylogeny: 8 papers (4.4%)
+
+2023:
+  Taxonomy/Systematics: 55 papers (31.4%)
+  Ecology/Behavior: 47 papers (26.9%)
+  Not Specified: 44 papers (25.1%)
+  Biomonitoring/Water Quality: 17 papers (9.7%)
+  Evolution/Phylogeny: 10 papers (5.7%)
+
+2024:
+  Not Specified: 62 papers (34.4%)
+  Taxonomy/Systematics: 47 papers (26.1%)
+  Ecology/Behavior: 31 papers (17.2%)
+  Biomonitoring/Water Quality: 22 papers (12.2%)
+  Evolution/Phylogeny: 13 papers (7.2%)
+
+2025:
+  Not Specified: 53 papers (28.2%)
+  Ecology/Behavior: 51 papers (27.1%)
+  Taxonomy/Systematics: 44 papers (23.4%)
+  Biomonitoring/Water Quality: 30 papers (16.0%)
+  Evolution/Phylogeny: 6 papers (3.2%)
+
+THEME BY REGION
+---------------
+
+Afrotropical:
+  Biomonitoring/Water Quality: 19 papers (44.2%)
+  Ecology/Behavior: 12 papers (27.9%)
+  Taxonomy/Systematics: 12 papers (27.9%)
+  Conservation: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+
+Asia:
+  Biomonitoring/Water Quality: 1 papers (50.0%)
+  Ecology/Behavior: 1 papers (50.0%)
+  Conservation: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+  Genetic/Molecular Study: 0 papers (0.0%)
+
+Australasian:
+  Taxonomy/Systematics: 21 papers (60.0%)
+  Ecology/Behavior: 12 papers (34.3%)
+  Biomonitoring/Water Quality: 2 papers (5.7%)
+  Conservation: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+
+East Palearctic:
+  Ecology/Behavior: 10 papers (62.5%)
+  Taxonomy/Systematics: 3 papers (18.8%)
+  Biomonitoring/Water Quality: 2 papers (12.5%)
+  Evolution/Phylogeny: 1 papers (6.2%)
+  Conservation: 0 papers (0.0%)
+
+East Palearctic, Oriental, Nearctic, Neotropical:
+  Evolution/Phylogeny: 1 papers (100.0%)
+  Biomonitoring/Water Quality: 0 papers (0.0%)
+  Conservation: 0 papers (0.0%)
+  Ecology/Behavior: 0 papers (0.0%)
+  Genetic/Molecular Study: 0 papers (0.0%)
+
+Europe:
+  Biomonitoring/Water Quality: 1 papers (100.0%)
+  Conservation: 0 papers (0.0%)
+  Ecology/Behavior: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+  Genetic/Molecular Study: 0 papers (0.0%)
+
+Global:
+  Ecology/Behavior: 7 papers (77.8%)
+  Biomonitoring/Water Quality: 2 papers (22.2%)
+  Conservation: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+  Genetic/Molecular Study: 0 papers (0.0%)
+
+Mediterranean:
+  Ecology/Behavior: 1 papers (100.0%)
+  Biomonitoring/Water Quality: 0 papers (0.0%)
+  Conservation: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+  Genetic/Molecular Study: 0 papers (0.0%)
+
+Nearctic:
+  Ecology/Behavior: 79 papers (47.3%)
+  Taxonomy/Systematics: 44 papers (26.3%)
+  Biomonitoring/Water Quality: 36 papers (21.6%)
+  Evolution/Phylogeny: 8 papers (4.8%)
+  Conservation: 0 papers (0.0%)
+
+Neotropical:
+  Taxonomy/Systematics: 194 papers (57.4%)
+  Ecology/Behavior: 104 papers (30.8%)
+  Biomonitoring/Water Quality: 36 papers (10.7%)
+  Evolution/Phylogeny: 2 papers (0.6%)
+  Conservation: 1 papers (0.3%)
+
+North America:
+  Biomonitoring/Water Quality: 3 papers (60.0%)
+  Taxonomy/Systematics: 2 papers (40.0%)
+  Conservation: 0 papers (0.0%)
+  Ecology/Behavior: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+
+Oriental:
+  Taxonomy/Systematics: 116 papers (64.4%)
+  Ecology/Behavior: 33 papers (18.3%)
+  Biomonitoring/Water Quality: 25 papers (13.9%)
+  Evolution/Phylogeny: 6 papers (3.3%)
+  Conservation: 0 papers (0.0%)
+
+Oriental, Australian and Afrotropical:
+  Taxonomy/Systematics: 1 papers (100.0%)
+  Biomonitoring/Water Quality: 0 papers (0.0%)
+  Conservation: 0 papers (0.0%)
+  Ecology/Behavior: 0 papers (0.0%)
+  Evolution/Phylogeny: 0 papers (0.0%)
+
+Palearctic:
+  Taxonomy/Systematics: 181 papers (45.4%)
+  Ecology/Behavior: 142 papers (35.6%)
+  Biomonitoring/Water Quality: 60 papers (15.0%)
+  Evolution/Phylogeny: 16 papers (4.0%)
+  Conservation: 0 papers (0.0%)
+
+KEY FINDINGS
+------------
+
+Emerging Themes (increased >3%):
+  - Biomonitoring/Water Quality: +4.4%
+
+LIMITATIONS
+-----------
+- Theme classification based on LLM coding of abstracts
+- Some papers may have multiple themes but only one is assigned
+- "Not Specified" papers excluded from theme analysis
+

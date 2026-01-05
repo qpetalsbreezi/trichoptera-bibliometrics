@@ -12,3 +12,16 @@
 *.bak
 *~
 
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
