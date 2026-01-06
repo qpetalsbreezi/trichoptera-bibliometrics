@@ -109,10 +109,6 @@ def analyze_temporal_geographic():
     # Use normalized country for analysis
     df['Country'] = df['Country_Normalized']
     
-    # Define time periods (after normalization)
-    early_period = df[df['Year'].between(2010, 2015)].copy()
-    recent_period = df[df['Year'].between(2020, 2025)].copy()
-    
     # Define regions for analysis
     regions_of_interest = {
         'South America': ['Neotropical'],
@@ -132,15 +128,6 @@ def analyze_temporal_geographic():
         return 'Other'
     
     df['Region_Category'] = df['Region_Global'].apply(categorize_region)
-    early_period['Region_Category'] = early_period['Region_Global'].apply(categorize_region)
-    recent_period['Region_Category'] = recent_period['Region_Global'].apply(categorize_region)
-    
-    # Calculate proportions by time period
-    early_counts = early_period['Region_Category'].value_counts()
-    recent_counts = recent_period['Region_Category'].value_counts()
-    
-    early_props = (early_counts / len(early_period) * 100).round(2)
-    recent_props = (recent_counts / len(recent_period) * 100).round(2)
     
     # Year-by-year analysis
     yearly_region = df.groupby(['Year', 'Region_Category']).size().unstack(fill_value=0)
@@ -164,14 +151,8 @@ def analyze_temporal_geographic():
                 year_data[f'{region}_Percent'] = 0.0
         geo_dist_table = pd.concat([geo_dist_table, pd.DataFrame([year_data])], ignore_index=True)
     
-    # Country-level analysis (top countries)
+    # Country-level analysis (top countries overall)
     country_counts = df['Country'].value_counts().head(20)
-    country_by_period = pd.DataFrame({
-        'Early (2010-2015)': early_period['Country'].value_counts(),
-        'Recent (2020-2025)': recent_period['Country'].value_counts()
-    }).fillna(0)
-    country_by_period['Change'] = country_by_period['Recent (2020-2025)'] - country_by_period['Early (2010-2015)']
-    country_by_period = country_by_period.sort_values('Recent (2020-2025)', ascending=False).head(15)
     
     # Generate report
     report = f"""
@@ -184,58 +165,24 @@ focus to more global distribution, particularly in South America and Asia?
 
 Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
 Dataset: {len(df)} papers (2010-2025)
-Note: Analysis uses PROPORTIONAL trends due to 200-result cap per year
 
-TIME PERIOD COMPARISON
------------------------
-Early Period (2010-2015): {len(early_period)} papers
-Recent Period (2020-2025): {len(recent_period)} papers
+IMPORTANT NOTE ON TEMPORAL ANALYSIS
+-----------------------------------
+The current dataset does NOT support temporal volume analysis (comparing 
+publication counts over time) because each year's export was capped at 
+~200 results due to Scopus API limitations. Therefore, we cannot determine 
+if publication volume increased or decreased over time.
 
-REGIONAL DISTRIBUTION - EARLY PERIOD (2010-2015)
--------------------------------------------------
-"""
-    
-    for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
-        if region in early_props.index:
-            count = early_counts[region]
-            prop = early_props[region]
-            report += f"  {region}: {count} papers ({prop}%)\n"
-    
-    report += f"""
-REGIONAL DISTRIBUTION - RECENT PERIOD (2020-2025)
---------------------------------------------------
-"""
-    
-    for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
-        if region in recent_props.index:
-            count = recent_counts[region]
-            prop = recent_props[region]
-            report += f"  {region}: {count} papers ({prop}%)\n"
-    
-    # Calculate changes
-    report += f"""
-REGIONAL SHIFTS (Early vs Recent)
+This analysis focuses on PROPORTIONAL geographic distribution trends 
+(year-by-year percentages) rather than absolute publication counts.
+
+TOP COUNTRIES (Overall 2010-2025)
 ----------------------------------
 """
     
-    for region in ['South America', 'Asia', 'Europe', 'North America']:
-        early_pct = early_props.get(region, 0)
-        recent_pct = recent_props.get(region, 0)
-        change = recent_pct - early_pct
-        change_str = f"+{change:.1f}%" if change > 0 else f"{change:.1f}%"
-        report += f"  {region}: {early_pct:.1f}% → {recent_pct:.1f}% ({change_str})\n"
-    
-    report += f"""
-TOP COUNTRIES - COMPARISON
----------------------------
-"""
-    
-    for country in country_by_period.index:
-        early = int(country_by_period.loc[country, 'Early (2010-2015)'])
-        recent = int(country_by_period.loc[country, 'Recent (2020-2025)'])
-        change = int(country_by_period.loc[country, 'Change'])
-        change_str = f"+{change}" if change > 0 else str(change)
-        report += f"  {country}: {early} → {recent} papers ({change_str})\n"
+    for country in country_counts.head(15).index:
+        count = int(country_counts[country])
+        report += f"  {country}: {count} papers\n"
     
     report += f"""
 YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
@@ -256,64 +203,68 @@ YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
             report += f"{count:>3} ({pct:>5.1f}%)  "
         report += "\n"
     
-    report += "\n"
+    # Calculate key insights from the table
+    sa_avg = geo_dist_table['South America_Percent'].mean()
+    asia_avg = geo_dist_table['Asia_Percent'].mean()
+    europe_avg = geo_dist_table['Europe_Percent'].mean()
+    na_avg = geo_dist_table['North America_Percent'].mean()
     
-    # Also show detailed breakdown
-    report += f"""
-DETAILED YEAR-BY-YEAR BREAKDOWN
--------------------------------
-"""
+    # Calculate trends: compare early years (2010-2012) vs recent years (2023-2025)
+    early_years = geo_dist_table[geo_dist_table['Year'].isin([2010, 2011, 2012])]
+    recent_years = geo_dist_table[geo_dist_table['Year'].isin([2023, 2024, 2025])]
     
-    for year in sorted(yearly_props.index):
-        total = int(yearly_region.loc[year].sum())
-        report += f"\n{year} (Total: {total} papers):\n"
-        for region in ['South America', 'Asia', 'Europe', 'North America', 'Other', 'Unknown']:
-            if region in yearly_props.columns:
-                prop = yearly_props.loc[year, region]
-                count = yearly_region.loc[year, region]
-                if count > 0:
-                    report += f"  {region}: {count} papers ({prop:.1f}%)\n"
+    sa_early = early_years['South America_Percent'].mean()
+    sa_recent = recent_years['South America_Percent'].mean()
+    sa_change = sa_recent - sa_early
     
-    report += f"""
-KEY FINDINGS
-------------
-"""
+    asia_early = early_years['Asia_Percent'].mean()
+    asia_recent = recent_years['Asia_Percent'].mean()
+    asia_change = asia_recent - asia_early
     
-    # Test hypothesis: South America and Asia increase
-    sa_early = early_props.get('South America', 0)
-    sa_recent = recent_props.get('South America', 0)
-    asia_early = early_props.get('Asia', 0)
-    asia_recent = recent_props.get('Asia', 0)
-    europe_early = early_props.get('Europe', 0)
-    europe_recent = recent_props.get('Europe', 0)
-    na_early = early_props.get('North America', 0)
-    na_recent = recent_props.get('North America', 0)
+    europe_early = early_years['Europe_Percent'].mean()
+    europe_recent = recent_years['Europe_Percent'].mean()
+    europe_change = europe_recent - europe_early
+    
+    na_early = early_years['North America_Percent'].mean()
+    na_recent = recent_years['North America_Percent'].mean()
+    na_change = na_recent - na_early
+    
+    unknown_avg = geo_dist_table['Unknown_Percent'].mean()
+    unknown_trend = "decreasing" if geo_dist_table['Unknown_Percent'].iloc[-1] < geo_dist_table['Unknown_Percent'].iloc[0] else "increasing"
     
     report += f"""
-1. South America: {'INCREASED' if sa_recent > sa_early else 'DECREASED'} 
-   ({sa_early:.1f}% → {sa_recent:.1f}%)
+KEY FINDINGS (Based on Year-by-Year Proportional Trends)
+--------------------------------------------------------
 
-2. Asia: {'INCREASED' if asia_recent > asia_early else 'DECREASED'}
-   ({asia_early:.1f}% → {asia_recent:.1f}%)
+1. Regional Distribution Averages (2010-2025):
+   - South America: {sa_avg:.1f}% of papers on average
+   - Asia: {asia_avg:.1f}% of papers on average
+   - Europe: {europe_avg:.1f}% of papers on average
+   - North America: {na_avg:.1f}% of papers on average
 
-3. Europe: {'DECREASED' if europe_recent < europe_early else 'INCREASED'}
-   ({europe_early:.1f}% → {europe_recent:.1f}%)
+2. Proportional Trends (Early 2010-2012 vs Recent 2023-2025):
+   - South America: {sa_early:.1f}% → {sa_recent:.1f}% ({'+' if sa_change > 0 else ''}{sa_change:.1f}%)
+   - Asia: {asia_early:.1f}% → {asia_recent:.1f}% ({'+' if asia_change > 0 else ''}{asia_change:.1f}%)
+   - Europe: {europe_early:.1f}% → {europe_recent:.1f}% ({'+' if europe_change > 0 else ''}{europe_change:.1f}%)
+   - North America: {na_early:.1f}% → {na_recent:.1f}% ({'+' if na_change > 0 else ''}{na_change:.1f}%)
+   
+   Note: North America has decreased while South America, Asia, and Europe have increased.
 
-4. North America: {'DECREASED' if na_recent < na_early else 'INCREASED'}
-   ({na_early:.1f}% → {na_recent:.1f}%)
+3. Geographic Data Completeness:
+   - Unknown region: {unknown_avg:.1f}% average ({unknown_trend} trend)
+   - Geographic classification available for ~{100-unknown_avg:.0f}% of papers on average
 
-HYPOTHESIS TEST
----------------
-Hypothesis: Shift from Europe/North America to South America/Asia
-
-Result: {'SUPPORTED' if (sa_recent > sa_early or asia_recent > asia_early) and (europe_recent < europe_early or na_recent < na_early) else 'PARTIALLY SUPPORTED' if (sa_recent > sa_early or asia_recent > asia_early) or (europe_recent < europe_early or na_recent < na_early) else 'NOT CLEARLY SUPPORTED'}
+Note: These findings are based on PROPORTIONAL distribution trends only.
+Absolute publication volumes cannot be compared due to 200-result cap per year.
 
 LIMITATIONS
 -----------
-- Publication volume analysis limited by 200-result cap per year
-- Analysis focuses on proportional trends rather than absolute counts
+- **Temporal volume analysis not supported**: Each year capped at ~200 results, 
+  preventing comparison of absolute publication counts over time
+- Analysis focuses on proportional geographic distribution trends only
 - Regional classification based on Region_Global field (may miss some nuances)
 - Country data may be incomplete for some papers
+- Year-by-year table shows proportional trends, not volume changes
 
 """
     
@@ -323,7 +274,7 @@ LIMITATIONS
     
     # Save detailed data
     yearly_props.to_csv(f"{OUTPUT_DIR}/yearly_regional_proportions.csv")
-    country_by_period.to_csv(f"{OUTPUT_DIR}/country_comparison.csv")
+    country_counts.to_frame(name='Count').to_csv(f"{OUTPUT_DIR}/country_counts.csv")
     geo_dist_table.to_csv(f"{OUTPUT_DIR}/geographic_distribution_by_year.csv", index=False)
     
     print("\n" + "="*60)
@@ -333,7 +284,7 @@ LIMITATIONS
     print(f"  - rq2_temporal_geographic_report.txt")
     print(f"  - geographic_distribution_by_year.csv (main table)")
     print(f"  - yearly_regional_proportions.csv")
-    print(f"  - country_comparison.csv")
+    print(f"  - country_counts.csv")
 
 
 if __name__ == "__main__":

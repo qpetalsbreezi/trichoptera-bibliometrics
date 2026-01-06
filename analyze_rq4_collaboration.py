@@ -154,6 +154,28 @@ def analyze_collaboration():
     yearly_collab = df.groupby(['Year', 'Collaboration_Category']).size().unstack(fill_value=0)
     yearly_collab_props = yearly_collab.div(yearly_collab.sum(axis=1), axis=0) * 100
     
+    # Create comprehensive collaboration distribution table (similar to RQ2/RQ3)
+    collab_dist_table = pd.DataFrame()
+    collab_categories = ['Single author', '2 authors', '3-5 authors', '6-10 authors', '10+ authors']
+    
+    for year in sorted(yearly_author.index):
+        year_data = {
+            'Year': year,
+            'Total_Papers': int(yearly_author.loc[year, 'count']),
+            'Mean_Authors': yearly_author.loc[year, 'mean'],
+            'Median_Authors': yearly_author.loc[year, 'median']
+        }
+        for category in collab_categories:
+            if category in yearly_collab.columns:
+                count = int(yearly_collab.loc[year, category])
+                prop = yearly_collab_props.loc[year, category]
+                year_data[f'{category}_Count'] = count
+                year_data[f'{category}_Percent'] = prop
+            else:
+                year_data[f'{category}_Count'] = 0
+                year_data[f'{category}_Percent'] = 0.0
+        collab_dist_table = pd.concat([collab_dist_table, pd.DataFrame([year_data])], ignore_index=True)
+    
     # International collaboration (papers with authors from multiple countries)
     # Note: This is a simplified analysis - would need better country extraction
     # For now, we'll use Region_Global as a proxy
@@ -231,29 +253,26 @@ COLLABORATION BY STUDY TYPE
                     report += f"  {category}: {prop:.1f}%\n"
     
     report += f"""
-YEAR-BY-YEAR AUTHORSHIP TRENDS
--------------------------------
+YEAR-BY-YEAR COLLABORATION DISTRIBUTION TABLE
+----------------------------------------------
 """
     
-    for year in sorted(yearly_author.index):
-        mean = yearly_author.loc[year, 'mean']
-        median = yearly_author.loc[year, 'median']
-        count = int(yearly_author.loc[year, 'count'])
-        report += f"  {year}: Mean {mean:.2f}, Median {median:.1f} ({count} papers)\n"
+    # Create formatted table
+    report += f"{'Year':<6} {'Total':<8} {'Mean':<8} {'Median':<8} "
+    for category in collab_categories:
+        cat_short = category.replace('Single author', 'Single').replace('2 authors', '2 Auth').replace('3-5 authors', '3-5 Auth').replace('6-10 authors', '6-10 Auth').replace('10+ authors', '10+ Auth')
+        report += f"{cat_short[:12]:<14} "
+    report += "\n" + "-" * 120 + "\n"
     
-    report += f"""
-COLLABORATION TRENDS OVER TIME
--------------------------------
-"""
+    for _, row in collab_dist_table.iterrows():
+        report += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} {row['Mean_Authors']:<8.2f} {row['Median_Authors']:<8.0f} "
+        for category in collab_categories:
+            count = int(row[f'{category}_Count'])
+            pct = row[f'{category}_Percent']
+            report += f"{count:>3} ({pct:>5.1f}%)  "
+        report += "\n"
     
-    for year in sorted(yearly_collab_props.index):
-        report += f"\n{year}:\n"
-        for category in ['Single author', '2 authors', '3-5 authors', '6-10 authors', '10+ authors']:
-            if category in yearly_collab_props.columns:
-                prop = yearly_collab_props.loc[year, category]
-                count = yearly_collab.loc[year, category]
-                if count > 0:
-                    report += f"  {category}: {count} papers ({prop:.1f}%)\n"
+    report += "\n"
     
     report += f"""
 KEY FINDINGS
@@ -305,12 +324,14 @@ LIMITATIONS
     yearly_author.to_csv(f"{OUTPUT_DIR}/yearly_author_stats.csv")
     yearly_collab_props.to_csv(f"{OUTPUT_DIR}/yearly_collaboration_proportions.csv")
     collab_by_type.to_csv(f"{OUTPUT_DIR}/collaboration_by_study_type.csv")
+    collab_dist_table.to_csv(f"{OUTPUT_DIR}/collaboration_distribution_by_year.csv", index=False)
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
     print(f"\nAnalysis complete! Files saved to {OUTPUT_DIR}/")
     print(f"  - rq4_collaboration_report.txt")
+    print(f"  - collaboration_distribution_by_year.csv (main table)")
     print(f"  - yearly_author_stats.csv")
     print(f"  - yearly_collaboration_proportions.csv")
     print(f"  - collaboration_by_study_type.csv")

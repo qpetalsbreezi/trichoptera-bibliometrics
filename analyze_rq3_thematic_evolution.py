@@ -51,6 +51,37 @@ def analyze_thematic_evolution():
     yearly_theme = df.groupby(['Year', 'Research_Theme']).size().unstack(fill_value=0)
     yearly_theme_props = yearly_theme.div(yearly_theme.sum(axis=1), axis=0) * 100
     
+    # Create comprehensive theme distribution table (similar to RQ2)
+    theme_dist_table = pd.DataFrame()
+    all_themes_list = sorted([t for t in yearly_theme.columns if t != 'Not Specified'])
+    
+    for year in sorted(yearly_theme.index):
+        year_data = {
+            'Year': year,
+            'Total_Papers': int(yearly_theme.loc[year].sum())
+        }
+        for theme in all_themes_list:
+            if theme in yearly_theme.columns:
+                count = int(yearly_theme.loc[year, theme])
+                prop = yearly_theme_props.loc[year, theme]
+                year_data[f'{theme}_Count'] = count
+                year_data[f'{theme}_Percent'] = prop
+            else:
+                year_data[f'{theme}_Count'] = 0
+                year_data[f'{theme}_Percent'] = 0.0
+        
+        # Add "Not Specified" (Unknown) category
+        if 'Not Specified' in yearly_theme.columns:
+            not_spec_count = int(yearly_theme.loc[year, 'Not Specified'])
+            not_spec_prop = yearly_theme_props.loc[year, 'Not Specified']
+            year_data['Not Specified_Count'] = not_spec_count
+            year_data['Not Specified_Percent'] = not_spec_prop
+        else:
+            year_data['Not Specified_Count'] = 0
+            year_data['Not Specified_Percent'] = 0.0
+            
+        theme_dist_table = pd.concat([theme_dist_table, pd.DataFrame([year_data])], ignore_index=True)
+    
     # Theme trends over time
     theme_trends = {}
     for theme in df['Research_Theme'].dropna().unique():
@@ -131,17 +162,36 @@ THEME SHIFTS (Early → Recent)
             report += f"  {theme}: {early_pct:.1f}% → {recent_pct:.1f}% ({change_str}) {trend}\n"
     
     report += f"""
-YEAR-BY-YEAR THEME TRENDS
---------------------------
+YEAR-BY-YEAR THEME DISTRIBUTION TABLE
+--------------------------------------
 """
     
-    # Show top 5 themes per year
-    for year in sorted(yearly_theme_props.index):
-        year_themes = yearly_theme_props.loc[year].sort_values(ascending=False).head(5)
-        report += f"\n{year}:\n"
-        for theme, prop in year_themes.items():
-            count = yearly_theme.loc[year, theme]
-            report += f"  {theme}: {count} papers ({prop:.1f}%)\n"
+    # Create formatted table (show top themes in columns)
+    # Get top themes by average proportion across all years (exclude 'Not Specified')
+    theme_avg_props = yearly_theme_props.drop(columns=['Not Specified'], errors='ignore').mean().sort_values(ascending=False)
+    top_themes_for_table = theme_avg_props.head(5).index.tolist()  # Top 5 themes + Not Specified = 6 columns
+    
+    report += f"{'Year':<6} {'Total':<8} "
+    for theme in top_themes_for_table:
+        # Shorten theme names for table
+        theme_short = theme.replace('Biomonitoring/Water Quality', 'Biomonitor').replace('Taxonomy/Systematics', 'Taxonomy').replace('Ecology/Behavior', 'Ecology').replace('Evolution/Phylogeny', 'Evolution').replace('Materials Science (Silk)', 'Silk')
+        report += f"{theme_short[:15]:<17} "
+    report += f"{'Unknown':<17} "  # Add Unknown column
+    report += "\n" + "-" * 120 + "\n"
+    
+    for _, row in theme_dist_table.iterrows():
+        report += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} "
+        for theme in top_themes_for_table:
+            count = int(row[f'{theme}_Count'])
+            pct = row[f'{theme}_Percent']
+            report += f"{count:>3} ({pct:>5.1f}%)  "
+        # Add Not Specified (Unknown)
+        not_spec_count = int(row['Not Specified_Count'])
+        not_spec_pct = row['Not Specified_Percent']
+        report += f"{not_spec_count:>3} ({not_spec_pct:>5.1f}%)  "
+        report += "\n"
+    
+    report += "\n"
     
     report += f"""
 THEME BY REGION
@@ -204,6 +254,7 @@ LIMITATIONS
     # Save detailed data
     yearly_theme_props.to_csv(f"{OUTPUT_DIR}/yearly_theme_proportions.csv")
     theme_by_region_props.to_csv(f"{OUTPUT_DIR}/theme_by_region.csv")
+    theme_dist_table.to_csv(f"{OUTPUT_DIR}/theme_distribution_by_year.csv", index=False)
     
     # Create theme trends CSV
     theme_trends_df = pd.DataFrame(theme_trends).fillna(0)
@@ -214,6 +265,7 @@ LIMITATIONS
     print("="*60)
     print(f"\nAnalysis complete! Files saved to {OUTPUT_DIR}/")
     print(f"  - rq3_thematic_evolution_report.txt")
+    print(f"  - theme_distribution_by_year.csv (main table)")
     print(f"  - yearly_theme_proportions.csv")
     print(f"  - theme_by_region.csv")
     print(f"  - theme_trends_by_year.csv")
