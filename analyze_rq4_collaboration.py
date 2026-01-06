@@ -10,6 +10,8 @@ import numpy as np
 from pathlib import Path
 
 # Configuration
+# Use enriched file with full author data if available, otherwise fall back to original
+AUTHORS_CSV = "data/processed/trichoptera_scopus_with_authors.csv"
 INPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
 OUTPUT_DIR = "analysis/rq4_collaboration"
 
@@ -19,9 +21,17 @@ Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 def analyze_collaboration():
     """Analyze collaboration and authorship patterns"""
     
-    # Load data
-    print("Loading data...")
-    df = pd.read_csv(INPUT_CSV)
+    # Load data - prefer enriched file with full author data
+    import os
+    if os.path.exists(AUTHORS_CSV):
+        print(f"Loading enriched data with full author information from: {AUTHORS_CSV}")
+        df = pd.read_csv(AUTHORS_CSV)
+        has_full_author_data = True
+    else:
+        print(f"Loading data from: {INPUT_CSV}")
+        print("Note: Full author data not available. Using limited data from Publish or Perish export.")
+        df = pd.read_csv(INPUT_CSV)
+        has_full_author_data = False
     
     # Clean and prepare data
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
@@ -30,34 +40,37 @@ def analyze_collaboration():
     # Filter out papers with "Not Trichoptera-focused"
     df = df[df['Trichoptera_Relevance'] != 'Not Trichoptera-focused']
     
-    # Note: Publish or Perish export only includes first author in Authors field
-    # AuthorCount field is also unreliable (shows 1 for all)
-    # Collaboration analysis is limited by data availability
-    
-    # Try to extract author count from Authors field, but acknowledge limitation
-    def count_authors(authors_str):
-        if pd.isna(authors_str) or not authors_str:
-            return 1  # Default to 1 if missing
-        authors_str = str(authors_str).strip()
-        if not authors_str or authors_str == 'nan':
+    # Use accurate author count if available, otherwise try to extract from Authors field
+    if has_full_author_data and 'Author_Count_Actual' in df.columns:
+        print("Using accurate author counts from OpenAlex API")
+        df['AuthorCount'] = df['Author_Count_Actual'].fillna(0).astype(int)
+        # Filter out papers with 0 authors
+        df = df[df['AuthorCount'] > 0]
+    else:
+        print("Warning: Using unreliable author count from Publish or Perish export")
+        # Fallback: Try to extract author count from Authors field (limited)
+        def count_authors(authors_str):
+            if pd.isna(authors_str) or not authors_str:
+                return 1
+            authors_str = str(authors_str).strip()
+            if not authors_str or authors_str == 'nan':
+                return 1
+            # Check for multiple authors (comma, semicolon, 'and', '&')
+            if ',' in authors_str or ';' in authors_str or ' and ' in authors_str.lower() or ' & ' in authors_str:
+                count = 1
+                if ',' in authors_str:
+                    count = max(count, authors_str.count(',') + 1)
+                if ';' in authors_str:
+                    count = max(count, authors_str.count(';') + 1)
+                if ' and ' in authors_str.lower():
+                    count = max(count, authors_str.lower().count(' and ') + 1)
+                if ' & ' in authors_str:
+                    count = max(count, authors_str.count(' & ') + 1)
+                return count
             return 1
-        # Check for multiple authors (comma, semicolon, 'and', '&')
-        if ',' in authors_str or ';' in authors_str or ' and ' in authors_str.lower() or ' & ' in authors_str:
-            # Count separators
-            count = 1
-            if ',' in authors_str:
-                count = max(count, authors_str.count(',') + 1)
-            if ';' in authors_str:
-                count = max(count, authors_str.count(';') + 1)
-            if ' and ' in authors_str.lower():
-                count = max(count, authors_str.lower().count(' and ') + 1)
-            if ' & ' in authors_str:
-                count = max(count, authors_str.count(' & ') + 1)
-            return count
-        return 1  # Single author or can't determine
-    
-    df['AuthorCount'] = df['Authors'].apply(count_authors)
-    df = df[df['AuthorCount'] > 0]
+        
+        df['AuthorCount'] = df['Authors'].apply(count_authors)
+        df = df[df['AuthorCount'] > 0]
     
     print(f"Analyzing {len(df)} papers from 2010-2025")
     
@@ -266,14 +279,22 @@ KEY FINDINGS
 
 LIMITATIONS
 -----------
+"""
+    if has_full_author_data:
+        report += """
+- Author data from OpenAlex API (full author lists available)
+- Author_Count_Actual provides accurate collaboration metrics
+- International collaboration analysis may be limited by affiliation data completeness
+- Study type classification based on Research_Theme field
+"""
+    else:
+        report += """
 - **CRITICAL**: Publish or Perish export only includes FIRST AUTHOR in Authors field
 - AuthorCount field in export is unreliable (shows 1 for all papers)
 - Collaboration analysis severely limited - cannot accurately determine multi-author papers
+- **RECOMMENDATION**: Run fetch_authors.py to get full author data from OpenAlex API
 - International collaboration analysis limited by country data availability
 - Study type classification based on Research_Theme field
-- **RECOMMENDATION**: For proper collaboration analysis, use Scopus API or full export 
-  that includes all authors, not just first author
-
 """
     
     # Save report
