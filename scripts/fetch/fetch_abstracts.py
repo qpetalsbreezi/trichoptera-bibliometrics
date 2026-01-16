@@ -3,14 +3,18 @@ import requests
 from tqdm import tqdm
 import time
 import os
+from pathlib import Path
+
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Configuration
-INPUT_CSV = "data/processed/trichoptera_scopus_raw_2010_2025.csv"
-OUTPUT_CSV = "data/processed/trichoptera_scopus_with_abstracts.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_raw_2010_2025.csv"
+OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_abstracts.csv"
 SAVE_INTERVAL = 50  # Save every N papers
 
 # Load your Scopus CSV
-if os.path.exists(OUTPUT_CSV):
+if OUTPUT_CSV.exists():
     print(f"Resuming from existing file: {OUTPUT_CSV}")
     df = pd.read_csv(OUTPUT_CSV)
 else:

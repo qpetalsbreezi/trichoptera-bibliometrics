@@ -13,12 +13,15 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+
 # Configuration
-INPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
-OUTPUT_DIR = "analysis/rq2_temporal_geographic"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+OUTPUT_DIR = PROJECT_ROOT / "analysis/rq2_temporal_geographic"
 
 # Create output directory
-Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def analyze_temporal_geographic():
     """Analyze temporal and geographic trends in Trichoptera research"""
@@ -269,13 +272,13 @@ LIMITATIONS
 """
     
     # Save report
-    with open(f"{OUTPUT_DIR}/rq2_temporal_geographic_report.txt", 'w') as f:
+    with open(OUTPUT_DIR / "rq2_temporal_geographic_report.txt", 'w') as f:
         f.write(report)
     
     # Save detailed data
-    yearly_props.to_csv(f"{OUTPUT_DIR}/yearly_regional_proportions.csv")
-    country_counts.to_frame(name='Count').to_csv(f"{OUTPUT_DIR}/country_counts.csv")
-    geo_dist_table.to_csv(f"{OUTPUT_DIR}/geographic_distribution_by_year.csv", index=False)
+    yearly_props.to_csv(OUTPUT_DIR / "yearly_regional_proportions.csv")
+    country_counts.to_frame(name='Count').to_csv(OUTPUT_DIR / "country_counts.csv")
+    geo_dist_table.to_csv(OUTPUT_DIR / "geographic_distribution_by_year.csv", index=False)
     
     print("\n" + "="*60)
     print(report)

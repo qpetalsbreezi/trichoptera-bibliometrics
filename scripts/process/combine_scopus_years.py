@@ -8,20 +8,23 @@ import glob
 import os
 from pathlib import Path
 
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+
 # Configuration
-DATA_DIR = "data/raw/scopus_years"
+DATA_DIR = PROJECT_ROOT / "data/raw/scopus_publish_or_perish"
 PATTERN = "trichoptera_scopus_raw_*.csv"
-OUTPUT_FILE = "data/processed/trichoptera_scopus_raw_2010_2025.csv"
+OUTPUT_FILE = PROJECT_ROOT / "data/processed/trichoptera_scopus_raw_2010_2025.csv"
 
 def combine_scopus_exports():
     """Combine all year-specific Scopus exports into one dataset"""
     
     # Find all matching files
-    pattern = os.path.join(DATA_DIR, PATTERN)
+    pattern = str(DATA_DIR / PATTERN)
     files = sorted(glob.glob(pattern))
     
     # Filter out the combined file if it exists
-    files = [f for f in files if f != OUTPUT_FILE and not f.endswith("_2010_2025.csv")]
+    files = [f for f in files if Path(f) != OUTPUT_FILE and not f.endswith("_2010_2025.csv")]
     
     if not files:
         print(f"No files found matching pattern: {pattern}")

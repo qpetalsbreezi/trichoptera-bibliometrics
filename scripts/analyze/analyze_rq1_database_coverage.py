@@ -9,15 +9,18 @@ import pandas as pd
 import numpy as np
 from difflib import SequenceMatcher
 import re
+from pathlib import Path
+
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # File paths
-SCOPUS_FILE = "data/raw/scopus_years/trichoptera_scopus_raw_2023.csv"
-GS_FILE = "data/raw/google_scholar/trichoptera_google_scholar_raw_2023.csv"
-OUTPUT_DIR = "analysis/rq1_coverage"
+SCOPUS_FILE = PROJECT_ROOT / "data/raw/scopus_publish_or_perish/trichoptera_scopus_raw_2023.csv"
+GS_FILE = PROJECT_ROOT / "data/raw/google_scholar/trichoptera_google_scholar_raw_2023.csv"
+OUTPUT_DIR = PROJECT_ROOT / "analysis/rq1_coverage"
 
 # Create output directory
-import os
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def normalize_title(title):
@@ -327,13 +330,13 @@ LIMITATIONS
 
 """
     
-    with open(f"{OUTPUT_DIR}/coverage_report.txt", 'w') as f:
+    with open(OUTPUT_DIR / "coverage_report.txt", 'w') as f:
         f.write(report)
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
-    print(f"\nAnalysis complete! Report saved to {OUTPUT_DIR}/coverage_report.txt")
+    print(f"\nAnalysis complete! Report saved to {OUTPUT_DIR / 'coverage_report.txt'}")
     
     return stats
 

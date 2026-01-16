@@ -9,21 +9,23 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+
 # Configuration
 # Use enriched file with full author data if available, otherwise fall back to original
-AUTHORS_CSV = "data/processed/trichoptera_scopus_with_authors.csv"
-INPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
-OUTPUT_DIR = "analysis/rq4_collaboration"
+AUTHORS_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_authors.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+OUTPUT_DIR = PROJECT_ROOT / "analysis/rq4_collaboration"
 
 # Create output directory
-Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def analyze_collaboration():
     """Analyze collaboration and authorship patterns"""
     
     # Load data - prefer enriched file with full author data
-    import os
-    if os.path.exists(AUTHORS_CSV):
+    if AUTHORS_CSV.exists():
         print(f"Loading enriched data with full author information from: {AUTHORS_CSV}")
         df = pd.read_csv(AUTHORS_CSV)
         has_full_author_data = True
@@ -317,14 +319,14 @@ LIMITATIONS
 """
     
     # Save report
-    with open(f"{OUTPUT_DIR}/rq4_collaboration_report.txt", 'w') as f:
+    with open(OUTPUT_DIR / "rq4_collaboration_report.txt", 'w') as f:
         f.write(report)
     
     # Save detailed data
-    yearly_author.to_csv(f"{OUTPUT_DIR}/yearly_author_stats.csv")
-    yearly_collab_props.to_csv(f"{OUTPUT_DIR}/yearly_collaboration_proportions.csv")
-    collab_by_type.to_csv(f"{OUTPUT_DIR}/collaboration_by_study_type.csv")
-    collab_dist_table.to_csv(f"{OUTPUT_DIR}/collaboration_distribution_by_year.csv", index=False)
+    yearly_author.to_csv(OUTPUT_DIR / "yearly_author_stats.csv")
+    yearly_collab_props.to_csv(OUTPUT_DIR / "yearly_collaboration_proportions.csv")
+    collab_by_type.to_csv(OUTPUT_DIR / "collaboration_by_study_type.csv")
+    collab_dist_table.to_csv(OUTPUT_DIR / "collaboration_distribution_by_year.csv", index=False)
     
     print("\n" + "="*60)
     print(report)

@@ -9,12 +9,15 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+
 # Configuration
-INPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
-OUTPUT_DIR = "analysis/rq3_thematic_evolution"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+OUTPUT_DIR = PROJECT_ROOT / "analysis/rq3_thematic_evolution"
 
 # Create output directory
-Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def analyze_thematic_evolution():
     """Analyze thematic evolution in Trichoptera research"""
@@ -248,17 +251,17 @@ LIMITATIONS
 """
     
     # Save report
-    with open(f"{OUTPUT_DIR}/rq3_thematic_evolution_report.txt", 'w') as f:
+    with open(OUTPUT_DIR / "rq3_thematic_evolution_report.txt", 'w') as f:
         f.write(report)
     
     # Save detailed data
-    yearly_theme_props.to_csv(f"{OUTPUT_DIR}/yearly_theme_proportions.csv")
-    theme_by_region_props.to_csv(f"{OUTPUT_DIR}/theme_by_region.csv")
-    theme_dist_table.to_csv(f"{OUTPUT_DIR}/theme_distribution_by_year.csv", index=False)
+    yearly_theme_props.to_csv(OUTPUT_DIR / "yearly_theme_proportions.csv")
+    theme_by_region_props.to_csv(OUTPUT_DIR / "theme_by_region.csv")
+    theme_dist_table.to_csv(OUTPUT_DIR / "theme_distribution_by_year.csv", index=False)
     
     # Create theme trends CSV
     theme_trends_df = pd.DataFrame(theme_trends).fillna(0)
-    theme_trends_df.to_csv(f"{OUTPUT_DIR}/theme_trends_by_year.csv")
+    theme_trends_df.to_csv(OUTPUT_DIR / "theme_trends_by_year.csv")
     
     print("\n" + "="*60)
     print(report)

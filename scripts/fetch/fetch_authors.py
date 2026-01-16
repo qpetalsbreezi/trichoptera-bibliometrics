@@ -9,14 +9,18 @@ from tqdm import tqdm
 import time
 import os
 import json
+from pathlib import Path
+
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Configuration
-INPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
-OUTPUT_CSV = "data/processed/trichoptera_scopus_with_authors.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_authors.csv"
 SAVE_INTERVAL = 50  # Save every N papers
 
 # Load data
-if os.path.exists(OUTPUT_CSV):
+if OUTPUT_CSV.exists():
     print(f"Resuming from existing file: {OUTPUT_CSV}")
     df = pd.read_csv(OUTPUT_CSV)
     start_index = len(df[df['All_Authors'].notna() & (df['All_Authors'] != '')])

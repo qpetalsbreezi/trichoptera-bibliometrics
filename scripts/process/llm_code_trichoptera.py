@@ -4,10 +4,15 @@ import time
 from tqdm import tqdm
 from openai import OpenAI
 import os
+from pathlib import Path
+
+# Get project root directory (two levels up from this script)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Load environment variables from .env file if it exists
-if os.path.exists(".env"):
-    with open(".env", "r") as f:
+env_file = PROJECT_ROOT / ".env"
+if env_file.exists():
+    with open(env_file, "r") as f:
         for line in f:
             line = line.strip()
             if line and not line.startswith("#") and "=" in line:
@@ -21,9 +26,9 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 
-INPUT_CSV = "data/processed/trichoptera_scopus_with_abstracts.csv"
-SCHEMA_FILE = "data/trichoptera_schema.json"
-OUTPUT_CSV = "data/processed/trichoptera_scopus_coded.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_abstracts.csv"
+SCHEMA_FILE = PROJECT_ROOT / "data/trichoptera_schema.json"
+OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
 
 MODEL = "gpt-4o-mini"
 TEMPERATURE = 0
