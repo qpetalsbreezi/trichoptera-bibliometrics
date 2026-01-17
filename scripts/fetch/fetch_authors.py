@@ -15,8 +15,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Configuration
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
-OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_authors.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_abstracts.csv"
+OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_authors.csv"
 SAVE_INTERVAL = 50  # Save every N papers
 
 # Load data
