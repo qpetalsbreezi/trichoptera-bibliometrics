@@ -27,6 +27,7 @@ client = OpenAI(api_key=api_key)
 
 
 INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_abstracts.csv"
+AUTHORS_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_authors.csv"
 SCHEMA_FILE = PROJECT_ROOT / "data/trichoptera_schema.json"
 OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
 
@@ -37,6 +38,22 @@ TEMPERATURE = 0
 # LOAD FILES
 # -------------------------
 df = pd.read_csv(INPUT_CSV)
+
+# Load author affiliations data for geographic inference
+if AUTHORS_CSV.exists():
+    df_authors = pd.read_csv(AUTHORS_CSV)
+    # Merge author affiliations into main dataframe
+    # Use Title as key (should be unique)
+    df = df.merge(
+        df_authors[['Title', 'Author_Affiliations']],
+        on='Title',
+        how='left',
+        suffixes=('', '_auth')
+    )
+    print(f"Loaded author affiliations for {df['Author_Affiliations'].notna().sum():,} papers")
+else:
+    df['Author_Affiliations'] = None
+    print("Warning: Author affiliations file not found. Using abstract-only extraction.")
 
 with open(SCHEMA_FILE) as f:
     schema = json.load(f)
@@ -65,7 +82,12 @@ def safe_json_loads(text):
 # -------------------------
 # CLASSIFIER
 # -------------------------
-def classify(title, abstract):
+def classify(title, abstract, author_affiliations=None):
+    # Prepare affiliation text
+    affiliation_text = ""
+    if pd.notna(author_affiliations) and str(author_affiliations).strip():
+        affiliation_text = f"\n\nAuthor affiliations:\n{str(author_affiliations)}"
+    
     prompt = f"""
 You are coding academic papers for a bibliometric study on Trichoptera (caddisflies).
 
@@ -78,15 +100,23 @@ Paper title:
 {title}
 
 Paper abstract:
-{abstract}
+{abstract}{affiliation_text}
 
 CORE RULES (follow strictly):
 - Do NOT assume Trichoptera are the main focus unless clearly stated.
 - Prefer the MOST SPECIFIC allowed value supported by the text.
 - Use "Other" ONLY if no allowed value applies.
-- If information is missing, use "Not Specified".
+- For Country: If information is missing, leave empty (do NOT use "Not Specified").
+- For other fields: If information is missing, use "Not Specified".
 - Do NOT invent taxa, locations, methods, or conclusions.
 - Output VALID JSON only. No explanations.
+
+GEOGRAPHIC EXTRACTION PRIORITY:
+1. Explicit country/state/city names → extract country
+2. Species names with geographic indicators (japonica→Japan, sinensis→China, etc.) → infer country
+3. Author affiliations or institutional names → infer country
+4. Rivers/lakes/regions → infer country if context is clear
+5. If none of the above, leave Country empty (not "Not Specified")
 
 FOCUS DISCIPLINE RULE:
 Before assigning fields, determine whether Trichoptera are:
@@ -110,16 +140,52 @@ Research_Theme:
 - Use "Physiology" for physiological studies.
 - Use "Other" only if none of the above apply.
 
-Region_Global:
-- Use "Global" ONLY for meta-analyses or global syntheses.
-- Otherwise choose the most specific region stated (Oriental, Neotropical, Nearctic, Palearctic, East Palearctic, Afrotropical, Australasian).
-- Use "Not Specified" if region cannot be determined.
-
 Country:
-- Extract the primary country where research was conducted.
-- Can be inferred from study location, author affiliations, or geographic context.
-- Use standard country names (e.g., "United States" not "USA").
-- Leave empty if country cannot be determined.
+- Extract the PRIMARY country where the research was conducted (field site, study location, or primary geographic focus).
+- PRIORITY ORDER (use first available):
+  1. Explicit country/state/city in abstract or title (highest priority)
+  2. Study location mentioned in abstract (rivers, lakes, regions)
+  3. Species names with geographic indicators (japonica → Japan, sinensis → China, etc.)
+  4. Author affiliations (if provided) - infer country from institution names
+     * "Tohoku University" → Japan
+     * "University of Latvia" → Latvia
+     * "Hôpital du Sacré-Cœur de Montréal" → Canada
+     * "Parks Victoria" → Australia
+     * "University of Manitoba" → Canada
+     * Look for country names in affiliation text
+     * Infer from well-known institutions if country not explicit
+- Look for explicit mentions of: country names, states/provinces (infer country), cities (infer country), rivers/lakes (infer country), geographic regions.
+- Study sites: "X River", "X Lake", "X National Park" → infer country
+- Common patterns to extract:
+  * "North Carolina" → "United States"
+  * "California" → "United States"
+  * "Queensland" → "Australia"
+  * "Amazon" → "Brazil" (if context suggests Brazil)
+  * "Yangtze River" → "China"
+  * "japonica" in species name → "Japan" (if study focuses on that species)
+- Use standard country names: "United States" (not "USA"), "United Kingdom" (not "UK"), "South Korea" (not "Korea").
+- If multiple countries mentioned, choose the PRIMARY study location (where fieldwork/data collection occurred).
+- If country cannot be determined from title/abstract, leave empty (do NOT use "Not Specified").
+- Be AGGRESSIVE: if ANY geographic indicator exists (explicit or implicit), extract it.
+- EXAMPLES:
+  * Paper on "Goera japonica" with no location → "Japan" (species name indicates Japanese origin)
+  * Paper mentions "North Carolina" → "United States"
+  * Paper on "Amazon basin" → "Brazil" (most common country for Amazon basin studies)
+  * Paper studying multiple species including "japonica", "kisoensis" → "Japan" (if these are the primary study species)
+- IMPORTANT: If the paper focuses on species with geographic names (e.g., "japonica", "sinensis", "americana") and no other location is mentioned, infer the country from the species name.
+
+Region_Global:
+- Map the Country to its biogeographic region:
+  * United States, Canada, Mexico → "Nearctic"
+  * Brazil, Argentina, Chile, Colombia, Peru, Ecuador, Venezuela, etc. → "Neotropical"
+  * China, Japan, India, Thailand, Vietnam, Indonesia, Malaysia, Philippines, etc. → "Oriental"
+  * UK, Germany, France, Spain, Italy, Russia (European), etc. → "Palearctic"
+  * Russia (Asian), Mongolia, Kazakhstan (Asian) → "East Palearctic"
+  * South Africa, Kenya, Tanzania, Nigeria, etc. → "Afrotropical"
+  * Australia, New Zealand, Papua New Guinea → "Australasian"
+- If Country is empty but region can be inferred from geographic context, assign region.
+- Use "Global" ONLY for meta-analyses, global syntheses, or multi-continent studies.
+- Use "Not Specified" ONLY if neither country nor region can be determined.
 
 Trichoptera_Relevance:
 - "Primary focus": Trichoptera are the main study organism.
@@ -158,7 +224,7 @@ coded = []
 
 # Test with 5 records first
 TEST_MODE = False
-TEST_SIZE = 5
+TEST_SIZE = 10
 
 if TEST_MODE:
     print(f"TEST MODE: Processing only {TEST_SIZE} records")
@@ -167,8 +233,13 @@ if TEST_MODE:
         title = row.get("Title", "")
         abstract = row.get("Abstract", "")
         abstract_available = isinstance(abstract, str) and abstract.strip() != ""
+        author_affiliations = row.get("Author_Affiliations", None)
 
-        llm_output = classify(title, abstract if abstract_available else "")
+        llm_output = classify(
+            title, 
+            abstract if abstract_available else "",
+            author_affiliations=author_affiliations
+        )
 
         new_row = row.to_dict()
         new_row.update(llm_output)
@@ -195,8 +266,13 @@ else:
         title = row.get("Title", "")
         abstract = row.get("Abstract", "")
         abstract_available = isinstance(abstract, str) and abstract.strip() != ""
+        author_affiliations = row.get("Author_Affiliations", None)
 
-        llm_output = classify(title, abstract if abstract_available else "")
+        llm_output = classify(
+            title,
+            abstract if abstract_available else "",
+            author_affiliations=author_affiliations
+        )
 
         new_row = row.to_dict()
         new_row.update(llm_output)
