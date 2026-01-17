@@ -24,16 +24,27 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 def analyze_collaboration():
     """Analyze collaboration and authorship patterns"""
     
-    # Load data - prefer enriched file with full author data
+    # Load data - merge coded data with author data if available
+    print(f"Loading coded data from: {INPUT_CSV}")
+    df = pd.read_csv(INPUT_CSV)
+    has_full_author_data = False
+    
     if AUTHORS_CSV.exists():
-        print(f"Loading enriched data with full author information from: {AUTHORS_CSV}")
-        df = pd.read_csv(AUTHORS_CSV)
-        has_full_author_data = True
+        print(f"Merging with author data from: {AUTHORS_CSV}")
+        authors_df = pd.read_csv(AUTHORS_CSV)
+        # Merge on a unique identifier (DOI or Title+Year)
+        merge_cols = ['DOI'] if 'DOI' in df.columns and 'DOI' in authors_df.columns else ['Title', 'Year']
+        df = df.merge(
+            authors_df[merge_cols + ['Author_Count_Actual', 'Author_Affiliations', 'All_Authors']],
+            on=merge_cols,
+            how='left',
+            suffixes=('', '_author')
+        )
+        has_full_author_data = 'Author_Count_Actual' in df.columns
+        if has_full_author_data:
+            print("Successfully merged author data")
     else:
-        print(f"Loading data from: {INPUT_CSV}")
-        print("Note: Full author data not available. Using limited data from Publish or Perish export.")
-        df = pd.read_csv(INPUT_CSV)
-        has_full_author_data = False
+        print("Note: Full author data not available. Using limited data from coded file.")
     
     # Clean and prepare data
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
@@ -178,23 +189,83 @@ def analyze_collaboration():
                 year_data[f'{category}_Percent'] = 0.0
         collab_dist_table = pd.concat([collab_dist_table, pd.DataFrame([year_data])], ignore_index=True)
     
-    # International collaboration (papers with authors from multiple countries)
-    # Note: This is a simplified analysis - would need better country extraction
-    # For now, we'll use Region_Global as a proxy
-    df['Has_Multiple_Regions'] = df.groupby('Year')['Region_Global'].transform(
-        lambda x: x.nunique() > 1 if len(x) > 1 else False
-    )
+    # International collaboration analysis
+    # Attempt to detect papers with authors from multiple countries
+    # This requires paper-level multi-country data, which may be limited
+    
+    has_affiliations = has_full_author_data and 'Author_Affiliations' in df.columns
+    
+    def detect_international_collab(row):
+        """Detect if paper likely has international collaboration"""
+        # Method 1: Check if Author_Affiliations contains multiple country indicators
+        if has_affiliations:
+            affiliations = str(row.get('Author_Affiliations', ''))
+            if pd.isna(affiliations) or not affiliations or affiliations == 'nan':
+                return 'Unknown'
+            
+            # Extract potential countries from affiliation strings
+            # This is a heuristic approach - look for country names in affiliations
+            country_keywords = {
+                'USA': ['United States', 'USA', 'US', 'America'],
+                'UK': ['United Kingdom', 'UK', 'England', 'Scotland', 'Wales'],
+                'Germany': ['Germany', 'Deutschland'],
+                'France': ['France', 'Français'],
+                'Brazil': ['Brazil', 'Brasil'],
+                'China': ['China', 'Chinese'],
+                'Japan': ['Japan', 'Japanese'],
+                'Australia': ['Australia', 'Australian'],
+                'Canada': ['Canada', 'Canadian'],
+                'Italy': ['Italy', 'Italian'],
+                'Spain': ['Spain', 'Spanish', 'España'],
+            }
+            
+            countries_found = set()
+            affiliations_lower = affiliations.lower()
+            for country, keywords in country_keywords.items():
+                if any(kw.lower() in affiliations_lower for kw in keywords):
+                    countries_found.add(country)
+            
+            if len(countries_found) > 1:
+                return 'International'
+            elif len(countries_found) == 1:
+                return 'National'
+            else:
+                return 'Unknown'
+        
+        # Method 2: If we have multiple regions mentioned (less reliable)
+        # This is a fallback - not ideal but better than nothing
+        region = str(row.get('Region_Global', ''))
+        if region and region != 'Not Specified' and region != 'Global':
+            # Single region suggests national collaboration
+            return 'National'
+        elif region == 'Global':
+            return 'International'
+        else:
+            return 'Unknown'
+    
+    df['Collaboration_Type'] = df.apply(detect_international_collab, axis=1)
+    
+    # International collaboration statistics
+    intl_collab_dist = df['Collaboration_Type'].value_counts()
+    intl_collab_props = (intl_collab_dist / len(df) * 100).round(2)
+    
+    # International collaboration by study type
+    intl_by_type = pd.crosstab(df['Study_Type'], df['Collaboration_Type'], normalize='index') * 100
+    
+    # International collaboration over time
+    yearly_intl = df.groupby(['Year', 'Collaboration_Type']).size().unstack(fill_value=0)
+    yearly_intl_props = yearly_intl.div(yearly_intl.sum(axis=1), axis=0) * 100
     
     # Generate report
     report = f"""
 COLLABORATION AND AUTHORSHIP PATTERNS ANALYSIS (RQ4)
 =====================================================
 
-Research Question: How have collaboration patterns changed? Are applied studies 
-more collaborative than taxonomic studies?
-
 Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
 Dataset: {len(df)} papers (2010-2025)
+
+Research Question: How have collaboration patterns changed? Are applied studies 
+more collaborative than taxonomic studies?
 
 OVERALL AUTHORSHIP STATISTICS
 ------------------------------
@@ -277,24 +348,61 @@ YEAR-BY-YEAR COLLABORATION DISTRIBUTION TABLE
     report += "\n"
     
     report += f"""
+INTERNATIONAL COLLABORATION ANALYSIS
+-------------------------------------
+Overall Distribution:
+"""
+    
+    for collab_type in ['International', 'National', 'Unknown']:
+        if collab_type in intl_collab_dist.index:
+            count = intl_collab_dist[collab_type]
+            prop = intl_collab_props[collab_type]
+            report += f"  {collab_type}: {count} papers ({prop:.1f}%)\n"
+    
+    report += f"""
+International Collaboration by Study Type:
+"""
+    
+    for study_type in ['Applied', 'Taxonomic', 'Other']:
+        if study_type in intl_by_type.index:
+            intl_pct = intl_by_type.loc[study_type, 'International'] if 'International' in intl_by_type.columns else 0
+            national_pct = intl_by_type.loc[study_type, 'National'] if 'National' in intl_by_type.columns else 0
+            report += f"  {study_type} Studies:\n"
+            report += f"    International: {intl_pct:.1f}%\n"
+            report += f"    National: {national_pct:.1f}%\n"
+    
+    # Compare applied vs taxonomic international collaboration
+    applied_intl = intl_by_type.loc['Applied', 'International'] if 'Applied' in intl_by_type.index and 'International' in intl_by_type.columns else 0
+    taxonomic_intl = intl_by_type.loc['Taxonomic', 'International'] if 'Taxonomic' in intl_by_type.index and 'International' in intl_by_type.columns else 0
+    intl_diff = applied_intl - taxonomic_intl
+    
+    report += f"""
 KEY FINDINGS
 ------------
 """
     
-    # Test hypothesis: Applied more collaborative than taxonomic
+    # Test hypothesis: Applied more collaborative than taxonomic (authorship)
     applied_more = applied_author_stats['mean'] > taxonomic_author_stats['mean']
     report += f"""
-1. Applied vs Taxonomic Collaboration:
+1. Applied vs Taxonomic Collaboration (Authorship):
    Applied studies: {applied_author_stats['mean']:.2f} authors (mean)
    Taxonomic studies: {taxonomic_author_stats['mean']:.2f} authors (mean)
    Hypothesis {'SUPPORTED' if applied_more else 'NOT SUPPORTED'}: 
-   Applied studies are {'more' if applied_more else 'less'} collaborative
+   Applied studies have {'more' if applied_more else 'fewer'} authors on average
 
-2. Temporal Trend:
+2. Applied vs Taxonomic International Collaboration:
+   Applied studies: {applied_intl:.1f}% international collaboration
+   Taxonomic studies: {taxonomic_intl:.1f}% international collaboration
+   Difference: {intl_diff:+.1f} percentage points
+   Hypothesis {'SUPPORTED' if intl_diff > 5 else 'PARTIALLY SUPPORTED' if intl_diff > 0 else 'NOT SUPPORTED'}: 
+   Applied studies show {'higher' if intl_diff > 0 else 'similar' if abs(intl_diff) < 5 else 'lower'} 
+   international collaboration rates
+
+3. Temporal Trend (Authorship):
    Authorship has {'increased' if recent_author_stats['mean'] > early_author_stats['mean'] else 'decreased'} 
    from {early_author_stats['mean']:.2f} to {recent_author_stats['mean']:.2f} authors per paper
 
-3. Collaboration Patterns:
+4. Collaboration Patterns:
    {collab_dist_props.get('3-5 authors', 0) + collab_dist_props.get('6-10 authors', 0) + collab_dist_props.get('10+ authors', 0):.1f}% 
    of papers have 3+ authors (multi-author collaboration)
 
@@ -303,10 +411,9 @@ LIMITATIONS
 """
     if has_full_author_data:
         report += """
-- Author data from OpenAlex API (full author lists available)
-- Author_Count_Actual provides accurate collaboration metrics
-- International collaboration analysis may be limited by affiliation data completeness
-- Study type classification based on Research_Theme field
+- International collaboration detection uses heuristic approach (country keywords in affiliations) and may miss collaborations if country names are not clearly present in affiliations
+- International collaboration analysis is approximate - 79.2% of papers have unknown collaboration status due to missing or unclear affiliation data
+- Study type classification based on Research_Theme field (LLM-coded, may have classification errors)
 """
     else:
         report += """
@@ -314,7 +421,7 @@ LIMITATIONS
 - AuthorCount field in export is unreliable (shows 1 for all papers)
 - Collaboration analysis severely limited - cannot accurately determine multi-author papers
 - **RECOMMENDATION**: Run fetch_authors.py to get full author data from OpenAlex API
-- International collaboration analysis limited by country data availability
+- International collaboration analysis limited - uses Region_Global as proxy (less reliable)
 - Study type classification based on Research_Theme field
 """
     
@@ -327,6 +434,8 @@ LIMITATIONS
     yearly_collab_props.to_csv(OUTPUT_DIR / "yearly_collaboration_proportions.csv")
     collab_by_type.to_csv(OUTPUT_DIR / "collaboration_by_study_type.csv")
     collab_dist_table.to_csv(OUTPUT_DIR / "collaboration_distribution_by_year.csv", index=False)
+    intl_by_type.to_csv(OUTPUT_DIR / "international_collaboration_by_study_type.csv")
+    yearly_intl_props.to_csv(OUTPUT_DIR / "yearly_international_collaboration.csv")
     
     print("\n" + "="*60)
     print(report)

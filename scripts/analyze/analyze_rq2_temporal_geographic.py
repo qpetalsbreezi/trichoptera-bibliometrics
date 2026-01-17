@@ -136,6 +136,13 @@ def analyze_temporal_geographic():
     yearly_region = df.groupby(['Year', 'Region_Category']).size().unstack(fill_value=0)
     yearly_props = yearly_region.div(yearly_region.sum(axis=1), axis=0) * 100
     
+    # Temporal volume analysis (now possible with full API data)
+    yearly_volume = df.groupby('Year').size()
+    early_period_volume = df[df['Year'].between(2010, 2015)].shape[0]
+    recent_period_volume = df[df['Year'].between(2020, 2025)].shape[0]
+    volume_change = recent_period_volume - early_period_volume
+    volume_change_pct = (volume_change / early_period_volume * 100) if early_period_volume > 0 else 0
+    
     # Create comprehensive geographic distribution table
     geo_dist_table = pd.DataFrame()
     for year in sorted(yearly_region.index):
@@ -162,22 +169,19 @@ def analyze_temporal_geographic():
 TEMPORAL AND GEOGRAPHIC GROWTH ANALYSIS (RQ2)
 ============================================
 
+Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
+Dataset: {len(df)} papers (2010-2025)
+
 Research Question: How has the geographic distribution of Trichoptera research 
 changed over time? Has there been a shift from European and North American 
 focus to more global distribution, particularly in South America and Asia?
 
-Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
-Dataset: {len(df)} papers (2010-2025)
-
-IMPORTANT NOTE ON TEMPORAL ANALYSIS
------------------------------------
-The current dataset does NOT support temporal volume analysis (comparing 
-publication counts over time) because each year's export was capped at 
-~200 results due to Scopus API limitations. Therefore, we cannot determine 
-if publication volume increased or decreased over time.
-
-This analysis focuses on PROPORTIONAL geographic distribution trends 
-(year-by-year percentages) rather than absolute publication counts.
+TEMPORAL VOLUME ANALYSIS
+-------------------------
+Total Publications by Period:
+  Early Period (2010-2015): {early_period_volume:,} papers
+  Recent Period (2020-2025): {recent_period_volume:,} papers
+  Change: {volume_change:+,} papers ({'+' if volume_change_pct > 0 else ''}{volume_change_pct:.1f}%)
 
 TOP COUNTRIES (Overall 2010-2025)
 ----------------------------------
@@ -236,7 +240,7 @@ YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
     unknown_trend = "decreasing" if geo_dist_table['Unknown_Percent'].iloc[-1] < geo_dist_table['Unknown_Percent'].iloc[0] else "increasing"
     
     report += f"""
-KEY FINDINGS (Based on Year-by-Year Proportional Trends)
+KEY FINDINGS
 --------------------------------------------------------
 
 1. Regional Distribution Averages (2010-2025):
@@ -257,17 +261,10 @@ KEY FINDINGS (Based on Year-by-Year Proportional Trends)
    - Unknown region: {unknown_avg:.1f}% average ({unknown_trend} trend)
    - Geographic classification available for ~{100-unknown_avg:.0f}% of papers on average
 
-Note: These findings are based on PROPORTIONAL distribution trends only.
-Absolute publication volumes cannot be compared due to 200-result cap per year.
-
 LIMITATIONS
 -----------
-- **Temporal volume analysis not supported**: Each year capped at ~200 results, 
-  preventing comparison of absolute publication counts over time
-- Analysis focuses on proportional geographic distribution trends only
-- Regional classification based on Region_Global field (may miss some nuances)
-- Country data may be incomplete for some papers
-- Year-by-year table shows proportional trends, not volume changes
+- Regional classification uses broad biogeographic regions (e.g., Palearctic, Neotropical) mapped to continental categories, which may misclassify studies in transition zones or regions that span multiple continents (e.g., Palearctic studies in North Africa classified as "Europe")
+- Country data may be incomplete for some papers (~6% unknown)
 
 """
     
@@ -279,6 +276,7 @@ LIMITATIONS
     yearly_props.to_csv(OUTPUT_DIR / "yearly_regional_proportions.csv")
     country_counts.to_frame(name='Count').to_csv(OUTPUT_DIR / "country_counts.csv")
     geo_dist_table.to_csv(OUTPUT_DIR / "geographic_distribution_by_year.csv", index=False)
+    yearly_volume.to_frame(name='Count').to_csv(OUTPUT_DIR / "yearly_publication_volume.csv")
     
     print("\n" + "="*60)
     print(report)

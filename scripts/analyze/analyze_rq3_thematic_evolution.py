@@ -105,11 +105,11 @@ def analyze_thematic_evolution():
 THEMATIC EVOLUTION ANALYSIS (RQ3)
 ==================================
 
-Research Question: How have research themes in Trichoptera studies evolved 
-over time? What are the dominant themes and how have they shifted?
-
 Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
 Dataset: {len(df)} papers (2010-2025)
+
+Research Question: How have research themes in Trichoptera studies evolved 
+over time? What are the dominant themes and how have they shifted?
 
 OVERALL THEME DISTRIBUTION
 ---------------------------
@@ -119,50 +119,8 @@ OVERALL THEME DISTRIBUTION
         prop = (count / len(df) * 100)
         report += f"  {theme}: {count} papers ({prop:.1f}%)\n"
     
-    report += f"""
-THEME DISTRIBUTION BY TIME PERIOD
-----------------------------------
-Early Period (2010-2015): {len(early_period)} papers
-"""
-    
-    for theme in sorted(early_props.index):
-        count = early_counts[theme]
-        prop = early_props[theme]
-        report += f"  {theme}: {count} papers ({prop:.1f}%)\n"
-    
-    report += f"""
-Mid Period (2016-2020): {len(mid_period)} papers
-"""
-    
-    for theme in sorted(mid_props.index):
-        count = mid_counts[theme]
-        prop = mid_props[theme]
-        report += f"  {theme}: {count} papers ({prop:.1f}%)\n"
-    
-    report += f"""
-Recent Period (2021-2025): {len(recent_period)} papers
-"""
-    
-    for theme in sorted(recent_props.index):
-        count = recent_counts[theme]
-        prop = recent_props[theme]
-        report += f"  {theme}: {count} papers ({prop:.1f}%)\n"
-    
-    # Calculate theme changes
-    report += f"""
-THEME SHIFTS (Early → Recent)
------------------------------
-"""
-    
+    # Calculate theme changes for KEY FINDINGS (but don't report here - table shows this)
     all_themes = set(early_props.index) | set(recent_props.index)
-    for theme in sorted(all_themes):
-        if theme != 'Not Specified':
-            early_pct = early_props.get(theme, 0)
-            recent_pct = recent_props.get(theme, 0)
-            change = recent_pct - early_pct
-            change_str = f"+{change:.1f}%" if change > 0 else f"{change:.1f}%"
-            trend = "↑" if change > 2 else "↓" if change < -2 else "→"
-            report += f"  {theme}: {early_pct:.1f}% → {recent_pct:.1f}% ({change_str}) {trend}\n"
     
     report += f"""
 YEAR-BY-YEAR THEME DISTRIBUTION TABLE
@@ -244,9 +202,9 @@ KEY FINDINGS
     report += f"""
 LIMITATIONS
 -----------
-- Theme classification based on LLM coding of abstracts
-- Some papers may have multiple themes but only one is assigned
-- "Not Specified" papers excluded from theme analysis
+- Theme classification based on LLM coding of abstracts (may miss nuanced themes or interdisciplinary work)
+- Some papers may have multiple themes but only one primary theme is assigned
+- "Not Specified" papers (3.1% of dataset) excluded from detailed theme analysis
 
 """
     
