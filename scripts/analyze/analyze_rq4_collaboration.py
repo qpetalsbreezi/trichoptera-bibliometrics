@@ -14,8 +14,8 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Configuration
 # Use enriched file with full author data if available, otherwise fall back to original
-AUTHORS_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_authors.csv"
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+AUTHORS_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_authors.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
 OUTPUT_DIR = PROJECT_ROOT / "analysis/rq4_collaboration"
 
 # Create output directory

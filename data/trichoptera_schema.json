@@ -1,122 +1,33 @@
 {
     "schema_name": "Trichoptera_Bibliometric_Coding_Sheet",
-    "version": "1.0",
+    "version": "2.0",
+    "description": "Streamlined schema containing only fields used in RQ2, RQ3, and RQ4 analyses",
     "columns": {
-      "Paper_ID": {
-        "type": "integer",
-        "description": "Unique ID assigned to each publication."
-      },
       "Title": {
-        "type": "string"
+        "type": "string",
+        "description": "Paper title (from Scopus metadata, not LLM coded)"
       },
       "Authors": {
-        "type": "string"
+        "type": "string",
+        "description": "Author names (from Scopus metadata, not LLM coded)"
       },
       "Year": {
-        "type": "integer"
+        "type": "integer",
+        "description": "Publication year (from Scopus metadata, not LLM coded)"
       },
       "Journal": {
-        "type": "string"
+        "type": "string",
+        "description": "Journal name (from Scopus metadata, not LLM coded)"
       },
       "DOI": {
-        "type": "string"
-      },
-      "Citation_Count": {
-        "type": "integer",
-        "nullable": true
-      },
-      "Document_Type": {
         "type": "string",
-        "allowed_values": [
-          "Article",
-          "Review",
-          "Taxonomic Description",
-          "Conference Paper",
-          "Book Chapter",
-          "Short Communication",
-          "Other"
-        ]
+        "description": "Digital Object Identifier (from Scopus metadata, not LLM coded)"
       },
-      "Taxonomic_Focus": {
+      "Country": {
         "type": "string",
-        "description": "General focus (Trichoptera) or specific families/species."
-      },
-      "Family_Studied": {
-        "type": "string",
-        "allowed_values": [
-          "Hydropsychidae",
-          "Leptoceridae",
-          "Philopotamidae",
-          "Rhyacophilidae",
-          "Limnephilidae",
-          "Polycentropodidae",
-          "Glossosomatidae",
-          "Psychomyiidae",
-          "Unknown",
-          "Multiple"
-        ]
-      },
-      "Species_Studied": {
-        "type": "string",
-        "nullable": true
-      },
-      "Research_Theme": {
-        "type": "string",
-        "allowed_values": [
-          "Taxonomy/Systematics",
-          "Ecology/Behavior",
-          "Biomonitoring/Water Quality",
-          "Evolution/Phylogeny",
-          "Conservation",
-          "Materials Science (Silk)",
-          "Physiology",
-          "Applied Ecology",
-          "Other"
-        ]
-      },
-      "Ecosystem_Service": {
-        "type": "string",
-        "allowed_values": [
-          "Nutrient Cycling",
-          "Organic Matter Processing",
-          "Sediment Stabilization",
-          "Habitat Engineering",
-          "Food-Web Support",
-          "Water-Quality Monitoring",
-          "Silk Applications",
-          "None",
-          "Not Specified"
-        ]
-      },
-      "FFG": {
-        "type": "string",
-        "allowed_values": [
-          "Shredder",
-          "Scraper/Grazer",
-          "Collector-Filterer",
-          "Collector-Gatherer",
-          "Predator",
-          "Case-Builder",
-          "Tube-Builder",
-          "Mixed",
-          "Not Specified"
-        ]
-      },
-      "Habitat_Type": {
-        "type": "string",
-        "allowed_values": [
-          "Stream",
-          "River",
-          "Lake",
-          "Wetland",
-          "Spring",
-          "Riffle",
-          "Pool",
-          "Lentic",
-          "Lotic",
-          "Multiple",
-          "Not Specified"
-        ]
+        "nullable": true,
+        "description": "Primary country where research was conducted. Used in RQ2 for geographic distribution analysis. Extract from abstract, title, or author affiliations if mentioned.",
+        "usage": "RQ2: Temporal and Geographic Growth"
       },
       "Region_Global": {
         "type": "string",
@@ -130,63 +41,26 @@
           "Australasian",
           "Global",
           "Not Specified"
-        ]
+        ],
+        "description": "Global biogeographic region where research was conducted. Used in RQ2 (geographic trends), RQ3 (theme by region), and RQ4 (international collaboration).",
+        "usage": "RQ2, RQ3, RQ4"
       },
-      "Country": {
-        "type": "string",
-        "nullable": true
-      },
-      "Method_Type": {
+      "Research_Theme": {
         "type": "string",
         "allowed_values": [
-          "Field Study",
-          "Laboratory Study",
-          "Review",
-          "Taxonomic Study",
-          "Modeling",
-          "Biomonitoring Protocol",
-          "Genetic/Molecular Study",
-          "Materials Science Analysis",
-          "Other"
-        ]
-      },
-      "Data_Type": {
-        "type": "string",
-        "allowed_values": [
-          "Observational",
-          "Experimental",
-          "Genetic",
-          "Chemical/Water Quality",
-          "Morphological",
-          "Mixed",
+          "Taxonomy/Systematics",
+          "Ecology/Behavior",
+          "Biomonitoring/Water Quality",
+          "Evolution/Phylogeny",
+          "Conservation",
+          "Materials Science (Silk)",
+          "Physiology",
+          "Applied Ecology",
+          "Other",
           "Not Specified"
-        ]
-      },
-      "Scale": {
-        "type": "string",
-        "allowed_values": [
-          "Local",
-          "Regional",
-          "National",
-          "Global",
-          "Not Specified"
-        ]
-      },
-      "Author_Keywords": {
-        "type": "string",
-        "nullable": true
-      },
-      "Indexed_Keywords": {
-        "type": "string",
-        "nullable": true
-      },
-      "Notes": {
-        "type": "string",
-        "nullable": true
-      },
-      "Relevance_to_Hypotheses": {
-        "type": "string",
-        "nullable": true
+        ],
+        "description": "Primary research theme of the paper. Used in RQ3 (thematic evolution) and RQ4 (applied vs taxonomic collaboration comparison).",
+        "usage": "RQ3, RQ4"
       },
       "Trichoptera_Relevance": {
         "type": "string",
@@ -196,8 +70,14 @@
           "Peripheral",
           "Not Trichoptera-focused"
         ],
-        "description": "Degree to which Trichoptera are the primary taxonomic focus of the paper."
+        "description": "Degree to which Trichoptera are the primary taxonomic focus of the paper. Used by all RQs to filter out non-Trichoptera-focused papers.",
+        "usage": "RQ2, RQ3, RQ4 (filtering)"
       }
+    },
+    "notes": {
+      "metadata_fields": "Title, Authors, Year, Journal, DOI come from Scopus API, not LLM coding",
+      "llm_coded_fields": "Country, Region_Global, Research_Theme, Trichoptera_Relevance",
+      "removed_fields": "The following fields were removed as they are not used in any analysis: Paper_ID, Citation_Count, Document_Type, Taxonomic_Focus, Family_Studied, Species_Studied, Ecosystem_Service, FFG, Habitat_Type, Method_Type, Data_Type, Scale, Author_Keywords, Indexed_Keywords, Notes, Relevance_to_Hypotheses",
+      "author_data": "Author_Count_Actual comes from fetch_authors.py (OpenAlex API), not LLM coding"
     }
   }
-  

@@ -17,7 +17,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Configuration
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
 OUTPUT_DIR = PROJECT_ROOT / "analysis/rq2_temporal_geographic"
 
 # Create output directory

@@ -26,9 +26,9 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_abstracts.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_abstracts.csv"
 SCHEMA_FILE = PROJECT_ROOT / "data/trichoptera_schema.json"
-OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_coded.csv"
+OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
 
 MODEL = "gpt-4o-mini"
 TEMPERATURE = 0
@@ -41,19 +41,18 @@ df = pd.read_csv(INPUT_CSV)
 with open(SCHEMA_FILE) as f:
     schema = json.load(f)
 
-# Build LLM coding schema
+# Build LLM coding schema - only include fields that need LLM coding
+# Exclude metadata fields (Title, Authors, Year, Journal, DOI) which come from Scopus
+llm_coded_fields = ["Country", "Region_Global", "Research_Theme", "Trichoptera_Relevance"]
+
 llm_schema = {}
 for col, spec in schema["columns"].items():
-    if "allowed_values" in spec:
-        llm_schema[col] = spec["allowed_values"]
-    elif col in [
-        "Taxonomic_Focus",
-        "Species_Studied",
-        "Country",
-        "Notes",
-        "Relevance_to_Hypotheses"
-    ]:
-        llm_schema[col] = "short free-text"
+    if col in llm_coded_fields:
+        if "allowed_values" in spec:
+            llm_schema[col] = spec["allowed_values"]
+        else:
+            # Free-text fields (like Country)
+            llm_schema[col] = "short free-text"
 
 llm_schema_text = json.dumps(llm_schema, indent=2)
 
@@ -106,24 +105,27 @@ Research_Theme:
 - Use "Biomonitoring/Water Quality" ONLY if Trichoptera are used as indicators.
 - Use "Ecology/Behavior" for life history, traits, distributions, interactions.
 - Use "Materials Science (Silk)" ONLY if silk properties are studied.
-
-Method_Type:
-- Use "Review" ONLY if the paper synthesizes literature without new data or analyses.
-- Otherwise prefer Field Study, Modeling, Genetic/Molecular Study, or Other.
-
-Family_Studied:
-- Assign a family ONLY if the paper focuses on that family.
-- If multiple families, higher taxa, or mixed orders are involved, use "Multiple".
-
-FFG:
-- Assign ONLY if feeding or functional role is explicitly discussed.
-
-Habitat_Type:
-- Prefer Lotic / Stream / River ONLY if freshwater flow is explicitly implied.
+- Use "Applied Ecology" for applied research that doesn't fit other categories.
+- Use "Conservation" for conservation-focused studies.
+- Use "Physiology" for physiological studies.
+- Use "Other" only if none of the above apply.
 
 Region_Global:
 - Use "Global" ONLY for meta-analyses or global syntheses.
-- Otherwise choose the most specific region stated.
+- Otherwise choose the most specific region stated (Oriental, Neotropical, Nearctic, Palearctic, East Palearctic, Afrotropical, Australasian).
+- Use "Not Specified" if region cannot be determined.
+
+Country:
+- Extract the primary country where research was conducted.
+- Can be inferred from study location, author affiliations, or geographic context.
+- Use standard country names (e.g., "United States" not "USA").
+- Leave empty if country cannot be determined.
+
+Trichoptera_Relevance:
+- "Primary focus": Trichoptera are the main study organism.
+- "Secondary mention": Trichoptera are studied alongside other taxa.
+- "Peripheral": Trichoptera mentioned but not central to the study.
+- "Not Trichoptera-focused": Paper does not focus on Trichoptera.
 
 OUTPUT FORMAT:
 - One JSON object
@@ -154,21 +156,54 @@ OUTPUT FORMAT:
 # -------------------------
 coded = []
 
-# subset = df.head(10)
-# for _, row in tqdm(subset.iterrows(), total=len(subset)):
-for _, row in tqdm(df.iterrows(), total=len(df)):
-    title = row.get("Title", "")
-    abstract = row.get("Abstract", "")
-    abstract_available = isinstance(abstract, str) and abstract.strip() != ""
+# Test with 5 records first
+TEST_MODE = False
+TEST_SIZE = 5
 
-    llm_output = classify(title, abstract if abstract_available else "")
+if TEST_MODE:
+    print(f"TEST MODE: Processing only {TEST_SIZE} records")
+    subset = df.head(TEST_SIZE)
+    for _, row in tqdm(subset.iterrows(), total=len(subset)):
+        title = row.get("Title", "")
+        abstract = row.get("Abstract", "")
+        abstract_available = isinstance(abstract, str) and abstract.strip() != ""
 
-    new_row = row.to_dict()
-    new_row.update(llm_output)
-    new_row["abstract_available"] = abstract_available
+        llm_output = classify(title, abstract if abstract_available else "")
 
-    coded.append(new_row)
-    time.sleep(0.5)
+        new_row = row.to_dict()
+        new_row.update(llm_output)
+        new_row["abstract_available"] = abstract_available
 
-pd.DataFrame(coded).to_csv(OUTPUT_CSV, index=False)
-print("Saved:", OUTPUT_CSV)
+        coded.append(new_row)
+        time.sleep(0.5)
+    
+    # Save test output
+    test_output = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded_TEST.csv"
+    pd.DataFrame(coded).to_csv(test_output, index=False)
+    print(f"\n✓ Test complete! Saved {len(coded)} records to: {test_output}")
+    print(f"\nSample output:")
+    for i, row in enumerate(coded[:3], 1):
+        print(f"\n  Paper {i}:")
+        print(f"    Title: {row.get('Title', '')[:60]}...")
+        print(f"    Country: {row.get('Country', 'N/A')}")
+        print(f"    Region_Global: {row.get('Region_Global', 'N/A')}")
+        print(f"    Research_Theme: {row.get('Research_Theme', 'N/A')}")
+        print(f"    Trichoptera_Relevance: {row.get('Trichoptera_Relevance', 'N/A')}")
+else:
+    # Full run
+    for _, row in tqdm(df.iterrows(), total=len(df)):
+        title = row.get("Title", "")
+        abstract = row.get("Abstract", "")
+        abstract_available = isinstance(abstract, str) and abstract.strip() != ""
+
+        llm_output = classify(title, abstract if abstract_available else "")
+
+        new_row = row.to_dict()
+        new_row.update(llm_output)
+        new_row["abstract_available"] = abstract_available
+
+        coded.append(new_row)
+        time.sleep(0.5)
+    
+    pd.DataFrame(coded).to_csv(OUTPUT_CSV, index=False)
+    print(f"\n✓ Complete! Saved {len(coded)} records to: {OUTPUT_CSV}")
