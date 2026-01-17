@@ -27,4 +27,7 @@ analysis/
 # macOS
 .DS_Store
 .AppleDouble
-.LSOverridedata/processed/trichoptera_scopus_api_coded.csv
+.LSOverride
+
+# Large processed data files
+data/processed/trichoptera_scopus_api_coded.csv
