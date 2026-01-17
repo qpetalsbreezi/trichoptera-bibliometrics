@@ -10,8 +10,8 @@ import json
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Configuration
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_raw_2010_2025.csv"
-OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_with_abstracts.csv"
+INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_combined_2010_2025.csv"
+OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_abstracts.csv"
 SAVE_INTERVAL = 50  # Save every N papers
 
 # Statistics tracking
