@@ -5,6 +5,9 @@ from tqdm import tqdm
 from openai import OpenAI
 import os
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
+from threading import Lock
 
 # Get project root directory (two levels up from this script)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -33,6 +36,10 @@ OUTPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
 
 MODEL = "gpt-4o-mini"
 TEMPERATURE = 0
+
+# Multi-threading configuration
+NUM_THREADS = 8  # Adjust based on API rate limits (gpt-4o-mini allows higher throughput)
+SAVE_INTERVAL = 50  # Save progress every N papers
 
 # -------------------------
 # LOAD FILES
@@ -79,10 +86,14 @@ def safe_json_loads(text):
     except Exception:
         return None
 
+# Thread-safe locks for progress tracking and saving
+progress_lock = Lock()
+save_lock = Lock()
+
 # -------------------------
 # CLASSIFIER
 # -------------------------
-def classify(title, abstract, author_affiliations=None):
+def classify(title, abstract, author_affiliations=None, max_retries=3):
     # Prepare affiliation text
     affiliation_text = ""
     if pd.notna(author_affiliations) and str(author_affiliations).strip():
@@ -198,62 +209,109 @@ OUTPUT FORMAT:
 - One value per field
 """
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        temperature=TEMPERATURE,
-        messages=[
-            {"role": "system", "content": "You are a careful bibliometric classifier."},
-            {"role": "user", "content": prompt}
-        ]
-    )
+    # Retry logic for rate limits
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model=MODEL,
+                temperature=TEMPERATURE,
+                messages=[
+                    {"role": "system", "content": "You are a careful bibliometric classifier."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
 
-    raw = response.choices[0].message.content.strip()
-    parsed = safe_json_loads(raw)
+            raw = response.choices[0].message.content.strip()
+            parsed = safe_json_loads(raw)
 
-    if parsed is not None:
-        return parsed
+            if parsed is not None:
+                return parsed
 
-    # Safe fallback (single-pass philosophy)
+            # Safe fallback (single-pass philosophy)
+            return {col: "Not Specified" for col in llm_schema.keys()}
+            
+        except Exception as e:
+            if attempt < max_retries - 1:
+                # Exponential backoff for rate limits
+                wait_time = (2 ** attempt) * 0.5
+                time.sleep(wait_time)
+                continue
+            else:
+                # Final attempt failed, return fallback
+                print(f"Warning: Failed to classify after {max_retries} attempts: {e}")
+                return {col: "Not Specified" for col in llm_schema.keys()}
+    
+    # Should not reach here, but just in case
     return {col: "Not Specified" for col in llm_schema.keys()}
 
 
 # -------------------------
+# PROCESS SINGLE PAPER (for threading)
+# -------------------------
+def process_paper(row_data):
+    """Process a single paper - thread-safe"""
+    idx, row = row_data
+    
+    title = row.get("Title", "")
+    abstract = row.get("Abstract", "")
+    abstract_available = isinstance(abstract, str) and abstract.strip() != ""
+    author_affiliations = row.get("Author_Affiliations", None)
+
+    llm_output = classify(
+        title,
+        abstract if abstract_available else "",
+        author_affiliations=author_affiliations
+    )
+
+    new_row = row.to_dict()
+    new_row.update(llm_output)
+    new_row["abstract_available"] = abstract_available
+
+    return idx, new_row
+
+# -------------------------
 # RUN (PILOT FIRST)
 # -------------------------
-coded = []
 
 # Test with 5 records first
 TEST_MODE = False
-TEST_SIZE = 10
+TEST_SIZE = 20  # Test with 20 papers to verify multi-threading
 
 if TEST_MODE:
-    print(f"TEST MODE: Processing only {TEST_SIZE} records")
-    subset = df.head(TEST_SIZE)
-    for _, row in tqdm(subset.iterrows(), total=len(subset)):
-        title = row.get("Title", "")
-        abstract = row.get("Abstract", "")
-        abstract_available = isinstance(abstract, str) and abstract.strip() != ""
-        author_affiliations = row.get("Author_Affiliations", None)
-
-        llm_output = classify(
-            title, 
-            abstract if abstract_available else "",
-            author_affiliations=author_affiliations
-        )
-
-        new_row = row.to_dict()
-        new_row.update(llm_output)
-        new_row["abstract_available"] = abstract_available
-
-        coded.append(new_row)
-        time.sleep(0.5)
+    # Test mode with multi-threading
+    print(f"TEST MODE: Processing only {TEST_SIZE} records with {NUM_THREADS} threads")
+    df = df.head(TEST_SIZE)
+    rows_to_process = [(idx, row) for idx, row in df.iterrows()]
+    coded_dict = {}
+    
+    # Process with ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
+        future_to_idx = {executor.submit(process_paper, row_data): row_data[0] 
+                         for row_data in rows_to_process}
+        
+        with tqdm(total=len(rows_to_process), desc="Coding papers") as pbar:
+            for future in as_completed(future_to_idx):
+                try:
+                    idx, new_row = future.result()
+                    coded_dict[idx] = new_row
+                    pbar.update(1)
+                except Exception as e:
+                    idx = future_to_idx[future]
+                    print(f"\nError processing paper {idx}: {e}")
+                    row = df.loc[idx]
+                    error_row = row.to_dict()
+                    error_row.update({col: "Not Specified" for col in llm_schema.keys()})
+                    error_row["abstract_available"] = pd.notna(row.get("Abstract"))
+                    coded_dict[idx] = error_row
+                    pbar.update(1)
     
     # Save test output
+    coded_test = [coded_dict[i] for i in sorted(coded_dict.keys())]
     test_output = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded_TEST.csv"
-    pd.DataFrame(coded).to_csv(test_output, index=False)
-    print(f"\n✓ Test complete! Saved {len(coded)} records to: {test_output}")
+    pd.DataFrame(coded_test).to_csv(test_output, index=False)
+    print(f"\n✓ Test complete! Saved {len(coded_test)} records to: {test_output}")
     print(f"\nSample output:")
-    for i, row in enumerate(coded[:3], 1):
+    for i, row in enumerate(coded_test[:3], 1):
         print(f"\n  Paper {i}:")
         print(f"    Title: {row.get('Title', '')[:60]}...")
         print(f"    Country: {row.get('Country', 'N/A')}")
@@ -261,25 +319,80 @@ if TEST_MODE:
         print(f"    Research_Theme: {row.get('Research_Theme', 'N/A')}")
         print(f"    Trichoptera_Relevance: {row.get('Trichoptera_Relevance', 'N/A')}")
 else:
-    # Full run
-    for _, row in tqdm(df.iterrows(), total=len(df)):
-        title = row.get("Title", "")
-        abstract = row.get("Abstract", "")
-        abstract_available = isinstance(abstract, str) and abstract.strip() != ""
-        author_affiliations = row.get("Author_Affiliations", None)
-
-        llm_output = classify(
-            title,
-            abstract if abstract_available else "",
-            author_affiliations=author_affiliations
-        )
-
-        new_row = row.to_dict()
-        new_row.update(llm_output)
-        new_row["abstract_available"] = abstract_available
-
-        coded.append(new_row)
-        time.sleep(0.5)
+    # Full run with multi-threading
+    print(f"\nStarting LLM coding with {NUM_THREADS} threads...")
+    print(f"Total papers: {len(df):,}")
+    print(f"Progress will be saved every {SAVE_INTERVAL} papers\n")
     
-    pd.DataFrame(coded).to_csv(OUTPUT_CSV, index=False)
-    print(f"\n✓ Complete! Saved {len(coded)} records to: {OUTPUT_CSV}")
+    # Check if we can resume from existing file
+    coded_dict = {}
+    start_index = 0
+    if OUTPUT_CSV.exists():
+        try:
+            df_existing = pd.read_csv(OUTPUT_CSV)
+            # Check which papers are already coded (have Country or Research_Theme)
+            if 'Country' in df_existing.columns or 'Research_Theme' in df_existing.columns:
+                coded_titles = set(df_existing['Title'].astype(str))
+                print(f"Found existing coded file with {len(df_existing)} papers")
+                print(f"Resuming from existing progress...")
+                # Only process papers not already coded
+                df = df[~df['Title'].astype(str).isin(coded_titles)]
+                coded_dict = {i: row.to_dict() for i, row in df_existing.iterrows()}
+                start_index = len(df_existing)
+        except Exception as e:
+            print(f"Warning: Could not read existing file: {e}")
+            print("Starting fresh...")
+    
+    # Prepare data for threading
+    rows_to_process = [(idx, row) for idx, row in df.iterrows()]
+    
+    # Process with ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
+        # Submit all tasks
+        future_to_idx = {executor.submit(process_paper, row_data): row_data[0] 
+                         for row_data in rows_to_process}
+        
+        # Process completed tasks with progress bar
+        with tqdm(total=len(rows_to_process), initial=start_index, desc="Coding papers") as pbar:
+            completed_count = 0
+            for future in as_completed(future_to_idx):
+                try:
+                    idx, new_row = future.result()
+                    coded_dict[idx] = new_row
+                    completed_count += 1
+                    pbar.update(1)
+                    
+                    # Save progress periodically (thread-safe)
+                    if completed_count % SAVE_INTERVAL == 0:
+                        with save_lock:
+                            # Convert dict to DataFrame and save
+                            coded_list = [coded_dict[i] for i in sorted(coded_dict.keys())]
+                            temp_df = pd.DataFrame(coded_list)
+                            temp_df.to_csv(OUTPUT_CSV, index=False)
+                            pbar.set_postfix({"Saved": f"{completed_count}/{len(rows_to_process)}"})
+                            
+                except Exception as e:
+                    idx = future_to_idx[future]
+                    print(f"\nError processing paper {idx}: {e}")
+                    # Add error row with fallback values
+                    row = df.loc[idx]
+                    error_row = row.to_dict()
+                    error_row.update({col: "Not Specified" for col in llm_schema.keys()})
+                    error_row["abstract_available"] = pd.notna(row.get("Abstract"))
+                    coded_dict[idx] = error_row
+                    pbar.update(1)
+    
+    # Final save
+    coded_list = [coded_dict[i] for i in sorted(coded_dict.keys())]
+    final_df = pd.DataFrame(coded_list)
+    final_df.to_csv(OUTPUT_CSV, index=False)
+    
+    print(f"\n✓ Complete! Saved {len(coded_list):,} records to: {OUTPUT_CSV}")
+    
+    # Summary statistics
+    if 'Country' in final_df.columns:
+        country_filled = final_df['Country'].notna() & (final_df['Country'] != '') & (final_df['Country'] != 'Not Specified')
+        print(f"  Papers with Country: {country_filled.sum():,} ({country_filled.sum()/len(final_df)*100:.1f}%)")
+    if 'Region_Global' in final_df.columns:
+        region_filled = final_df['Region_Global'] != 'Not Specified'
+        print(f"  Papers with Region: {region_filled.sum():,} ({region_filled.sum()/len(final_df)*100:.1f}%)")
