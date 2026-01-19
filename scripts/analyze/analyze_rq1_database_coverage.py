@@ -15,7 +15,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # File paths
-SCOPUS_FILE = PROJECT_ROOT / "data/raw/scopus_publish_or_perish/trichoptera_scopus_raw_2023.csv"
+SCOPUS_FILE = PROJECT_ROOT / "data/raw/scopus_api/scopus_api_2023.csv"
 GS_FILE = PROJECT_ROOT / "data/raw/google_scholar/trichoptera_google_scholar_raw_2023.csv"
 OUTPUT_DIR = PROJECT_ROOT / "analysis/rq1_coverage"
 
@@ -104,37 +104,29 @@ def find_overlaps(scopus_df, gs_df):
 
 def classify_journal_type(journal_name, publisher):
     """Classify journal as regional or international"""
-    if pd.isna(journal_name):
+    if pd.isna(journal_name) or not str(journal_name).strip():
         return "Unknown"
     
     journal_lower = str(journal_name).lower()
     
-    # Indicators of regional journals
+    # Indicators of regional journals (more specific patterns)
     regional_indicators = [
         'brasileira', 'brasil', 'chilena', 'chile', 'argentina', 'mexicana',
-        'chinese', 'japanese', 'korean', 'indian', 'african', 'asian',
-        'revista', 'journal of', 'acta', 'annales', 'bulletin',
-        'regional', 'local', 'national'
+        'chinese journal', 'japanese journal', 'korean journal', 
+        'indian journal', 'african journal', 'asian journal',
+        'revista brasileira', 'revista chilena', 'revista argentina',
+        'acta entomologica', 'annales de', 'bulletin of'
     ]
     
-    # International/major journals
-    international_indicators = [
-        'nature', 'science', 'plos', 'pnas', 'proceedings',
-        'freshwater biology', 'hydrobiologia', 'ecology', 'systematic'
-    ]
-    
-    # Check for international first
-    for indicator in international_indicators:
-        if indicator in journal_lower:
-            return "International"
-    
-    # Check for regional
+    # Check for regional indicators first (more specific)
     for indicator in regional_indicators:
         if indicator in journal_lower:
             return "Regional"
     
-    # Default to unknown if can't determine
-    return "Unknown"
+    # If journal name exists and doesn't match regional patterns, 
+    # assume international (most journals are international)
+    # Only mark as Unknown if truly empty/unclear
+    return "International"
 
 
 def detect_language(title, abstract):
@@ -241,11 +233,15 @@ def analyze_database_coverage():
             'scopus': {
                 'mean': float(scopus_df['Cites'].mean()) if 'Cites' in scopus_df.columns else 0,
                 'median': float(scopus_df['Cites'].median()) if 'Cites' in scopus_df.columns else 0,
+                'min': int(scopus_df['Cites'].min()) if 'Cites' in scopus_df.columns else 0,
+                'max': int(scopus_df['Cites'].max()) if 'Cites' in scopus_df.columns else 0,
                 'total': int(scopus_df['Cites'].sum()) if 'Cites' in scopus_df.columns else 0
             },
             'google_scholar': {
                 'mean': float(gs_df['Cites'].mean()) if 'Cites' in gs_df.columns else 0,
                 'median': float(gs_df['Cites'].median()) if 'Cites' in gs_df.columns else 0,
+                'min': int(gs_df['Cites'].min()) if 'Cites' in gs_df.columns else 0,
+                'max': int(gs_df['Cites'].max()) if 'Cites' in gs_df.columns else 0,
                 'total': int(gs_df['Cites'].sum()) if 'Cites' in gs_df.columns else 0
             }
         }
@@ -256,11 +252,11 @@ def analyze_database_coverage():
 DATABASE COVERAGE ANALYSIS REPORT (RQ1)
 ========================================
 
+Publication Year: 2023
+Analysis Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
+
 Research Question: Do Scopus and Google Scholar provide comparable coverage of 
 Trichoptera literature, or are there significant gaps?
-
-Year: 2023
-Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
 
 BASIC STATISTICS
 ----------------
@@ -300,11 +296,15 @@ CITATION STATISTICS
 Scopus:
   - Mean citations: {stats['citation_stats']['scopus']['mean']:.2f}
   - Median citations: {stats['citation_stats']['scopus']['median']:.2f}
+  - Min citations: {stats['citation_stats']['scopus']['min']}
+  - Max citations: {stats['citation_stats']['scopus']['max']}
   - Total citations: {stats['citation_stats']['scopus']['total']}
 
 Google Scholar:
   - Mean citations: {stats['citation_stats']['google_scholar']['mean']:.2f}
   - Median citations: {stats['citation_stats']['google_scholar']['median']:.2f}
+  - Min citations: {stats['citation_stats']['google_scholar']['min']}
+  - Max citations: {stats['citation_stats']['google_scholar']['max']}
   - Total citations: {stats['citation_stats']['google_scholar']['total']}
 
 KEY FINDINGS
@@ -323,10 +323,9 @@ KEY FINDINGS
 
 LIMITATIONS
 -----------
-- Scopus sample limited to 200 results due to API constraints
 - Google Scholar sample limited to 1000 results (export limit)
-- Language detection is basic and may miss some non-English papers
-- Journal type classification is heuristic-based
+- Language detection is basic (heuristic-based) and may miss some non-English papers
+- Journal type classification is heuristic-based (may misclassify some journals)
 
 """
     

@@ -139,7 +139,7 @@ def analyze_collaboration():
     }
     
     # Year-by-year author count trends
-    yearly_author = df.groupby('Year')['AuthorCount'].agg(['mean', 'median', 'count'])
+    yearly_author = df.groupby('Year')['AuthorCount'].agg(['mean', 'median', 'min', 'max', 'count'])
     
     # Collaboration categories
     def categorize_collaboration(count):
@@ -176,7 +176,9 @@ def analyze_collaboration():
             'Year': year,
             'Total_Papers': int(yearly_author.loc[year, 'count']),
             'Mean_Authors': yearly_author.loc[year, 'mean'],
-            'Median_Authors': yearly_author.loc[year, 'median']
+            'Median_Authors': yearly_author.loc[year, 'median'],
+            'Min_Authors': int(yearly_author.loc[year, 'min']),
+            'Max_Authors': int(yearly_author.loc[year, 'max'])
         }
         for category in collab_categories:
             if category in yearly_collab.columns:
@@ -331,14 +333,14 @@ YEAR-BY-YEAR COLLABORATION DISTRIBUTION TABLE
 """
     
     # Create formatted table
-    report += f"{'Year':<6} {'Total':<8} {'Mean':<8} {'Median':<8} "
+    report += f"{'Year':<6} {'Total':<8} {'Mean':<8} {'Median':<8} {'Min':<6} {'Max':<6} "
     for category in collab_categories:
         cat_short = category.replace('Single author', 'Single').replace('2 authors', '2 Auth').replace('3-5 authors', '3-5 Auth').replace('6-10 authors', '6-10 Auth').replace('10+ authors', '10+ Auth')
         report += f"{cat_short[:12]:<14} "
     report += "\n" + "-" * 120 + "\n"
     
     for _, row in collab_dist_table.iterrows():
-        report += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} {row['Mean_Authors']:<8.2f} {row['Median_Authors']:<8.0f} "
+        report += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} {row['Mean_Authors']:<8.2f} {row['Median_Authors']:<8.0f} {int(row['Min_Authors']):<6} {int(row['Max_Authors']):<6} "
         for category in collab_categories:
             count = int(row[f'{category}_Count'])
             pct = row[f'{category}_Percent']
