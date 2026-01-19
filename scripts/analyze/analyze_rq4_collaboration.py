@@ -167,7 +167,64 @@ def analyze_collaboration():
     yearly_collab = df.groupby(['Year', 'Collaboration_Category']).size().unstack(fill_value=0)
     yearly_collab_props = yearly_collab.div(yearly_collab.sum(axis=1), axis=0) * 100
     
-    # Create comprehensive collaboration distribution table (similar to RQ2/RQ3)
+    # Split data into taxonomic and non-taxonomic for separate tables
+    taxonomic_df = df[df['Study_Type'] == 'Taxonomic']
+    non_taxonomic_df = df[df['Study_Type'] != 'Taxonomic']
+    
+    # Year-by-year stats for taxonomic studies
+    yearly_author_taxonomic = taxonomic_df.groupby('Year')['AuthorCount'].agg(['mean', 'median', 'min', 'max', 'count'])
+    yearly_collab_taxonomic = taxonomic_df.groupby(['Year', 'Collaboration_Category']).size().unstack(fill_value=0)
+    yearly_collab_props_taxonomic = yearly_collab_taxonomic.div(yearly_collab_taxonomic.sum(axis=1), axis=0) * 100
+    
+    # Year-by-year stats for non-taxonomic studies
+    yearly_author_non_taxonomic = non_taxonomic_df.groupby('Year')['AuthorCount'].agg(['mean', 'median', 'min', 'max', 'count'])
+    yearly_collab_non_taxonomic = non_taxonomic_df.groupby(['Year', 'Collaboration_Category']).size().unstack(fill_value=0)
+    yearly_collab_props_non_taxonomic = yearly_collab_non_taxonomic.div(yearly_collab_non_taxonomic.sum(axis=1), axis=0) * 100
+    
+    # Helper function to create collaboration distribution table
+    def create_collab_table(yearly_author_data, yearly_collab_data, yearly_collab_props_data):
+        collab_dist_table = pd.DataFrame()
+        collab_categories = ['Single author', '2 authors', '3-5 authors', '6-10 authors', '10+ authors']
+        
+        all_years = sorted(set(yearly_author_data.index) | set(yearly_collab_data.index))
+        for year in all_years:
+            if year in yearly_author_data.index:
+                year_data = {
+                    'Year': year,
+                    'Total_Papers': int(yearly_author_data.loc[year, 'count']),
+                    'Mean_Authors': yearly_author_data.loc[year, 'mean'],
+                    'Median_Authors': yearly_author_data.loc[year, 'median'],
+                    'Min_Authors': int(yearly_author_data.loc[year, 'min']),
+                    'Max_Authors': int(yearly_author_data.loc[year, 'max'])
+                }
+            else:
+                year_data = {
+                    'Year': year,
+                    'Total_Papers': 0,
+                    'Mean_Authors': 0.0,
+                    'Median_Authors': 0.0,
+                    'Min_Authors': 0,
+                    'Max_Authors': 0
+                }
+            
+            for category in collab_categories:
+                if year in yearly_collab_data.index and category in yearly_collab_data.columns:
+                    count = int(yearly_collab_data.loc[year, category])
+                    prop = yearly_collab_props_data.loc[year, category] if year in yearly_collab_props_data.index and category in yearly_collab_props_data.columns else 0.0
+                    year_data[f'{category}_Count'] = count
+                    year_data[f'{category}_Percent'] = prop
+                else:
+                    year_data[f'{category}_Count'] = 0
+                    year_data[f'{category}_Percent'] = 0.0
+            collab_dist_table = pd.concat([collab_dist_table, pd.DataFrame([year_data])], ignore_index=True)
+        
+        return collab_dist_table
+    
+    # Create separate tables for taxonomic and non-taxonomic
+    collab_dist_table_taxonomic = create_collab_table(yearly_author_taxonomic, yearly_collab_taxonomic, yearly_collab_props_taxonomic)
+    collab_dist_table_non_taxonomic = create_collab_table(yearly_author_non_taxonomic, yearly_collab_non_taxonomic, yearly_collab_props_non_taxonomic)
+    
+    # Also keep overall table for backward compatibility
     collab_dist_table = pd.DataFrame()
     collab_categories = ['Single author', '2 authors', '3-5 authors', '6-10 authors', '10+ authors']
     
@@ -332,22 +389,30 @@ YEAR-BY-YEAR COLLABORATION DISTRIBUTION TABLE
 ----------------------------------------------
 """
     
-    # Create formatted table
-    report += f"{'Year':<6} {'Total':<8} {'Mean':<8} {'Median':<8} {'Min':<6} {'Max':<6} "
-    for category in collab_categories:
-        cat_short = category.replace('Single author', 'Single').replace('2 authors', '2 Auth').replace('3-5 authors', '3-5 Auth').replace('6-10 authors', '6-10 Auth').replace('10+ authors', '10+ Auth')
-        report += f"{cat_short[:12]:<14} "
-    report += "\n" + "-" * 120 + "\n"
-    
-    for _, row in collab_dist_table.iterrows():
-        report += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} {row['Mean_Authors']:<8.2f} {row['Median_Authors']:<8.0f} {int(row['Min_Authors']):<6} {int(row['Max_Authors']):<6} "
+    # Helper function to format table
+    def format_collab_table(collab_table, title):
+        formatted = f"\n{title}\n"
+        formatted += "-" * len(title) + "\n"
+        formatted += f"{'Year':<6} {'Total':<8} {'Mean':<8} {'Median':<8} {'Min':<6} {'Max':<6} "
         for category in collab_categories:
-            count = int(row[f'{category}_Count'])
-            pct = row[f'{category}_Percent']
-            report += f"{count:>3} ({pct:>5.1f}%)  "
-        report += "\n"
+            cat_short = category.replace('Single author', 'Single').replace('2 authors', '2 Auth').replace('3-5 authors', '3-5 Auth').replace('6-10 authors', '6-10 Auth').replace('10+ authors', '10+ Auth')
+            formatted += f"{cat_short[:12]:<14} "
+        formatted += "\n" + "-" * 120 + "\n"
+        
+        for _, row in collab_table.iterrows():
+            formatted += f"{int(row['Year']):<6} {int(row['Total_Papers']):<8} {row['Mean_Authors']:<8.2f} {row['Median_Authors']:<8.0f} {int(row['Min_Authors']):<6} {int(row['Max_Authors']):<6} "
+            for category in collab_categories:
+                count = int(row[f'{category}_Count'])
+                pct = row[f'{category}_Percent']
+                formatted += f"{count:>3} ({pct:>5.1f}%)  "
+            formatted += "\n"
+        
+        formatted += "\n"
+        return formatted
     
-    report += "\n"
+    # Add tables for taxonomic and non-taxonomic
+    report += format_collab_table(collab_dist_table_taxonomic, "Taxonomic Studies")
+    report += format_collab_table(collab_dist_table_non_taxonomic, "Non-Taxonomic Studies (Applied + Other)")
     
     report += f"""
 INTERNATIONAL COLLABORATION ANALYSIS
