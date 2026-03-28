@@ -4,7 +4,7 @@ Trichoptera (caddisflies) are ecologically important aquatic insects. Their larv
 
 This study uses bibliometrics, the statistical analysis of scientific publications, to map the Trichoptera literature. The study addresses four questions: (1) How complete and comparable are different databases? (2) How has publication output changed over time and across regions? (3) How have research themes shifted? (4) What are the patterns of authorship and international collaboration, including differences between applied work and taxonomy? The aim is to provide a quantitative, reproducible synthesis of the indexed literature, rather than a narrative literature review based on a curated subset of studies.
 
-The paper is organized in numbered sections. Section 1 is the introduction. Section 2 describes the methods (subsections 2.1–2.7). Section 3 presents results by research question. A Discussion section will follow in the full manuscript.
+The paper is organized in numbered sections. Section 1 is the introduction. Section 2 describes the methods (subsections 2.1–2.7). Section 3 presents results for each topic in turn (aligned with the four questions above). Section 4 discusses interpretation, implications, and limitations.
 
 ## 2. Methods
 
@@ -59,19 +59,19 @@ Geographic coding followed a structured decision order. The model prioritized ex
 
 Analyses for research questions 2–4 were restricted to publications from 2010 to 2025 and to papers classified as having at least some substantive Trichoptera focus. Papers classified as not Trichoptera-focused were excluded. The resulting set served as the analytical corpus for geographic, thematic, and collaboration analyses, with the usual limitations of automated relevance classification.
 
-#### 2.6.2 RQ1: Database overlap, citations, language, and journal type
+#### 2.6.2 Database overlap, citations, language, and journal type
 
 For the 2023 comparison year, records in Scopus and Google Scholar were paired where possible by matching DOIs, and when DOIs were missing, by high similarity between titles so that minor formatting differences still identified the same article. We reported how many records appeared in both databases, how many were unique to each database, and summarized citation-related measures for comparison. Language of the title and abstract was described using a simple rule based on character patterns, for example non-Latin scripts or common diacritics associated with non-English text. This is a rough indicator only and not full language identification. Journals were classified from their titles as regional when the name suggested a national or regional scope. When no such cue appeared but a journal name was present, the outlet was treated as international or general. Names that were missing or unusable were set aside separately. This rule avoids treating most major journals as “unknown” solely because the title does not name a country.
 
-#### 2.6.3 RQ2: Temporal and geographic variation
+#### 2.6.3 Temporal and geographic variation
 
 Publication volume and geographic patterns were summarized over time using the filtered, coded dataset. Country labels were harmonized to standard forms, and when multiple countries were present in a single record, one primary study location was retained for consistency. The main temporal summaries were reported at the regional level by year, with country-level summaries used to describe overall geographic concentration across the study period. These results reflect locations inferred during classification rather than an independent geocoding workflow.
 
-#### 2.6.4 RQ3: Thematic evolution
+#### 2.6.4 Thematic evolution
 
 Theme frequencies were taken from the classifier’s research theme variable. Themes were summarized across three multi-year bands (early, middle, and recent within 2010–2025) and also year by year, so that short-term fluctuations and longer trends could both be observed.
 
-#### 2.6.5 RQ4: Authorship, collaboration size, and international collaboration
+#### 2.6.5 Authorship, collaboration size, and international collaboration
 
 Authorship and collaboration were analyzed using enriched author metadata, with records grouped into predefined collaboration-size categories. For thematic comparisons, papers were collapsed into applied, taxonomic, and other groups. International collaboration was estimated from affiliation text using a conservative heuristic: papers were treated as international when affiliation information indicated contributors from more than one country, national when evidence suggested a single country, and unclear when affiliation evidence was insufficient. Collaboration rates were compared across thematic groups, and team size was summarized over time. Team size and internationality were interpreted as related but distinct dimensions of collaboration.
 
@@ -81,9 +81,9 @@ The steps above were implemented in Python using common tools for data tables, w
 
 ## 3. Results
 
-### 3.1 Research question 1: Database overlap and coverage (2023)
+### 3.1 Database overlap and coverage (2023)
 
-The following summarizes the 2023 comparison between Scopus (API export) and Google Scholar (Publish or Perish export). Records were matched across databases by DOI where possible, then by high title similarity when DOI was missing (see Methods).
+2023 records from Scopus (API export) and Google Scholar (Publish or Perish export) were matched by DOI where possible, then by high title similarity when DOI was missing (Methods, subsection 2.6.2).
 
 #### Basic statistics
 
@@ -91,8 +91,6 @@ The following summarizes the 2023 comparison between Scopus (API export) and Goo
 |---|--------|----------------|
 | Total papers | 261 | 993 |
 | Ratio (Google Scholar / Scopus) | — | 3.80 |
-
-Google Scholar listed substantially more records than Scopus for the same calendar year; the lists are not assumed to be directly comparable in query scope or completeness.
 
 #### Overlap analysis
 
@@ -106,7 +104,7 @@ Google Scholar listed substantially more records than Scopus for the same calend
 
 #### Journal type distribution
 
-Journal names were classified with a simple rule-based scheme (see Methods). **Regional** journals were those whose titles contained cues suggesting a national or regional outlet (e.g., certain national journal name patterns). **International** applied when a journal name was present and did not match those regional cues—interpreted here as general or international in scope, not as a formal index of prestige. **Unknown** applied when the journal field was missing or could not be classified (more common in the Google Scholar export).
+Journal labels are International, Regional, or Unknown (Methods, subsection 2.6.2).
 
 | Label | Scopus | Google Scholar |
 |-------|--------|----------------|
@@ -116,16 +114,12 @@ Journal names were classified with a simple rule-based scheme (see Methods). **R
 
 #### Language distribution
 
-Language was inferred from character patterns in the title and abstract (English vs. non-English; see Methods).
-
 | | Scopus | Google Scholar |
 |---|--------|----------------|
 | English | 244 (93.5%) | 842 (84.8%) |
 | Non-English | 17 (6.5%) | 151 (15.2%) |
 
 #### Citation statistics
-
-Citation fields report each record’s **citation count as supplied by the source database**—i.e., how many times that item had been cited according to that source at the time of export—not an independent citation audit across the open literature.
 
 | | Scopus | Google Scholar |
 |---|--------|----------------|
@@ -135,24 +129,9 @@ Citation fields report each record’s **citation count as supplied by the sourc
 | Maximum | 49 | 598 |
 | Sum of citation counts (all records) | 1,177 | 7,272 |
 
-The Google Scholar export for this comparison was subject to the usual Publish or Perish cap on the number of retrievable results (up to 1,000), so the Google Scholar total reflects that ceiling as well as query coverage.
+### 3.2 Temporal and geographic variation (2010–2025)
 
-#### Key findings
-
-1. **Coverage ratio.** Google Scholar returned **3.8×** as many records as Scopus for 2023 (993 vs. 261).
-2. **Overlap.** **230** papers (**88.1%** of the smaller list, Scopus) appeared in both databases.
-3. **Unique coverage.** **31** papers were only in Scopus (**11.9%** of Scopus records), and **763** were only in Google Scholar (**76.8%** of Google Scholar records).
-4. **Regional journal labels (heuristic).** **18** Scopus records (**6.9%**) and **28** Google Scholar records (**2.8%**) were classified as regional by journal-title rules.
-
-#### Limitations (RQ1 comparison)
-
-- The Google Scholar side was limited by the Publish or Perish export cap (**1,000** results), so the Google Scholar total does not necessarily represent full Scholar coverage for the query.
-- Language labels are from a **simple character-based heuristic** and may miss or mislabel some non-English text.
-- Journal type (**International**, **Regional**, **Unknown**) is **rule-based** and may misclassify some outlets; it is a coarse descriptor, not a formal bibliometric journal rating.
-
-### 3.2 Research question 2: Temporal and geographic variation (2010–2025)
-
-**Dataset.** The RQ2 sample comprised **2,870** coded papers with publication years **2010–2025**, after excluding records classified as not Trichoptera-focused. Records build on the deduplicated Scopus-based tables described in Methods (one row per DOI, then per normalized title among remaining rows), so tabulated annual counts are **not** the same article counted twice. Country and region fields reflect **what the classifier inferred** from title, abstract, and affiliation text (see Methods); this is **not** a separate analysis by author mailing address alone.
+Analytical sample: *N* = 2,870 papers, years 2010–2025, excluding not Trichoptera–focused records (Methods, subsection 2.6.1). Counts use deduplicated Scopus-based records. Country and `Region_Global` are classifier outputs (title, abstract, affiliations), not a separate author-address-only geography.
 
 #### Temporal volume
 
@@ -164,11 +143,11 @@ The Google Scholar export for this comparison was subject to the usual Publish o
 
 #### Top countries (overall, 2010–2025)
 
-After harmonizing country strings, the most frequent primary country labels were: United States (**433**), Brazil (**333**), Not Specified (**154**), China (**135**), Japan (**121**), Russia (**112**), Germany (**92**), Canada (**88**), Australia (**80**), India (**70**), United Kingdom (**63**), Spain (**62**), Argentina (**50**), Poland (**42**), New Zealand (**40**).
+After harmonizing country strings, the most frequent primary country labels were: United States (433), Brazil (333), Not Specified (154), China (135), Japan (121), Russia (112), Germany (92), Canada (88), Australia (80), India (70), United Kingdom (63), Spain (62), Argentina (50), Poland (42), New Zealand (40).
 
 #### Year-by-year geographic distribution (continental categories)
 
-Each paper’s classifier-assigned global biogeographic region (`Region_Global`) was mapped to **display** categories for plotting (see Methods). **South America** aggregates **Neotropical**; **Asia** aggregates **Oriental** and **East Palearctic**; **Europe** maps **Palearctic**; **North America** maps **Nearctic**. **Other** aggregates **Afrotropical**, **Australasian**, and **Global** (multi-region or global syntheses). **Unknown** means the biogeographic region was missing or **Not Specified** after classification. Cell entries are **count (percent of that year’s total)**.
+`Region_Global` was mapped to display continents as in Methods (South America = Neotropical; Asia = Oriental + East Palearctic; Europe = Palearctic; North America = Nearctic; Other = Afrotropical, Australasian, Global; Unknown = missing or Not Specified). Cells are count (percent of that year’s total).
 
 | Year | *N* | South America | Asia | Europe | N. America | Other | Unknown |
 |-----:|----:|---------------|------|--------|------------|-------|---------|
@@ -189,23 +168,9 @@ Each paper’s classifier-assigned global biogeographic region (`Region_Global`)
 | 2024 | 213 | 41 (19.2%) | 48 (22.5%) | 66 (31.0%) | 23 (10.8%) | 19 (8.9%) | 16 (7.5%) |
 | 2025 | 202 | 35 (17.3%) | 42 (20.8%) | 64 (31.7%) | 26 (12.9%) | 18 (8.9%) | 17 (8.4%) |
 
-#### Key findings (RQ2)
+### 3.3 Thematic evolution (2010–2025)
 
-1. **Mean regional shares (2010–2025, by year, then averaged):** South America **18.6%**, Asia **18.9%**, Europe **30.0%**, North America **19.5%** (remainder in **Other** and **Unknown** as in the table).
-2. **Early vs. recent (mean of annual percentages):** comparing **2010–2012** with **2023–2025**, South America **16.5% → 19.5%** (+3.0 pp), Asia **16.7% → 20.6%** (+3.9 pp), Europe **24.7% → 31.5%** (+6.7 pp), North America **28.3% → 13.7%** (−14.5 pp). North America’s share declined while South America, Asia, and Europe increased in this decomposition.
-3. **Completeness:** **Unknown** region averaged **5.0%** of papers per year (with an increasing trend in the yearly series); roughly **95%** of papers had a non-unknown mapped region on average.
-
-#### Limitations (RQ2)
-
-- Continental categories are **collapsed from broad biogeographic regions** (e.g., Palearctic, Neotropical); borderline or multi-continent studies can be misclassified (e.g., some Palearctic-affiliated studies may appear under **Europe** in this mapping).
-- Primary **country** labels can be missing or **Not Specified** for a subset of papers (~**6%** in the automated report).
-- Regional percentages describe **inferred study geography from the classifier**, not a separate tabulation by author institutional address alone; a parallel “author-address-only” geography was **not** computed here.
-
-### 3.3 Research question 3: Thematic evolution (2010–2025)
-
-**Dataset.** Thematic summaries use the same analytical sample as RQ2: **2,870** papers with publication years **2010–2025**, after excluding records classified as not Trichoptera-focused.
-
-**Theme assignment.** Research theme is the classifier’s **single primary** category per paper (see Methods, subsections 2.5.1–2.5.3). For each record, GPT-4o-mini received the title, abstract (or an explicit missing-abstract flag), and affiliation context when available, with **one standardized instruction set** requiring evidence-based choices, the most specific supported category, and no fabrication of unstated details. Theme frequencies below are therefore **counts of primary LLM-assigned labels**, not co-occurrence of multiple topics within the same study.
+Analytical sample: same *N* and filters as §3.2. Each paper has one primary `Research_Theme` from the LLM (Methods, subsections 2.5–2.6.4).
 
 #### Overall theme distribution
 
@@ -224,7 +189,7 @@ Each paper’s classifier-assigned global biogeographic region (`Region_Global`)
 
 #### Year-by-year theme distribution (selected categories)
 
-The following table follows the automated RQ3 report layout: columns are the five themes with the highest **mean** within-year share across 2010–2025 (excluding **Not Specified** when ranking columns), plus **Not Specified** shown under the header **Unknown** (same variable as in the classifier output). Percentages are **within-year** (share of that year’s row total).
+Columns are the five themes with highest mean within-year share (excluding Not Specified from the ranking), plus Not Specified as Unknown; percentages are within-year.
 
 | Year | *N* | Ecology | Taxonomy | Biomonitor | Evolution | Silk | Unknown |
 |-----:|----:|--------:|---------:|-----------:|----------:|-----:|--------:|
@@ -247,9 +212,9 @@ The following table follows the automated RQ3 report layout: columns are the fiv
 
 #### Theme composition by biogeographic region
 
-Percentages are **within region** (share of papers with that **Region_Global** label). For each region, the tables list the **five most frequent** primary themes in the automated RQ3 summary (ties and additional rare themes are omitted from these short lists even if present in the full cross-tabulation).
+Within-region percentages; each block lists the five most frequent primary themes in the automated summary (other themes may occur).
 
-**Afrotropical**
+Afrotropical
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -259,7 +224,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Conservation | 2 | 2.2 |
 | Physiology | 1 | 1.1 |
 
-**Australasian**
+Australasian
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -269,7 +234,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Evolution/Phylogeny | 3 | 2.3 |
 | Conservation | 1 | 0.8 |
 
-**East Palearctic**
+East Palearctic
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -279,7 +244,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Evolution/Phylogeny | 4 | 5.2 |
 | Not Specified | 2 | 2.6 |
 
-**Global** (multi-regional syntheses)
+Global (multi-regional syntheses)
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -287,7 +252,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Biomonitoring/Water Quality | 1 | 14.3 |
 | Evolution/Phylogeny | 1 | 14.3 |
 
-**Nearctic**
+Nearctic
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -297,7 +262,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Evolution/Phylogeny | 26 | 4.8 |
 | Materials Science (Silk) | 24 | 4.4 |
 
-**Neotropical**
+Neotropical
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -307,7 +272,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Evolution/Phylogeny | 7 | 1.3 |
 | Not Specified | 5 | 0.9 |
 
-**Oriental**
+Oriental
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -317,7 +282,7 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Evolution/Phylogeny | 34 | 7.1 |
 | Materials Science (Silk) | 11 | 2.3 |
 
-**Palearctic**
+Palearctic
 
 | Theme | Papers | % |
 |-------|-------:|--:|
@@ -327,25 +292,9 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Evolution/Phylogeny | 39 | 4.5 |
 | Conservation | 16 | 1.8 |
 
-#### Key findings (RQ3)
+### 3.4 Authorship and collaboration (2010–2025)
 
-1. **Corpus-wide emphasis.** Three themes accounted for most of the literature: **Ecology/Behavior** (**35.4%**), **Taxonomy/Systematics** (**31.5%**), and **Biomonitoring/Water Quality** (**20.9%**); every other primary theme was **under 5%** in this single-label summary.
-2. **Regional contrast.** **Biomonitoring/Water Quality** dominated the **Afrotropical** subset (**48.9%**), while **Ecology/Behavior** was largest in **Australasian** (**53.8%**) and **Nearctic** (**43.6%**) papers. **Taxonomy/Systematics** was the modal theme in **East Palearctic**, **Neotropical**, and **Oriental** regions (about **43–45%** in each).
-3. **Temporal shifts (period proportions).** Following the RQ3 script, **early** was defined as **2010–2015** and **recent** as **2021–2025**; each theme’s **percentage of papers within that multi-year band** was compared. With a **3** percentage-point threshold, **Biomonitoring/Water Quality** increased (**+4.5** pp) and **Ecology/Behavior** decreased (**−7.2** pp). These are **not** year-averaged within-year shares; they are shares of the pooled early vs. pooled recent corpus.
-
-#### Limitations (RQ3)
-
-- Theme labels reflect **LLM coding of titles and abstracts** (plus affiliations when used); nuanced or interdisciplinary work may be forced into one primary category.
-- **Only one primary theme** is stored per paper, so multi-topic studies are not represented as co-themes in these tables.
-- **Not Specified** papers (**3.1%** of the corpus) are a small but non-zero share of the overall distribution; the automated report also uses **Not Specified** when building the year-by-year table’s **Unknown** column. Column selection for that table (which themes appear besides **Unknown**) follows the script’s rule (top themes by mean within-year share), so rare themes are not shown as separate columns even when present in the data.
-
-### 3.4 Research question 4: Authorship and collaboration (2010–2025)
-
-**Dataset.** The RQ4 workflow uses the same year range and Trichoptera relevance filter as RQ2–RQ3, merges coded records with OpenAlex-derived author lists where available, and **drops papers with zero recorded authors** after merge. The analytical sample in the January 2026 report comprised **2,845** papers (slightly smaller than the **2,870** thematic/geographic corpus) because of that author-count requirement.
-
-**Study-type groups (for applied vs. taxonomic contrasts).** Papers were split using the LLM-assigned **Research_Theme** field and the RQ4 script rules: **Applied** = **Biomonitoring/Water Quality**, **Applied Ecology**, **Conservation**, or **Materials Science (Silk)**; **Taxonomic** = **Taxonomy/Systematics** only; **Other** = all remaining themes. **Non-taxonomic** tables pool **Applied** and **Other**.
-
-**Authorship source.** Team sizes use **Author_Count_Actual** from the author enrichment step when present (see Methods, subsection 2.6.5); the report’s descriptive statistics are based on those counts.
+Analytical sample: *N* = 2,845 after merging OpenAlex author fields and excluding papers with Author_Count_Actual of zero (smaller than §3.2–3.3 because of that rule). Applied = Biomonitoring/Water Quality, Applied Ecology, Conservation, Materials Science (Silk); taxonomic = Taxonomy/Systematics; other = remaining themes. Non-taxonomic = applied + other. Team sizes from Author_Count_Actual (Methods, subsection 2.6.5).
 
 #### Overall authorship
 
@@ -363,8 +312,6 @@ Percentages are **within region** (share of papers with that **Region_Global** l
 | Early (2010–2015) | 920 | 3.39 | 3.0 |
 | Recent (2020–2025) | 1,261 | 4.53 | 4.0 |
 
-Mean team size **increased by 1.14** authors between these pooled periods (not a statistical model; descriptive comparison only).
-
 #### Authorship by study type
 
 | Study type | Papers | Mean authors | Median authors |
@@ -372,11 +319,9 @@ Mean team size **increased by 1.14** authors between these pooled periods (not a
 | Applied | 672 | 4.74 | 4.0 |
 | Taxonomic | 896 | 3.22 | 3.0 |
 
-The remaining **1,277** papers (**Other** themes) are included in overall and yearly totals; their team-size summary was not tabulated separately in the source report. Applied papers averaged **1.53** more authors than taxonomic papers.
-
 #### Collaboration size (all papers)
 
-Categories follow the RQ4 script: **3–5** and **6–10** are inclusive of those endpoints; **10+** means **11 or more** authors.
+Collaboration bins: 3–5 and 6–10 inclusive; 10+ = 11 or more authors.
 
 | Category | Papers | % |
 |----------|-------:|--:|
@@ -386,13 +331,11 @@ Categories follow the RQ4 script: **3–5** and **6–10** are inclusive of thos
 | 6–10 authors | 498 | 17.5 |
 | 10+ authors | 69 | 2.4 |
 
-**70.6%** of papers had **three or more** authors (multi-author collaboration at that threshold).
-
 #### Collaboration size by study type
 
-Row percentages are **within** each study-type group.
+Percentages are within each study-type group.
 
-**Applied** (*n* = 672)
+Applied (*n* = 672)
 
 | Category | % |
 |----------|--:|
@@ -402,7 +345,7 @@ Row percentages are **within** each study-type group.
 | 6–10 authors | 26.6 |
 | 10+ authors | 3.4 |
 
-**Taxonomic** (*n* = 896)
+Taxonomic (*n* = 896)
 
 | Category | % |
 |----------|--:|
@@ -412,7 +355,7 @@ Row percentages are **within** each study-type group.
 | 6–10 authors | 7.6 |
 | 10+ authors | 1.8 |
 
-**Other** (*n* = 1,277)
+Other (*n* = 1,277)
 
 | Category | % |
 |----------|--:|
@@ -424,7 +367,7 @@ Row percentages are **within** each study-type group.
 
 #### Year-by-year collaboration (taxonomic studies only)
 
-*N* = papers with **Taxonomy/Systematics** as primary theme that year. Collaboration columns are **count (percent of that year’s taxonomic total)**.
+*N* = papers with Taxonomy/Systematics as primary theme that year. Collaboration columns are count (percent of that year’s taxonomic total).
 
 | Year | *N* | Mean | Median | Min | Max | Single | 2 | 3–5 | 6–10 | 10+ |
 |-----:|----:|-----:|-------:|----:|----:|-------|---:|----:|-----:|----:|
@@ -468,9 +411,9 @@ Row percentages are **within** each study-type group.
 
 #### International collaboration (affiliation heuristic)
 
-**Collaboration_Type** was assigned with the RQ4 heuristic (see Methods): when enriched affiliation text was available, the script searched for a small dictionary of country keywords; **International** = more than one such country label hit, **National** = exactly one, **Unknown** = no hit or missing affiliations. If affiliations were unusable, the routine sometimes fell back on **Region_Global** (single region → **National**, **Global** → **International**, else **Unknown**). These labels are **approximate** and are **not** equivalent to manual disambiguation of every institution.
+Collaboration_Type per Methods (subsection 2.6.5): keyword-based country cues in affiliations, with Region_Global fallback when needed.
 
-**Overall** (*n* = 2,845)
+Overall (*n* = 2,845)
 
 | Label | Papers | % |
 |-------|-------:|--:|
@@ -478,7 +421,7 @@ Row percentages are **within** each study-type group.
 | National | 526 | 18.5 |
 | Unknown | 2,254 | 79.2 |
 
-**By study type** (row percentages sum to 100%)
+By study type (row percentages sum to 100%)
 
 | Study type | International | National | Unknown |
 |------------|----------------:|---------:|--------:|
@@ -486,16 +429,34 @@ Row percentages are **within** each study-type group.
 | Taxonomic | 3.1 | 15.4 | 81.5 |
 | Other | 2.3 | 19.5 | 78.2 |
 
-#### Key findings (RQ4)
+## 4. Discussion
 
-1. **Team size (applied vs. taxonomic).** Mean authorship was higher for **Applied** (**4.74**) than for **Taxonomic** (**3.22**) papers under the theme-based grouping above—a **1.53** author difference consistent with larger teams in the applied-theme bucket.
-2. **International labels (same heuristic).** **Taxonomic** papers had a slightly **higher** share classified as **International** (**3.1%**) than **Applied** (**1.2%**), a **−1.9** pp difference in the opposite direction from “more international applied work” if one expected it; given **~79% Unknown** overall, these rates are **low-precision** and chiefly show how often the keyword heuristic fired, not definitive cross-border collaboration rates.
-3. **Temporal trend.** Mean authors rose from **3.39** (2010–2015) to **4.53** (2020–2025) in the pooled periods reported by the script.
-4. **Prevalence of multi-author papers.** **70.6%** of papers had **≥3** authors.
+### 4.1 Database overlap and coverage
 
-#### Limitations (RQ4)
+For the same calendar year (2023), Google Scholar listed far more records than Scopus (993 vs. 261; 3.8×); the two lists are not assumed to use equivalent queries or completeness, so raw totals are not directly comparable as “true” population sizes. Even so, 230 papers (88.1% of the smaller Scopus list) appeared in both databases (88 by DOI, 142 by title match). 31 records were unique to Scopus (11.9% of Scopus) and 763 to Google Scholar (76.8% of Google Scholar). Journal-type splits (International vs. Regional vs. Unknown) and language splits illustrate how each export labels metadata; citation means/medians differ between sources and reflect each database’s own citation field, not an independent cross-source citation audit.
 
-- **International collaboration** detection depends on **keyword hits in affiliation strings** and a **short country list**; collaborations are easily missed when institutions omit country names or use abbreviations the script does not map.
-- **Unknown** collaboration status dominated (**79.2%**), so between-group differences in **International** percentages are based on **small absolute counts** and sparse signal.
-- **Study-type** contrasts inherit **Research_Theme** misclassification risk from the LLM; **Applied** is **not** synonymous with “all applied science on caddisflies,” only papers whose **primary** coded theme falls in the four applied categories listed above.
-- The RQ4 sample **excludes papers with zero author count** after merge, which can slightly shift totals relative to RQ2–RQ3 tables based on the full coded list.
+The Google Scholar side was subject to the Publish or Perish retrieval cap (1,000 results), so the Google Scholar total is bounded by that ceiling as well as by query definition. Language labels rely on a simple character-based heuristic and may miss or mislabel some non-English text. Journal type is rule-based and is a coarse descriptor, not a formal index of journal prestige or impact.
+
+### 4.2 Temporal and geographic patterns
+
+Across 2010–2025, publication volume rose from 925 papers in 2010–2015 to 1,273 in 2020–2025 (+348, +37.6%). The United States and Brazil were the most frequent primary country labels, followed by substantial counts for China, Japan, Russia, and others (see §3.2).
+
+Averaging each continent’s within-year percentage across all years yields roughly South America 18.6%, Asia 18.9%, Europe 30.0%, and North America 19.5%, with the remainder in Other and Unknown as in the table. Comparing the mean of annual percentages for 2010–2012 with 2023–2025, North America fell from 28.3% to 13.7% (−14.5 pp) while South America, Asia, and Europe rose (+3.0, +3.9, and +6.7 pp respectively)—a decomposition in which North America’s mapped display share declined as the other regions increased. Unknown region averaged 5.0% per year (with an increasing share in later years in this series), so on average about 95% of papers received a non-unknown mapped continent under the classifier rules.
+
+Continental categories collapse broad biogeographic regions (e.g., Palearctic → Europe display), so borderline or multi-region studies can be misrepresented. Primary country can be missing or Not Specified for a subset of papers (on the order of ~6% in the automated report). Regional percentages describe inferred study geography from the classifier, not a parallel tabulation by author institutional address alone.
+
+### 4.3 Thematic evolution
+
+Under a single primary LLM theme per paper, three categories dominated the corpus: Ecology/Behavior (35.4%), Taxonomy/Systematics (31.5%), and Biomonitoring/Water Quality (20.9%); all other primary themes were under 5%. Regionally, Biomonitoring/Water Quality was the largest share in the Afrotropical subset (48.9%), Ecology/Behavior was largest in Australasian (53.8%) and Nearctic (43.6%) subsets, and Taxonomy/Systematics was modal in East Palearctic, Neotropical, and Oriental regions (about 43–45% in each).
+
+Defining early as 2010–2015 and recent as 2021–2025, the pooled share of papers in Biomonitoring/Water Quality rose by +4.5 percentage points and Ecology/Behavior fell by −7.2 points (using the analysis threshold of >3 pp used in the project script). These are shares of the pooled early vs. recent multi-year bands, not averages of within-year percentages.
+
+Theme labels inherit LLM limitations: interdisciplinary or multi-topic work is forced into one category, and co-themes are not tabulated. Not Specified themes (3.1% overall) appear in corpus totals and as Unknown in the abbreviated year table; that table’s columns are chosen by the script’s rule (top themes by mean within-year share), so rare themes are omitted as separate columns even when present in the full data.
+
+### 4.4 Authorship and collaboration
+
+Mean authors per paper was 4.05 (median 3). Between pooled 2010–2015 and 2020–2025, mean team size rose from 3.39 to 4.53 (+1.14 authors); this is a descriptive comparison, not a fitted trend model. Applied-themed papers (as defined in §3.4) had higher mean authorship (4.74) than taxonomic papers (3.22), a difference of 1.53 authors on average—consistent with larger teams in the applied-theme bucket under this grouping. An additional 1,277 other-theme papers contribute to overall and yearly tables; their means/medians can be read from the same merged file if needed.
+
+70.6% of papers had three or more authors. Collaboration-bin contrasts by study type (e.g., more 6–10 author papers in Applied than Taxonomic) summarize how team-size distributions differ under the LLM’s theme split.
+
+International collaboration rates (2.3% overall) are low-precision: the heuristic depends on keyword hits in affiliations and a short country list, and Unknown status dominated (79.2%). Among classified rows, taxonomic papers showed a slightly higher share labeled International (3.1%) than applied (1.2%), i.e. −1.9 pp in the direction opposite a simple expectation of “more international applied work.” Given sparse signal, between-type differences should be read as how often the heuristic fired, not as definitive cross-border collaboration rates. Study-type contrasts also inherit Research_Theme error; Applied here means only papers whose primary coded theme falls in the four applied categories, not all applied caddisfly science. Excluding zero-author rows makes the authorship-analysis sample (2,845) slightly smaller than the geographic and thematic corpus (2,870).
