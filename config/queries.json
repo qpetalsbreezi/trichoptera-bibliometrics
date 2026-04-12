@@ -9,6 +9,42 @@
         "taxon_name": "Trichoptera",
         "relevance_field": "Trichoptera_Relevance"
       }
+    },
+    "mosquitoes": {
+      "label": "Mosquitoes (Culicidae)",
+      "scopus_query": "TITLE-ABS-KEY(\"mosquito\" OR \"mosquitoes\" OR \"Culicidae\")",
+      "llm": {
+        "study_descriptor": "mosquitoes (family Culicidae)",
+        "taxon_name": "mosquitoes",
+        "relevance_field": "Trichoptera_Relevance"
+      }
+    },
+    "ephemeroptera": {
+      "label": "Ephemeroptera (mayflies)",
+      "scopus_query": "TITLE-ABS-KEY(\"Ephemeroptera\" OR \"mayfly\" OR \"mayflies\")",
+      "llm": {
+        "study_descriptor": "Ephemeroptera (mayflies)",
+        "taxon_name": "Ephemeroptera",
+        "relevance_field": "Trichoptera_Relevance"
+      }
+    },
+    "plecoptera": {
+      "label": "Plecoptera (stoneflies)",
+      "scopus_query": "TITLE-ABS-KEY(\"Plecoptera\" OR \"stonefly\" OR \"stoneflies\")",
+      "llm": {
+        "study_descriptor": "Plecoptera (stoneflies)",
+        "taxon_name": "Plecoptera",
+        "relevance_field": "Trichoptera_Relevance"
+      }
+    },
+    "odonata": {
+      "label": "Odonata (dragonflies and damselflies)",
+      "scopus_query": "TITLE-ABS-KEY(\"Odonata\" OR \"dragonfly\" OR \"dragonflies\" OR \"damselfly\" OR \"damselflies\")",
+      "llm": {
+        "study_descriptor": "Odonata (dragonflies and damselflies)",
+        "taxon_name": "Odonata",
+        "relevance_field": "Trichoptera_Relevance"
+      }
     }
   }
 }
