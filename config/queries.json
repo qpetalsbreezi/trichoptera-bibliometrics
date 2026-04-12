@@ -1,0 +1,14 @@
+{
+  "default_query_id": "trichoptera",
+  "queries": {
+    "trichoptera": {
+      "label": "Trichoptera (caddisflies)",
+      "scopus_query": "TITLE-ABS-KEY(\"Trichoptera\" OR \"caddisfly\" OR \"caddisflies\" OR \"caddis fly\" OR \"caddis flies\")",
+      "llm": {
+        "study_descriptor": "Trichoptera (caddisflies)",
+        "taxon_name": "Trichoptera",
+        "relevance_field": "Trichoptera_Relevance"
+      }
+    }
+  }
+}

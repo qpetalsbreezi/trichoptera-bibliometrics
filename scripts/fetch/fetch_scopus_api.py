@@ -30,7 +30,10 @@ USAGE EXAMPLES:
     python fetch_scopus_api.py --year 2023 --max-results 50
     
     # Specify custom output file (for merged results)
-    python fetch_scopus_api.py --start-date 2023-01-01 --end-date 2023-12-31 --period quarterly --merge --output data/raw/scopus_api/scopus_2023_complete.csv
+    python fetch_scopus_api.py --start-date 2023-01-01 --end-date 2023-12-31 --period quarterly --merge --output data/raw/scopus_api/trichoptera/scopus_2023_complete.csv
+
+    # Use another registered query (see config/queries.json)
+    python fetch_scopus_api.py --query-id trichoptera --year 2023
 
 NOTES:
 - Default count is 25 results per page (most Scopus API tiers have this limit)
@@ -56,33 +59,22 @@ from datetime import datetime
 from tqdm import tqdm
 import os
 import json
+import sys
 from pathlib import Path
 
-# Get project root directory (two levels up from this script)
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
-# Load environment variables from .env file if it exists
-env_file = PROJECT_ROOT / ".env"
-if env_file.exists():
-    with open(env_file, "r") as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                key, value = line.split("=", 1)
-                os.environ[key.strip()] = value.strip()
-
-# Configuration
-SCOPUS_API_KEY = os.getenv("SCOPUS_API_KEY")
-SCOPUS_INST_TOKEN = os.getenv("SCOPUS_INST_TOKEN")  # Optional, may be required by some subscriptions
-
-if not SCOPUS_API_KEY:
-    raise ValueError("SCOPUS_API_KEY not set. Please set it in .env file or environment variable.")
+from lib.pipeline import (  # noqa: E402
+    PROJECT_ROOT,
+    PipelinePaths,
+    add_query_arg,
+    get_query_config,
+    load_dotenv,
+)
 
 BASE_URL = "https://api.elsevier.com/content/search/scopus"
-
-# Query for Trichoptera papers
-# Using TITLE-ABS-KEY to search in title, abstract, and keywords
-TRICHOPTERA_QUERY = 'TITLE-ABS-KEY("Trichoptera" OR "caddisfly" OR "caddisflies" OR "caddis fly" OR "caddis flies")'
 
 def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="standard", max_results=None):
     """
@@ -142,8 +134,13 @@ def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="
     print(f"Query: {full_query}")
     print(f"View: {view}, Count per page: {count}")
     
+    api_key = os.getenv("SCOPUS_API_KEY")
+    if not api_key:
+        raise ValueError("SCOPUS_API_KEY not set. Please set it in .env file or environment variable.")
+    inst_token = os.getenv("SCOPUS_INST_TOKEN")
+    
     headers = {
-        "X-ELS-APIKey": SCOPUS_API_KEY,
+        "X-ELS-APIKey": api_key,
         "Accept": "application/json"
     }
     
@@ -165,8 +162,8 @@ def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="
         else:
             params["start"] = start
         
-        if SCOPUS_INST_TOKEN:
-            params["insttoken"] = SCOPUS_INST_TOKEN
+        if inst_token:
+            params["insttoken"] = inst_token
         
         try:
             response = requests.get(BASE_URL, headers=headers, params=params, timeout=30)
@@ -483,7 +480,9 @@ def get_periods(start_date, end_date, period):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Fetch Trichoptera papers from Scopus API")
+    load_dotenv()
+    parser = argparse.ArgumentParser(description="Fetch papers from Scopus API (query defined in config/queries.json)")
+    add_query_arg(parser)
     parser.add_argument("--start-date", type=str, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end-date", type=str, help="End date (YYYY-MM-DD)")
     parser.add_argument("--year", type=int, help="Year (alternative to start-date/end-date)")
@@ -497,6 +496,14 @@ def main():
     parser.add_argument("--output", type=str, help="Output CSV file path")
     
     args = parser.parse_args()
+    
+    if not os.getenv("SCOPUS_API_KEY"):
+        raise ValueError("SCOPUS_API_KEY not set. Please set it in .env file or environment variable.")
+    
+    qconf = get_query_config(args.query_id)
+    scopus_query = qconf["scopus_query"]
+    paths = PipelinePaths(args.query_id)
+    paths.raw_scopus_api.mkdir(parents=True, exist_ok=True)
     
     # Validate arguments
     if args.year and (args.start_date or args.end_date):
@@ -541,11 +548,11 @@ def main():
             
             period_start_str = p_start.replace("-", "")
             period_end_str = p_end.replace("-", "")
-            period_output = PROJECT_ROOT / f"data/raw/scopus_api/scopus_api_{period_start_str}_{period_end_str}.csv"
+            period_output = paths.raw_scopus_api / f"scopus_api_{period_start_str}_{period_end_str}.csv"
             period_output.parent.mkdir(parents=True, exist_ok=True)
             
             results = fetch_scopus_papers(
-                query=TRICHOPTERA_QUERY,
+                query=scopus_query,
                 start_date=p_start,
                 end_date=p_end,
                 year=None,
@@ -581,7 +588,7 @@ def main():
                 if not merged_output.is_absolute():
                     merged_output = PROJECT_ROOT / merged_output
             else:
-                merged_output = PROJECT_ROOT / f"data/raw/scopus_api/scopus_api_{args.start_date.replace('-', '')}_{args.end_date.replace('-', '')}_merged.csv"
+                merged_output = paths.raw_scopus_api / f"scopus_api_{args.start_date.replace('-', '')}_{args.end_date.replace('-', '')}_merged.csv"
             
             merged_df = merge_and_deduplicate(period_files, merged_output)
             
@@ -601,23 +608,24 @@ def main():
         if not output_file.is_absolute():
             output_file = PROJECT_ROOT / output_file
     elif args.year:
-        output_file = PROJECT_ROOT / f"data/raw/scopus_api/scopus_api_{args.year}.csv"
+        output_file = paths.raw_scopus_api / f"scopus_api_{args.year}.csv"
     elif args.start_date and args.end_date:
         start_str = args.start_date.replace("-", "")
         end_str = args.end_date.replace("-", "")
-        output_file = PROJECT_ROOT / f"data/raw/scopus_api/scopus_api_{start_str}_{end_str}.csv"
+        output_file = paths.raw_scopus_api / f"scopus_api_{start_str}_{end_str}.csv"
     else:
-        output_file = PROJECT_ROOT / "data/raw/scopus_api/scopus_api_results.csv"
+        output_file = paths.raw_scopus_api / "scopus_api_results.csv"
     
     # Create output directory if needed
     output_file.parent.mkdir(parents=True, exist_ok=True)
     
     # Fetch papers
     print("Fetching papers from Scopus API...")
-    print(f"Query: {TRICHOPTERA_QUERY}")
+    print(f"query_id: {args.query_id}")
+    print(f"Query: {scopus_query}")
     
     results = fetch_scopus_papers(
-        query=TRICHOPTERA_QUERY,
+        query=scopus_query,
         start_date=args.start_date,
         end_date=args.end_date,
         year=args.year,

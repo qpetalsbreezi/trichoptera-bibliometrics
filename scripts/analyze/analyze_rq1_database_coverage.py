@@ -5,22 +5,20 @@ Research Question: Do Scopus and Google Scholar provide comparable coverage of
 Trichoptera literature, or are there significant gaps?
 """
 
-import pandas as pd
-import numpy as np
-from difflib import SequenceMatcher
+import argparse
 import re
+import sys
+from difflib import SequenceMatcher
 from pathlib import Path
 
-# Get project root directory (two levels up from this script)
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+import numpy as np
+import pandas as pd
 
-# File paths
-SCOPUS_FILE = PROJECT_ROOT / "data/raw/scopus_api/scopus_api_2023.csv"
-GS_FILE = PROJECT_ROOT / "data/raw/google_scholar/trichoptera_google_scholar_raw_2023.csv"
-OUTPUT_DIR = PROJECT_ROOT / "analysis/rq1_coverage"
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
-# Create output directory
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
 
 
 def normalize_title(title):
@@ -151,11 +149,17 @@ def detect_language(title, abstract):
     return "English"
 
 
-def analyze_database_coverage():
+def analyze_database_coverage(paths: PipelinePaths):
     """Main analysis function"""
+    scopus_file = paths.raw_scopus_api / "scopus_api_2023.csv"
+    gs_file = paths.raw_google_scholar / f"{paths.query_id}_google_scholar_raw_2023.csv"
+    output_dir = paths.rq_dir("rq1_coverage")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"query_id={paths.query_id}")
     print("Loading datasets...")
-    scopus_df = pd.read_csv(SCOPUS_FILE)
-    gs_df = pd.read_csv(GS_FILE)
+    scopus_df = pd.read_csv(scopus_file)
+    gs_df = pd.read_csv(gs_file)
     
     print(f"Scopus: {len(scopus_df)} papers")
     print(f"Google Scholar: {len(gs_df)} papers")
@@ -329,17 +333,20 @@ LIMITATIONS
 
 """
     
-    with open(OUTPUT_DIR / "coverage_report.txt", 'w') as f:
+    with open(output_dir / "coverage_report.txt", 'w') as f:
         f.write(report)
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
-    print(f"\nAnalysis complete! Report saved to {OUTPUT_DIR / 'coverage_report.txt'}")
+    print(f"\nAnalysis complete! Report saved to {output_dir / 'coverage_report.txt'}")
     
     return stats
 
 
 if __name__ == "__main__":
-    stats = analyze_database_coverage()
+    parser = argparse.ArgumentParser(description="RQ1: Scopus vs Google Scholar coverage")
+    add_query_arg(parser)
+    args = parser.parse_args()
+    analyze_database_coverage(PipelinePaths(args.query_id))
 

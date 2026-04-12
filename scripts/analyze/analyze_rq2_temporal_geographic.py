@@ -9,26 +9,29 @@ Note: Due to 200-result cap per year, analysis focuses on PROPORTIONAL trends
 rather than absolute publication volumes.
 """
 
-import pandas as pd
-import numpy as np
+import argparse
+import sys
 from pathlib import Path
 
-# Get project root directory (two levels up from this script)
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+import numpy as np
+import pandas as pd
 
-# Configuration
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
-OUTPUT_DIR = PROJECT_ROOT / "analysis/rq2_temporal_geographic"
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
-# Create output directory
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
 
-def analyze_temporal_geographic():
+
+def analyze_temporal_geographic(paths: PipelinePaths):
     """Analyze temporal and geographic trends in Trichoptera research"""
-    
-    # Load data
+    input_csv = paths.coded
+    output_dir = paths.rq_dir("rq2_temporal_geographic")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"query_id={paths.query_id}")
     print("Loading data...")
-    df = pd.read_csv(INPUT_CSV)
+    df = pd.read_csv(input_csv)
     
     # Clean and prepare data
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
@@ -269,19 +272,19 @@ LIMITATIONS
 """
     
     # Save report
-    with open(OUTPUT_DIR / "rq2_temporal_geographic_report.txt", 'w') as f:
+    with open(output_dir / "rq2_temporal_geographic_report.txt", 'w') as f:
         f.write(report)
     
     # Save detailed data
-    yearly_props.to_csv(OUTPUT_DIR / "yearly_regional_proportions.csv")
-    country_counts.to_frame(name='Count').to_csv(OUTPUT_DIR / "country_counts.csv")
-    geo_dist_table.to_csv(OUTPUT_DIR / "geographic_distribution_by_year.csv", index=False)
-    yearly_volume.to_frame(name='Count').to_csv(OUTPUT_DIR / "yearly_publication_volume.csv")
+    yearly_props.to_csv(output_dir / "yearly_regional_proportions.csv")
+    country_counts.to_frame(name='Count').to_csv(output_dir / "country_counts.csv")
+    geo_dist_table.to_csv(output_dir / "geographic_distribution_by_year.csv", index=False)
+    yearly_volume.to_frame(name='Count').to_csv(output_dir / "yearly_publication_volume.csv")
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
-    print(f"\nAnalysis complete! Files saved to {OUTPUT_DIR}/")
+    print(f"\nAnalysis complete! Files saved to {output_dir}/")
     print(f"  - rq2_temporal_geographic_report.txt")
     print(f"  - geographic_distribution_by_year.csv (main table)")
     print(f"  - yearly_regional_proportions.csv")
@@ -289,5 +292,8 @@ LIMITATIONS
 
 
 if __name__ == "__main__":
-    analyze_temporal_geographic()
+    parser = argparse.ArgumentParser(description="RQ2: Temporal and geographic analysis")
+    add_query_arg(parser)
+    args = parser.parse_args()
+    analyze_temporal_geographic(PipelinePaths(args.query_id))
 

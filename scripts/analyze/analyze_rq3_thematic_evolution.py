@@ -5,26 +5,29 @@ Research Question: How have research themes in Trichoptera studies evolved
 over time? What are the dominant themes and how have they shifted?
 """
 
-import pandas as pd
-import numpy as np
+import argparse
+import sys
 from pathlib import Path
 
-# Get project root directory (two levels up from this script)
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+import numpy as np
+import pandas as pd
 
-# Configuration
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
-OUTPUT_DIR = PROJECT_ROOT / "analysis/rq3_thematic_evolution"
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
-# Create output directory
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
 
-def analyze_thematic_evolution():
+
+def analyze_thematic_evolution(paths: PipelinePaths):
     """Analyze thematic evolution in Trichoptera research"""
-    
-    # Load data
+    input_csv = paths.coded
+    output_dir = paths.rq_dir("rq3_thematic_evolution")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"query_id={paths.query_id}")
     print("Loading data...")
-    df = pd.read_csv(INPUT_CSV)
+    df = pd.read_csv(input_csv)
     
     # Clean and prepare data
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
@@ -209,22 +212,22 @@ LIMITATIONS
 """
     
     # Save report
-    with open(OUTPUT_DIR / "rq3_thematic_evolution_report.txt", 'w') as f:
+    with open(output_dir / "rq3_thematic_evolution_report.txt", 'w') as f:
         f.write(report)
     
     # Save detailed data
-    yearly_theme_props.to_csv(OUTPUT_DIR / "yearly_theme_proportions.csv")
-    theme_by_region_props.to_csv(OUTPUT_DIR / "theme_by_region.csv")
-    theme_dist_table.to_csv(OUTPUT_DIR / "theme_distribution_by_year.csv", index=False)
+    yearly_theme_props.to_csv(output_dir / "yearly_theme_proportions.csv")
+    theme_by_region_props.to_csv(output_dir / "theme_by_region.csv")
+    theme_dist_table.to_csv(output_dir / "theme_distribution_by_year.csv", index=False)
     
     # Create theme trends CSV
     theme_trends_df = pd.DataFrame(theme_trends).fillna(0)
-    theme_trends_df.to_csv(OUTPUT_DIR / "theme_trends_by_year.csv")
+    theme_trends_df.to_csv(output_dir / "theme_trends_by_year.csv")
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
-    print(f"\nAnalysis complete! Files saved to {OUTPUT_DIR}/")
+    print(f"\nAnalysis complete! Files saved to {output_dir}/")
     print(f"  - rq3_thematic_evolution_report.txt")
     print(f"  - theme_distribution_by_year.csv (main table)")
     print(f"  - yearly_theme_proportions.csv")
@@ -233,5 +236,8 @@ LIMITATIONS
 
 
 if __name__ == "__main__":
-    analyze_thematic_evolution()
+    parser = argparse.ArgumentParser(description="RQ3: Thematic evolution analysis")
+    add_query_arg(parser)
+    args = parser.parse_args()
+    analyze_thematic_evolution(PipelinePaths(args.query_id))
 

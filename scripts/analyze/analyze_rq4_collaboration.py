@@ -5,33 +5,35 @@ Research Question: How have collaboration patterns changed? Are applied studies
 more collaborative than taxonomic studies?
 """
 
-import pandas as pd
-import numpy as np
+import argparse
+import sys
 from pathlib import Path
 
-# Get project root directory (two levels up from this script)
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+import numpy as np
+import pandas as pd
 
-# Configuration
-# Use enriched file with full author data if available, otherwise fall back to original
-AUTHORS_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_with_authors.csv"
-INPUT_CSV = PROJECT_ROOT / "data/processed/trichoptera_scopus_api_coded.csv"
-OUTPUT_DIR = PROJECT_ROOT / "analysis/rq4_collaboration"
+_SCRIPTS_DIR = Path(__file__).resolve().parent.parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
-# Create output directory
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
 
-def analyze_collaboration():
+
+def analyze_collaboration(paths: PipelinePaths):
     """Analyze collaboration and authorship patterns"""
-    
-    # Load data - merge coded data with author data if available
-    print(f"Loading coded data from: {INPUT_CSV}")
-    df = pd.read_csv(INPUT_CSV)
+    authors_csv = paths.with_authors
+    input_csv = paths.coded
+    output_dir = paths.rq_dir("rq4_collaboration")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"query_id={paths.query_id}")
+    print(f"Loading coded data from: {input_csv}")
+    df = pd.read_csv(input_csv)
     has_full_author_data = False
-    
-    if AUTHORS_CSV.exists():
-        print(f"Merging with author data from: {AUTHORS_CSV}")
-        authors_df = pd.read_csv(AUTHORS_CSV)
+
+    if authors_csv.exists():
+        print(f"Merging with author data from: {authors_csv}")
+        authors_df = pd.read_csv(authors_csv)
         # Merge on a unique identifier (DOI or Title+Year)
         merge_cols = ['DOI'] if 'DOI' in df.columns and 'DOI' in authors_df.columns else ['Title', 'Year']
         df = df.merge(
@@ -493,21 +495,21 @@ LIMITATIONS
 """
     
     # Save report
-    with open(OUTPUT_DIR / "rq4_collaboration_report.txt", 'w') as f:
+    with open(output_dir / "rq4_collaboration_report.txt", 'w') as f:
         f.write(report)
     
     # Save detailed data
-    yearly_author.to_csv(OUTPUT_DIR / "yearly_author_stats.csv")
-    yearly_collab_props.to_csv(OUTPUT_DIR / "yearly_collaboration_proportions.csv")
-    collab_by_type.to_csv(OUTPUT_DIR / "collaboration_by_study_type.csv")
-    collab_dist_table.to_csv(OUTPUT_DIR / "collaboration_distribution_by_year.csv", index=False)
-    intl_by_type.to_csv(OUTPUT_DIR / "international_collaboration_by_study_type.csv")
-    yearly_intl_props.to_csv(OUTPUT_DIR / "yearly_international_collaboration.csv")
+    yearly_author.to_csv(output_dir / "yearly_author_stats.csv")
+    yearly_collab_props.to_csv(output_dir / "yearly_collaboration_proportions.csv")
+    collab_by_type.to_csv(output_dir / "collaboration_by_study_type.csv")
+    collab_dist_table.to_csv(output_dir / "collaboration_distribution_by_year.csv", index=False)
+    intl_by_type.to_csv(output_dir / "international_collaboration_by_study_type.csv")
+    yearly_intl_props.to_csv(output_dir / "yearly_international_collaboration.csv")
     
     print("\n" + "="*60)
     print(report)
     print("="*60)
-    print(f"\nAnalysis complete! Files saved to {OUTPUT_DIR}/")
+    print(f"\nAnalysis complete! Files saved to {output_dir}/")
     print(f"  - rq4_collaboration_report.txt")
     print(f"  - collaboration_distribution_by_year.csv (main table)")
     print(f"  - yearly_author_stats.csv")
@@ -516,5 +518,8 @@ LIMITATIONS
 
 
 if __name__ == "__main__":
-    analyze_collaboration()
+    parser = argparse.ArgumentParser(description="RQ4: Collaboration analysis")
+    add_query_arg(parser)
+    args = parser.parse_args()
+    analyze_collaboration(PipelinePaths(args.query_id))
 
