@@ -92,10 +92,9 @@ def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="
         List of paper records
     """
     all_results = []
-    cursor = None  # Will be set after first request
-    # Most Scopus API subscriptions limit count to 25 per request
+    cursor = None  # Optional; many API keys do not allow cursor=* (403 ENTITLEMENTS_ERROR)
     count = 25  # Safe default for all views
-    start = 0  # Start position for first request
+    start = 0
     
     # Build date filter
     # Note: Scopus API supports PUBYEAR for year-level queries
@@ -156,7 +155,6 @@ def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="
             "sort": "pubdate"  # Sort by publication date
         }
         
-        # Use cursor for pagination if available, otherwise use start
         if cursor:
             params["cursor"] = cursor
         else:
@@ -166,7 +164,8 @@ def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="
             params["insttoken"] = inst_token
         
         try:
-            response = requests.get(BASE_URL, headers=headers, params=params, timeout=30)
+            # Long reads: large yearly result sets can exceed 30s during TLS or slow API responses
+            response = requests.get(BASE_URL, headers=headers, params=params, timeout=(15, 120))
             
             # Better error handling - print response details
             if response.status_code != 200:
@@ -208,32 +207,45 @@ def fetch_scopus_papers(query, start_date=None, end_date=None, year=None, view="
                 all_results = all_results[:max_results]
                 break
             
-            # Get next cursor for pagination
             cursor_info = search_results.get("cursor", {})
             next_cursor = cursor_info.get("@next")
-            
-            if not next_cursor:
-                # Try alternative: check if there are more results using start
+
+            if next_cursor:
+                cursor = next_cursor
+            else:
                 current_results = len(entries)
                 if current_results < count:
-                    break  # Last page (got fewer results than requested)
-                
-                # Try next page using start parameter
-                # Only stop if we got fewer results than requested (last page)
-                # Don't rely on total_found if it's 0 (API limitation)
+                    break
+
                 if max_results and len(all_results) >= max_results:
                     break
-                
-                # Continue to next page
+
+                # Cursor chain ended but a full page was returned: do not fall back to start=25
+                # after 5000 cursor-based rows (start is still 0); that would duplicate results.
+                if len(all_results) >= 5000:
+                    if total_found and total_found > len(all_results):
+                        print(
+                            f"\nWarning: Scopus Search API returns at most 5000 hits per query "
+                            f"(retrieved {len(all_results)}; total reported {total_found}). "
+                            "Narrow the date range (e.g. --period quarterly) to fetch the rest."
+                        )
+                    break
+
+                # Offset pagination only: stop before start=5000 (API 400).
+                next_start = start + count
+                if next_start >= 5000:
+                    if total_found and total_found > len(all_results):
+                        print(
+                            f"\nWarning: Scopus Search API returns at most 5000 hits per query "
+                            f"(retrieved {len(all_results)}; total reported {total_found}). "
+                            "Narrow the date range (e.g. --period quarterly) to fetch the rest."
+                        )
+                    break
+
                 start += count
-                cursor = None  # Reset cursor since we're using start
-                
-                # Only stop if total_found is valid and we've exceeded it
+                cursor = None
                 if total_found and total_found > 0 and start >= total_found:
                     break
-            else:
-                cursor = next_cursor
-                start = None  # Using cursor, not start
             
             # Rate limiting: be respectful to the API
             time.sleep(0.5)
