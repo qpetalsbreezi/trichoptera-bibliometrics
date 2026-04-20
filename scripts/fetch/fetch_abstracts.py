@@ -23,15 +23,34 @@ from lib.pipeline import PipelinePaths, add_query_arg, load_dotenv  # noqa: E402
 
 SAVE_INTERVAL = 50
 
+# Written when OpenAlex, Semantic Scholar, CrossRef, and PubMed all return no abstract
+# for this row, so a later run does not burn API quota on the same permanent miss.
+NO_EXTERNAL_ABSTRACT_MARKER = "__ABSTRACT_UNAVAILABLE__"
+
+
+def _is_unavailable_marker(val) -> bool:
+    if val is None or (isinstance(val, float) and pd.isna(val)):
+        return False
+    return str(val).strip() == NO_EXTERNAL_ABSTRACT_MARKER
+
 
 def _abstract_cell_has_text(val) -> bool:
-    """True if the cell looks like a real abstract (not NaN/empty/placeholder string from CSV)."""
+    """True if the cell has human-readable abstract text (not NaN/empty/marker from CSV)."""
     if val is None or (isinstance(val, float) and pd.isna(val)):
         return False
     s = str(val).strip()
     if not s or s.lower() in ("nan", "none", "nat", "#n/a"):
         return False
+    if s == NO_EXTERNAL_ABSTRACT_MARKER:
+        return False
     return True
+
+
+def _should_skip_abstract_fetch(val) -> bool:
+    """True if we should not call external APIs (already have text or prior exhaustive miss)."""
+    if _is_unavailable_marker(val):
+        return True
+    return _abstract_cell_has_text(val)
 
 
 def _configure_output_streams() -> None:
@@ -196,13 +215,14 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
         "pubmed": 0,
         "already_had": 0,
         "failed": 0,
+        "marked_unavailable": 0,
     }
 
     if output_csv.exists():
         print(f"Resuming from existing file: {output_csv}")
         df = pd.read_csv(output_csv)
         if "Abstract" in df.columns:
-            stats["already_had"] = int(df["Abstract"].map(_abstract_cell_has_text).sum())
+            stats["already_had"] = int(df["Abstract"].map(_should_skip_abstract_fetch).sum())
         else:
             stats["already_had"] = 0
     else:
@@ -219,8 +239,11 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
     print(f"\nquery_id={paths.query_id}")
     print(f"Starting abstract fetching...")
     print(f"Total papers: {total}")
-    print(f"Already have abstracts: {stats['already_had']}")
-    print(f"Need abstracts: {needs_abstract}")
+    print(
+        f"Already resolved (readable abstract or {NO_EXTERNAL_ABSTRACT_MARKER}): "
+        f"{stats['already_had']}"
+    )
+    print(f"Need abstract fetch attempts: {needs_abstract}")
     print(f"\nTrying sources in order: OpenAlex → Semantic Scholar → CrossRef → PubMed\n")
 
     session = requests.Session()
@@ -232,7 +255,7 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
             file=sys.stderr,
             mininterval=0.5,
         ):
-            if _abstract_cell_has_text(row.get("Abstract")):
+            if _should_skip_abstract_fetch(row.get("Abstract")):
                 continue
 
             doi = row.get("DOI")
@@ -260,6 +283,11 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
                 if df["Abstract"].dtype != "object":
                     df["Abstract"] = df["Abstract"].astype(str)
                 df.at[idx, "Abstract"] = abstract
+            else:
+                if df["Abstract"].dtype != "object":
+                    df["Abstract"] = df["Abstract"].astype(str)
+                df.at[idx, "Abstract"] = NO_EXTERNAL_ABSTRACT_MARKER
+                stats["marked_unavailable"] += 1
 
             processed += 1
 
@@ -273,7 +301,8 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
                     f"Progress: {processed}/{total} | Found: {current_found} | "
                     f"OpenAlex: {stats['openalex']}, Semantic: {stats['semantic']}, "
                     f"CrossRef: {stats['crossref']}, PubMed: {stats['pubmed']}, "
-                    f"Failed: {stats['failed']}",
+                    f"Failed: {stats['failed']}, "
+                    f"Marked unavailable: {stats['marked_unavailable']}",
                     file=sys.stderr,
                 )
                 sys.stderr.flush()
@@ -290,19 +319,27 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
     print("ABSTRACT FETCHING SUMMARY")
     print(f"{'='*70}")
     print(f"Total papers processed: {total}")
-    print(f"Already had abstracts: {stats['already_had']}")
+    print(
+        f"Rows already resolved at start (readable + prior marker): {stats['already_had']}"
+    )
     print(f"\nAbstracts fetched this run:")
     print(f"  OpenAlex:     {stats['openalex']}")
     print(f"  Semantic Scholar: {stats['semantic']}")
     print(f"  CrossRef:     {stats['crossref']}")
     print(f"  PubMed:       {stats['pubmed']}")
     print(f"  Failed:       {stats['failed']}")
+    print(f"  Marked {NO_EXTERNAL_ABSTRACT_MARKER} (no text from any source): {stats['marked_unavailable']}")
 
     total_fetched = stats["openalex"] + stats["semantic"] + stats["crossref"] + stats["pubmed"]
-    total_with_abstract = stats["already_had"] + total_fetched
-    coverage = (total_with_abstract / total * 100) if total > 0 else 0
+    readable = int(df["Abstract"].map(_abstract_cell_has_text).sum())
+    marked = int(df["Abstract"].map(_is_unavailable_marker).sum())
+    readable_pct = (readable / total * 100) if total > 0 else 0
+    marked_pct = (marked / total * 100) if total > 0 else 0
 
-    print(f"\nFinal coverage: {total_with_abstract}/{total} ({coverage:.1f}%)")
+    print(f"\nFinal readable abstracts: {readable}/{total} ({readable_pct:.1f}%)")
+    print(
+        f"Marked unavailable (skip future API calls): {marked}/{total} ({marked_pct:.1f}%)"
+    )
     print(f"{'='*70}")
     print(f"✓ Complete! Results saved to {output_csv}")
 
