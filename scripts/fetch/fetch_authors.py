@@ -1,5 +1,8 @@
 """
-Fetch full author data from OpenAlex API for papers in the dataset.
+Fetch full author lists and affiliations from OpenAlex (by DOI).
+
+Scopus/Google `Authors` in the export is often a single name; we do not copy it
+into `All_Authors`, so OpenAlex can supply complete multi-author strings.
 """
 
 import argparse
@@ -15,20 +18,34 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
+from lib.openalex import (  # noqa: E402
+    OPENALEX_TIMEOUT,
+    clean_doi,
+    openalex_headers,
+    openalex_work_url,
+    retry_after_seconds,
+)
+from lib.pipeline import PipelinePaths, add_query_arg, load_dotenv  # noqa: E402
 
 SAVE_INTERVAL = 50
 
 
-def get_authors_openalex(doi, max_retries=3):
-    if pd.isna(doi) or not doi:
+def get_authors_openalex(
+    doi,
+    session: requests.Session,
+    max_retries=4,
+    headers: dict | None = None,
+):
+    doi_norm = clean_doi(doi)
+    if not doi_norm:
         return None, None, None
 
-    url = f"https://api.openalex.org/works/https://doi.org/{doi}"
+    url = openalex_work_url(doi_norm)
+    headers = headers or openalex_headers()
 
     for attempt in range(max_retries):
         try:
-            r = requests.get(url, timeout=15)
+            r = session.get(url, timeout=OPENALEX_TIMEOUT, headers=headers)
             if r.status_code == 200:
                 data = r.json()
 
@@ -62,6 +79,12 @@ def get_authors_openalex(doi, max_retries=3):
 
             if r.status_code == 404:
                 return None, None, None
+            if r.status_code == 429:
+                wait = retry_after_seconds(r) or min(10.0 * (attempt + 1), 60.0)
+                time.sleep(wait)
+                if attempt < max_retries - 1:
+                    continue
+                return None, None, None
             if attempt < max_retries - 1:
                 time.sleep(2 ** attempt)
                 continue
@@ -76,36 +99,80 @@ def get_authors_openalex(doi, max_retries=3):
     return None, None, None
 
 
-def run_fetch_authors(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL):
+def _configure_output_streams() -> None:
+    """Line-buffer stdout/stderr when redirected so logs and tqdm update promptly."""
+    for stream in (sys.stdout, sys.stderr):
+        if not stream.isatty() and hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(line_buffering=True)
+            except OSError:
+                pass
+
+
+def run_fetch_authors(
+    paths: PipelinePaths,
+    save_interval: int = SAVE_INTERVAL,
+    request_delay: float = 0.35,
+):
+    _configure_output_streams()
     input_csv = paths.with_abstracts
     output_csv = paths.with_authors
 
     if output_csv.exists():
         print(f"Resuming from existing file: {output_csv}")
-        df = pd.read_csv(output_csv)
+        df = pd.read_csv(output_csv, low_memory=False)
         start_index = len(df[df["All_Authors"].notna() & (df["All_Authors"] != "")])
     else:
         print(f"Starting fresh from: {input_csv}")
-        df = pd.read_csv(input_csv)
+        df = pd.read_csv(input_csv, low_memory=False)
         start_index = 0
 
     if "All_Authors" not in df.columns:
         df["All_Authors"] = ""
+    else:
+        df["All_Authors"] = df["All_Authors"].fillna("").astype("string")
     if "Author_Count_Actual" not in df.columns:
         df["Author_Count_Actual"] = 0
+    else:
+        df["Author_Count_Actual"] = pd.to_numeric(
+            df["Author_Count_Actual"], errors="coerce"
+        ).fillna(0).astype(int)
     if "Author_Affiliations" not in df.columns:
         df["Author_Affiliations"] = ""
+    else:
+        df["Author_Affiliations"] = df["Author_Affiliations"].fillna("").astype("string")
+
+    needs_authors = (
+        df["All_Authors"].fillna("").astype(str).str.strip().eq("")
+        & df["DOI"].notna()
+        & df["DOI"].astype(str).str.strip().ne("")
+    )
+    pending_indices = df.index[needs_authors].tolist()
+    already_filled = len(df) - len(pending_indices)
 
     print(f"\nquery_id={paths.query_id}")
     print(f"\nFetching author data from OpenAlex API...")
-    print(f"Starting from index {start_index} of {len(df)} papers\n")
+    print(f"Starting from index {start_index} of {len(df)} papers")
+    print(f"Already have author data for {already_filled} papers")
+    print(f"Pending DOI lookups: {len(pending_indices)}\n")
 
-    for idx, row in tqdm(df.iterrows(), total=len(df), initial=start_index):
-        if pd.notna(row.get("All_Authors")) and str(row.get("All_Authors")).strip():
-            continue
+    headers = openalex_headers()
+    session = requests.Session()
+    processed = 0
 
-        doi = row.get("DOI")
-        all_authors, author_count, affiliations = get_authors_openalex(doi)
+    for idx in tqdm(
+        pending_indices,
+        total=len(pending_indices),
+        desc="Fetching authors",
+        file=sys.stderr,
+        mininterval=0.5,
+    ):
+        doi = df.at[idx, "DOI"]
+        all_authors, author_count, affiliations = get_authors_openalex(
+            doi,
+            session=session,
+            headers=headers,
+        )
 
         if all_authors:
             df.at[idx, "All_Authors"] = all_authors
@@ -113,15 +180,25 @@ def run_fetch_authors(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL):
             if affiliations:
                 df.at[idx, "Author_Affiliations"] = affiliations
 
-        time.sleep(0.2)
+        processed += 1
+        time.sleep(request_delay)
 
-        if (idx + 1) % save_interval == 0:
+        if processed % save_interval == 0:
             output_csv.parent.mkdir(parents=True, exist_ok=True)
             df.to_csv(output_csv, index=False)
-            print(f"\nSaved progress at {idx + 1} papers.")
+            filled_so_far = (
+                df["All_Authors"].fillna("").astype(str).str.strip().ne("").sum()
+            )
+            tqdm.write(
+                f"Saved progress at {processed}/{len(pending_indices)} pending DOI rows "
+                f"| filled {filled_so_far}/{len(df)} total papers.",
+                file=sys.stderr,
+            )
+            sys.stderr.flush()
 
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(output_csv, index=False)
+    session.close()
     print(f"\n✓ Complete! Enriched file saved to {output_csv}")
 
     filled = df["All_Authors"].notna() & (df["All_Authors"] != "")
@@ -133,8 +210,19 @@ def run_fetch_authors(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL):
 
 
 if __name__ == "__main__":
+    load_dotenv()
     parser = argparse.ArgumentParser(description="Fetch authors from OpenAlex for combined export")
     add_query_arg(parser)
     parser.add_argument("--save-interval", type=int, default=SAVE_INTERVAL)
+    parser.add_argument(
+        "--request-delay",
+        type=float,
+        default=0.35,
+        help="Seconds to sleep after each OpenAlex request (default: 0.35)",
+    )
     args = parser.parse_args()
-    run_fetch_authors(PipelinePaths(args.query_id), save_interval=args.save_interval)
+    run_fetch_authors(
+        PipelinePaths(args.query_id),
+        save_interval=args.save_interval,
+        request_delay=args.request_delay,
+    )
