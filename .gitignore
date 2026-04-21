@@ -28,6 +28,3 @@ analysis/
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Large processed data files
-data/processed/trichoptera_scopus_api_coded.csv
