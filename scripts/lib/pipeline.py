@@ -79,7 +79,7 @@ class PipelinePaths:
         self.raw_google_scholar = r / "data" / "raw" / "google_scholar" / query_id
         self.processed = r / "data" / "processed" / query_id
         self.analysis = r / "analysis" / query_id
-        self.schema = r / "data" / "trichoptera_schema.json"
+        self.schema = r / "data" / "taxon_schema.json"
 
         self.combined_scopus_api = self.processed / "scopus_api_combined_2010_2025.csv"
         self.with_abstracts = self.processed / "scopus_api_with_abstracts.csv"
