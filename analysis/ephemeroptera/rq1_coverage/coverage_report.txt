@@ -1,0 +1,84 @@
+
+DATABASE COVERAGE ANALYSIS REPORT (RQ1)
+========================================
+
+Publication Year: 2023
+Analysis Date: 2026-04-26
+
+Research Question: Do Scopus and Google Scholar provide comparable coverage of 
+Trichoptera literature, or are there significant gaps?
+
+BASIC STATISTICS
+----------------
+Total Papers:
+  - Scopus: 409
+  - Google Scholar: 997
+  - Ratio (GS/Scopus): 2.44
+
+OVERLAP ANALYSIS
+----------------
+Papers in both databases: 369
+  - Matched by DOI: 126
+  - Matched by Title: 243
+
+Unique Papers:
+  - Scopus only: 40 (9.8% of Scopus)
+  - Google Scholar only: 628 (63.0% of Google Scholar)
+
+JOURNAL TYPE DISTRIBUTION
+--------------------------
+Scopus:
+  - International: 396 (96.8%)
+  - Regional: 13 (3.2%)
+
+Google Scholar:
+  - International: 842 (84.5%)
+  - Unknown: 133 (13.3%)
+  - Regional: 22 (2.2%)
+
+LANGUAGE DISTRIBUTION
+---------------------
+Scopus:
+  - English: 393 (96.1%)
+  - Non-English: 16 (3.9%)
+
+Google Scholar:
+  - English: 879 (88.2%)
+  - Non-English: 118 (11.8%)
+
+CITATION STATISTICS
+-------------------
+Scopus:
+  - Mean citations: 7.28
+  - Median citations: 4.00
+  - Min citations: 0
+  - Max citations: 78
+  - Total citations: 2979
+
+Google Scholar:
+  - Mean citations: 7.77
+  - Median citations: 2.00
+  - Min citations: 0
+  - Max citations: 317
+  - Total citations: 7747
+
+KEY FINDINGS
+------------
+1. Coverage Ratio: Google Scholar has 2.4x more papers than Scopus for 2023
+
+2. Overlap: 369 papers (90.2% of smaller database) appear in both databases
+
+3. Unique Coverage:
+   - Scopus captures 40 papers not in Google Scholar
+   - Google Scholar captures 628 papers not in Scopus
+
+4. Journal Types: 
+   - Scopus Regional: 13 (3.2%)
+   - Google Scholar Regional: 22 (2.2%)
+
+LIMITATIONS
+-----------
+- Google Scholar sample limited to 1000 results (export limit)
+- Language detection is basic (heuristic-based) and may miss some non-English papers
+- Journal type classification is heuristic-based (may misclassify some journals)
+

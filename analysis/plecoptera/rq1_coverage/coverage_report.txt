@@ -1,0 +1,84 @@
+
+DATABASE COVERAGE ANALYSIS REPORT (RQ1)
+========================================
+
+Publication Year: 2023
+Analysis Date: 2026-04-26
+
+Research Question: Do Scopus and Google Scholar provide comparable coverage of 
+Trichoptera literature, or are there significant gaps?
+
+BASIC STATISTICS
+----------------
+Total Papers:
+  - Scopus: 153
+  - Google Scholar: 980
+  - Ratio (GS/Scopus): 6.41
+
+OVERLAP ANALYSIS
+----------------
+Papers in both databases: 136
+  - Matched by DOI: 47
+  - Matched by Title: 89
+
+Unique Papers:
+  - Scopus only: 17 (11.1% of Scopus)
+  - Google Scholar only: 844 (86.1% of Google Scholar)
+
+JOURNAL TYPE DISTRIBUTION
+--------------------------
+Scopus:
+  - International: 143 (93.5%)
+  - Regional: 10 (6.5%)
+
+Google Scholar:
+  - International: 775 (79.1%)
+  - Unknown: 182 (18.6%)
+  - Regional: 23 (2.3%)
+
+LANGUAGE DISTRIBUTION
+---------------------
+Scopus:
+  - English: 144 (94.1%)
+  - Non-English: 9 (5.9%)
+
+Google Scholar:
+  - English: 859 (87.7%)
+  - Non-English: 121 (12.3%)
+
+CITATION STATISTICS
+-------------------
+Scopus:
+  - Mean citations: 5.69
+  - Median citations: 3.00
+  - Min citations: 0
+  - Max citations: 44
+  - Total citations: 870
+
+Google Scholar:
+  - Mean citations: 7.73
+  - Median citations: 2.00
+  - Min citations: 0
+  - Max citations: 518
+  - Total citations: 7580
+
+KEY FINDINGS
+------------
+1. Coverage Ratio: Google Scholar has 6.4x more papers than Scopus for 2023
+
+2. Overlap: 136 papers (88.9% of smaller database) appear in both databases
+
+3. Unique Coverage:
+   - Scopus captures 17 papers not in Google Scholar
+   - Google Scholar captures 844 papers not in Scopus
+
+4. Journal Types: 
+   - Scopus Regional: 10 (6.5%)
+   - Google Scholar Regional: 23 (2.3%)
+
+LIMITATIONS
+-----------
+- Google Scholar sample limited to 1000 results (export limit)
+- Language detection is basic (heuristic-based) and may miss some non-English papers
+- Journal type classification is heuristic-based (may misclassify some journals)
+

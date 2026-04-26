@@ -1,0 +1,83 @@
+
+TEMPORAL AND GEOGRAPHIC GROWTH ANALYSIS (RQ2)
+============================================
+
+Date: 2026-04-26
+Dataset: 1057 papers (2010-2025)
+
+Research Question: How has the geographic distribution of Trichoptera research 
+changed over time? Has there been a shift from European and North American 
+focus to more global distribution, particularly in South America and Asia?
+
+TEMPORAL VOLUME ANALYSIS
+-------------------------
+Total Publications by Period:
+  Early Period (2010-2015): 260 papers
+  Recent Period (2020-2025): 537 papers
+  Change: +277 papers (+106.5%)
+
+TOP COUNTRIES (Overall 2010-2025)
+----------------------------------
+  China: 185 papers
+  United States: 175 papers
+  Brazil: 84 papers
+  Not Specified: 44 papers
+  New Zealand: 38 papers
+  Canada: 37 papers
+  Japan: 30 papers
+  United Kingdom: 30 papers
+  Russia: 29 papers
+  Germany: 24 papers
+  Italy: 22 papers
+  Switzerland: 22 papers
+  Australia: 16 papers
+  Argentina: 16 papers
+  Spain: 16 papers
+
+YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
+------------------------------------------
+Year   Total    South Americ    Asia            Europe          North Americ    Other           Unknown         
+----------------------------------------------------------------------------------------------------
+2010   40         4 ( 10.0%)    1 (  2.5%)   10 ( 25.0%)   19 ( 47.5%)    4 ( 10.0%)    2 (  5.0%)  
+2011   43         9 ( 20.9%)    3 (  7.0%)    5 ( 11.6%)   20 ( 46.5%)    5 ( 11.6%)    1 (  2.3%)  
+2012   43         3 (  7.0%)    9 ( 20.9%)   12 ( 27.9%)   12 ( 27.9%)    4 (  9.3%)    3 (  7.0%)  
+2013   43         4 (  9.3%)    3 (  7.0%)   16 ( 37.2%)   13 ( 30.2%)    6 ( 14.0%)    1 (  2.3%)  
+2014   42         8 ( 19.0%)    2 (  4.8%)   17 ( 40.5%)   13 ( 31.0%)    1 (  2.4%)    1 (  2.4%)  
+2015   49         6 ( 12.2%)    9 ( 18.4%)   10 ( 20.4%)   15 ( 30.6%)    5 ( 10.2%)    4 (  8.2%)  
+2016   43         7 ( 16.3%)    3 (  7.0%)   13 ( 30.2%)   13 ( 30.2%)    5 ( 11.6%)    2 (  4.7%)  
+2017   56        12 ( 21.4%)   14 ( 25.0%)   14 ( 25.0%)   12 ( 21.4%)    2 (  3.6%)    2 (  3.6%)  
+2018   63        10 ( 15.9%)    9 ( 14.3%)   18 ( 28.6%)   13 ( 20.6%)    7 ( 11.1%)    6 (  9.5%)  
+2019   98        19 ( 19.4%)   41 ( 41.8%)   14 ( 14.3%)   13 ( 13.3%)    7 (  7.1%)    4 (  4.1%)  
+2020   96        12 ( 12.5%)   51 ( 53.1%)   17 ( 17.7%)    9 (  9.4%)    5 (  5.2%)    2 (  2.1%)  
+2021   99         8 (  8.1%)   23 ( 23.2%)   41 ( 41.4%)   13 ( 13.1%)   13 ( 13.1%)    1 (  1.0%)  
+2022   92         7 (  7.6%)   42 ( 45.7%)   21 ( 22.8%)   12 ( 13.0%)    8 (  8.7%)    2 (  2.2%)  
+2023   77        16 ( 20.8%)   16 ( 20.8%)   25 ( 32.5%)   13 ( 16.9%)    4 (  5.2%)    3 (  3.9%)  
+2024   78        13 ( 16.7%)   22 ( 28.2%)   24 ( 30.8%)    9 ( 11.5%)    7 (  9.0%)    3 (  3.8%)  
+2025   95         9 (  9.5%)   35 ( 36.8%)   32 ( 33.7%)    9 (  9.5%)    5 (  5.3%)    5 (  5.3%)  
+
+KEY FINDINGS
+--------------------------------------------------------
+
+1. Regional Distribution Averages (2010-2025):
+   - South America: 14.2% of papers on average
+   - Asia: 22.3% of papers on average
+   - Europe: 27.5% of papers on average
+   - North America: 23.3% of papers on average
+
+2. Proportional Trends (Early 2010-2012 vs Recent 2023-2025):
+   - South America: 12.6% → 15.6% (+3.0%)
+   - Asia: 10.1% → 28.6% (+18.5%)
+   - Europe: 21.5% → 32.3% (+10.8%)
+   - North America: 40.6% → 12.6% (-28.0%)
+   
+   Note: North America has decreased while South America, Asia, and Europe have increased.
+
+3. Geographic Data Completeness:
+   - Unknown region: 4.2% average (increasing trend)
+   - Geographic classification available for ~96% of papers on average
+
+LIMITATIONS
+-----------
+- Regional classification uses broad biogeographic regions (e.g., Palearctic, Neotropical) mapped to continental categories, which may misclassify studies in transition zones or regions that span multiple continents (e.g., Palearctic studies in North Africa classified as "Europe")
+- Country data may be incomplete for some papers (~6% unknown)
+

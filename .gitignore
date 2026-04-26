@@ -21,10 +21,3 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Analysis outputs (generated files)
-analysis/
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride

@@ -1,0 +1,173 @@
+
+COLLABORATION AND AUTHORSHIP PATTERNS ANALYSIS (RQ4)
+=====================================================
+
+Date: 2026-04-26
+Dataset: 1472 papers (2010-2025)
+
+Research Question: How have collaboration patterns changed? Are applied studies 
+more collaborative than taxonomic studies?
+
+OVERALL AUTHORSHIP STATISTICS
+------------------------------
+Mean authors per paper: 4.26
+Median authors per paper: 4.0
+Standard deviation: 2.37
+Range: 1 - 22 authors
+
+AUTHORSHIP TRENDS OVER TIME
+----------------------------
+Early Period (2010-2015):
+  Mean: 3.74 authors
+  Median: 3.0 authors
+  Papers: 411
+
+Recent Period (2020-2025):
+  Mean: 4.51 authors
+  Median: 4.0 authors
+  Papers: 778
+
+Change: Mean INCREASED 
+        by 0.77 authors
+
+AUTHORSHIP BY STUDY TYPE
+-------------------------
+Applied Studies (403 papers):
+  Mean: 4.55 authors
+  Median: 4.0 authors
+
+Taxonomic Studies (122 papers):
+  Mean: 3.25 authors
+  Median: 3.0 authors
+
+Difference: Applied studies have MORE 
+            authors on average (1.30 difference)
+
+COLLABORATION DISTRIBUTION
+---------------------------
+  Single author: 75 papers (5.1%)
+  2 authors: 273 papers (18.6%)
+  3-5 authors: 773 papers (52.5%)
+  6-10 authors: 320 papers (21.7%)
+  10+ authors: 31 papers (2.1%)
+
+COLLABORATION BY STUDY TYPE
+---------------------------
+
+Applied Studies:
+  Single author: 3.7%
+  2 authors: 11.7%
+  3-5 authors: 55.8%
+  6-10 authors: 27.0%
+  10+ authors: 1.7%
+
+Taxonomic Studies:
+  Single author: 11.5%
+  2 authors: 30.3%
+  3-5 authors: 48.4%
+  6-10 authors: 9.0%
+  10+ authors: 0.8%
+
+Other Studies:
+  Single author: 4.9%
+  2 authors: 20.0%
+  3-5 authors: 51.6%
+  6-10 authors: 21.1%
+  10+ authors: 2.4%
+
+YEAR-BY-YEAR COLLABORATION DISTRIBUTION TABLE
+----------------------------------------------
+
+Taxonomic Studies
+-----------------
+Year   Total    Mean     Median   Min    Max    Single         2 Auth         3-5 Auth       6-10 Auth      10+ Auth       
+------------------------------------------------------------------------------------------------------------------------
+2010   2        2.50     2        1      4        1 ( 50.0%)    0 (  0.0%)    1 ( 50.0%)    0 (  0.0%)    0 (  0.0%)  
+2011   7        2.71     2        2      4        0 (  0.0%)    4 ( 57.1%)    3 ( 42.9%)    0 (  0.0%)    0 (  0.0%)  
+2012   6        4.00     2        2      11       0 (  0.0%)    3 ( 50.0%)    2 ( 33.3%)    0 (  0.0%)    1 ( 16.7%)  
+2013   6        2.50     2        1      5        2 ( 33.3%)    1 ( 16.7%)    3 ( 50.0%)    0 (  0.0%)    0 (  0.0%)  
+2014   4        4.50     5        1      7        1 ( 25.0%)    0 (  0.0%)    1 ( 25.0%)    2 ( 50.0%)    0 (  0.0%)  
+2015   11       2.82     3        1      5        1 (  9.1%)    4 ( 36.4%)    6 ( 54.5%)    0 (  0.0%)    0 (  0.0%)  
+2016   6        2.67     2        1      5        2 ( 33.3%)    1 ( 16.7%)    3 ( 50.0%)    0 (  0.0%)    0 (  0.0%)  
+2017   8        3.00     4        1      4        1 ( 12.5%)    2 ( 25.0%)    5 ( 62.5%)    0 (  0.0%)    0 (  0.0%)  
+2018   6        3.00     2        2      6        0 (  0.0%)    3 ( 50.0%)    2 ( 33.3%)    1 ( 16.7%)    0 (  0.0%)  
+2019   9        2.44     3        1      4        2 ( 22.2%)    2 ( 22.2%)    5 ( 55.6%)    0 (  0.0%)    0 (  0.0%)  
+2020   11       3.82     3        1      8        1 (  9.1%)    2 ( 18.2%)    6 ( 54.5%)    2 ( 18.2%)    0 (  0.0%)  
+2021   12       2.75     2        1      5        1 (  8.3%)    6 ( 50.0%)    5 ( 41.7%)    0 (  0.0%)    0 (  0.0%)  
+2022   6        4.50     4        2      7        0 (  0.0%)    1 ( 16.7%)    3 ( 50.0%)    2 ( 33.3%)    0 (  0.0%)  
+2023   13       3.77     4        1      8        2 ( 15.4%)    3 ( 23.1%)    5 ( 38.5%)    3 ( 23.1%)    0 (  0.0%)  
+2024   4        3.50     4        2      5        0 (  0.0%)    1 ( 25.0%)    3 ( 75.0%)    0 (  0.0%)    0 (  0.0%)  
+2025   11       3.55     3        2      9        0 (  0.0%)    4 ( 36.4%)    6 ( 54.5%)    1 (  9.1%)    0 (  0.0%)  
+
+
+Non-Taxonomic Studies (Applied + Other)
+---------------------------------------
+Year   Total    Mean     Median   Min    Max    Single         2 Auth         3-5 Auth       6-10 Auth      10+ Auth       
+------------------------------------------------------------------------------------------------------------------------
+2010   65       3.54     3        1      7        3 (  4.6%)   14 ( 21.5%)   39 ( 60.0%)    9 ( 13.8%)    0 (  0.0%)  
+2011   62       3.90     4        1      9        1 (  1.6%)   13 ( 21.0%)   40 ( 64.5%)    8 ( 12.9%)    0 (  0.0%)  
+2012   58       4.02     4        1      12       1 (  1.7%)   10 ( 17.2%)   40 ( 69.0%)    5 (  8.6%)    2 (  3.4%)  
+2013   67       3.57     3        1      9        3 (  4.5%)   16 ( 23.9%)   40 ( 59.7%)    8 ( 11.9%)    0 (  0.0%)  
+2014   53       3.66     3        1      10       3 (  5.7%)   17 ( 32.1%)   23 ( 43.4%)   10 ( 18.9%)    0 (  0.0%)  
+2015   70       4.10     4        1      10       1 (  1.4%)   19 ( 27.1%)   35 ( 50.0%)   15 ( 21.4%)    0 (  0.0%)  
+2016   62       4.37     4        1      15       5 (  8.1%)   12 ( 19.4%)   28 ( 45.2%)   15 ( 24.2%)    2 (  3.2%)  
+2017   59       4.37     4        1      15       1 (  1.7%)   10 ( 16.9%)   36 ( 61.0%)    9 ( 15.3%)    3 (  5.1%)  
+2018   49       4.78     4        1      10       1 (  2.0%)    6 ( 12.2%)   24 ( 49.0%)   18 ( 36.7%)    0 (  0.0%)  
+2019   84       4.46     4        1      13       4 (  4.8%)   14 ( 16.7%)   42 ( 50.0%)   23 ( 27.4%)    1 (  1.2%)  
+2020   86       4.77     4        1      12       3 (  3.5%)    6 (  7.0%)   51 ( 59.3%)   22 ( 25.6%)    4 (  4.7%)  
+2021   118      4.86     4        1      18      11 (  9.3%)    8 (  6.8%)   59 ( 50.0%)   37 ( 31.4%)    3 (  2.5%)  
+2022   117      4.59     4        1      22       5 (  4.3%)   20 ( 17.1%)   60 ( 51.3%)   30 ( 25.6%)    2 (  1.7%)  
+2023   139      4.35     4        1      13       5 (  3.6%)   29 ( 20.9%)   68 ( 48.9%)   33 ( 23.7%)    4 (  2.9%)  
+2024   127      4.35     4        1      16       7 (  5.5%)   22 ( 17.3%)   62 ( 48.8%)   32 ( 25.2%)    4 (  3.1%)  
+2025   134      4.71     4        1      16       7 (  5.2%)   20 ( 14.9%)   67 ( 50.0%)   35 ( 26.1%)    5 (  3.7%)  
+
+
+INTERNATIONAL COLLABORATION ANALYSIS
+-------------------------------------
+Overall Distribution:
+  International: 22 papers (1.5%)
+  National: 329 papers (22.4%)
+  Unknown: 1121 papers (76.2%)
+
+International Collaboration by Study Type:
+  Applied Studies:
+    International: 1.5%
+    National: 25.3%
+  Taxonomic Studies:
+    International: 1.6%
+    National: 28.7%
+  Other Studies:
+    International: 1.5%
+    National: 20.3%
+
+KEY FINDINGS
+------------
+
+1. Applied vs Taxonomic Collaboration (Authorship):
+   Applied studies: 4.55 authors (mean)
+   Taxonomic studies: 3.25 authors (mean)
+   Hypothesis SUPPORTED: 
+   Applied studies have more authors on average
+
+2. Applied vs Taxonomic International Collaboration:
+   Applied studies: 1.5% international collaboration
+   Taxonomic studies: 1.6% international collaboration
+   Difference: -0.2 percentage points
+   Hypothesis NOT SUPPORTED: 
+   Applied studies show similar 
+   international collaboration rates
+
+3. Temporal Trend (Authorship):
+   Authorship has increased 
+   from 3.74 to 4.51 authors per paper
+
+4. Collaboration Patterns:
+   76.4% 
+   of papers have 3+ authors (multi-author collaboration)
+
+LIMITATIONS
+-----------
+
+- International collaboration detection uses heuristic approach (country keywords in affiliations) and may miss collaborations if country names are not clearly present in affiliations
+- International collaboration analysis is approximate - 79.2% of papers have unknown collaboration status due to missing or unclear affiliation data
+- Study type classification based on Research_Theme field (LLM-coded, may have classification errors)

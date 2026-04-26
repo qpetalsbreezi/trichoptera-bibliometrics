@@ -1,0 +1,84 @@
+
+DATABASE COVERAGE ANALYSIS REPORT (RQ1)
+========================================
+
+Publication Year: 2023
+Analysis Date: 2026-04-26
+
+Research Question: Do Scopus and Google Scholar provide comparable coverage of 
+Trichoptera literature, or are there significant gaps?
+
+BASIC STATISTICS
+----------------
+Total Papers:
+  - Scopus: 4307
+  - Google Scholar: 1000
+  - Ratio (GS/Scopus): 0.23
+
+OVERLAP ANALYSIS
+----------------
+Papers in both databases: 863
+  - Matched by DOI: 295
+  - Matched by Title: 568
+
+Unique Papers:
+  - Scopus only: 3444 (80.0% of Scopus)
+  - Google Scholar only: 137 (13.7% of Google Scholar)
+
+JOURNAL TYPE DISTRIBUTION
+--------------------------
+Scopus:
+  - International: 4212 (97.8%)
+  - Regional: 95 (2.2%)
+
+Google Scholar:
+  - International: 956 (95.6%)
+  - Unknown: 27 (2.7%)
+  - Regional: 17 (1.7%)
+
+LANGUAGE DISTRIBUTION
+---------------------
+Scopus:
+  - English: 4210 (97.7%)
+  - Non-English: 97 (2.3%)
+
+Google Scholar:
+  - English: 971 (97.1%)
+  - Non-English: 29 (2.9%)
+
+CITATION STATISTICS
+-------------------
+Scopus:
+  - Mean citations: 8.56
+  - Median citations: 5.00
+  - Min citations: 0
+  - Max citations: 901
+  - Total citations: 36869
+
+Google Scholar:
+  - Mean citations: 17.79
+  - Median citations: 10.00
+  - Min citations: 1
+  - Max citations: 2937
+  - Total citations: 17788
+
+KEY FINDINGS
+------------
+1. Coverage Ratio: Google Scholar has 0.2x more papers than Scopus for 2023
+
+2. Overlap: 863 papers (86.3% of smaller database) appear in both databases
+
+3. Unique Coverage:
+   - Scopus captures 3444 papers not in Google Scholar
+   - Google Scholar captures 137 papers not in Scopus
+
+4. Journal Types: 
+   - Scopus Regional: 95 (2.2%)
+   - Google Scholar Regional: 17 (1.7%)
+
+LIMITATIONS
+-----------
+- Google Scholar sample limited to 1000 results (export limit)
+- Language detection is basic (heuristic-based) and may miss some non-English papers
+- Journal type classification is heuristic-based (may misclassify some journals)
+
