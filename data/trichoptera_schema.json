@@ -62,21 +62,22 @@
         "description": "Primary research theme of the paper. Used in RQ3 (thematic evolution) and RQ4 (applied vs taxonomic collaboration comparison).",
         "usage": "RQ3, RQ4"
       },
-      "Trichoptera_Relevance": {
+      "Taxon_Relevance": {
         "type": "string",
         "allowed_values": [
           "Primary focus",
           "Secondary mention",
           "Peripheral",
-          "Not Trichoptera-focused"
+          "Not target-taxon-focused",
+          "Not Specified"
         ],
-        "description": "Degree to which Trichoptera are the primary taxonomic focus of the paper. Used by all RQs to filter out non-Trichoptera-focused papers.",
+        "description": "Degree to which the query taxon is the primary focus of the paper. Used by all RQs to filter out non-target-taxon-focused papers.",
         "usage": "RQ2, RQ3, RQ4 (filtering)"
       }
     },
     "notes": {
       "metadata_fields": "Title, Authors, Year, Journal, DOI come from Scopus API, not LLM coding",
-      "llm_coded_fields": "Country, Region_Global, Research_Theme, Trichoptera_Relevance",
+      "llm_coded_fields": "Country, Region_Global, Research_Theme, Taxon_Relevance",
       "removed_fields": "The following fields were removed as they are not used in any analysis: Paper_ID, Citation_Count, Document_Type, Taxonomic_Focus, Family_Studied, Species_Studied, Ecosystem_Service, FFG, Habitat_Type, Method_Type, Data_Type, Scale, Author_Keywords, Indexed_Keywords, Notes, Relevance_to_Hypotheses",
       "author_data": "Author_Count_Actual comes from fetch_authors.py (OpenAlex API), not LLM coding"
     }

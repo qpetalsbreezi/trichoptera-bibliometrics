@@ -36,9 +36,11 @@ def analyze_temporal_geographic(paths: PipelinePaths):
     # Clean and prepare data
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')
     df = df[df['Year'].between(2010, 2025)]
-    
-    # Filter out papers with "Not Trichoptera-focused"
-    df = df[df['Trichoptera_Relevance'] != 'Not Trichoptera-focused']
+
+    relevance_col = "Taxon_Relevance" if "Taxon_Relevance" in df.columns else "Trichoptera_Relevance"
+    not_focused_labels = {"Not target-taxon-focused", "Not Trichoptera-focused"}
+    # Filter out papers where the query taxon is not the study focus.
+    df = df[~df[relevance_col].isin(not_focused_labels)]
     
     print(f"Analyzing {len(df)} papers from 2010-2025")
     

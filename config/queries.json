@@ -7,7 +7,7 @@
       "llm": {
         "study_descriptor": "Trichoptera (caddisflies)",
         "taxon_name": "Trichoptera",
-        "relevance_field": "Trichoptera_Relevance"
+        "relevance_field": "Taxon_Relevance"
       }
     },
     "mosquitoes": {
@@ -16,7 +16,7 @@
       "llm": {
         "study_descriptor": "mosquitoes (family Culicidae)",
         "taxon_name": "mosquitoes",
-        "relevance_field": "Trichoptera_Relevance"
+        "relevance_field": "Taxon_Relevance"
       }
     },
     "ephemeroptera": {
@@ -25,7 +25,7 @@
       "llm": {
         "study_descriptor": "Ephemeroptera (mayflies)",
         "taxon_name": "Ephemeroptera",
-        "relevance_field": "Trichoptera_Relevance"
+        "relevance_field": "Taxon_Relevance"
       }
     },
     "plecoptera": {
@@ -34,7 +34,7 @@
       "llm": {
         "study_descriptor": "Plecoptera (stoneflies)",
         "taxon_name": "Plecoptera",
-        "relevance_field": "Trichoptera_Relevance"
+        "relevance_field": "Taxon_Relevance"
       }
     },
     "odonata": {
@@ -43,7 +43,7 @@
       "llm": {
         "study_descriptor": "Odonata (dragonflies and damselflies)",
         "taxon_name": "Odonata",
-        "relevance_field": "Trichoptera_Relevance"
+        "relevance_field": "Taxon_Relevance"
       }
     }
   }
