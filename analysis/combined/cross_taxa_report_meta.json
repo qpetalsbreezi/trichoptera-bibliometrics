@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-04-28T19:59:40.287375",
+  "queries": [
+    "ephemeroptera",
+    "mosquitoes",
+    "odonata",
+    "plecoptera",
+    "trichoptera"
+  ],
+  "outputs": {
+    "markdown": "analysis/combined/cross_taxa_report.md",
+    "csv": "analysis/combined/cross_taxa_metrics.csv",
+    "yearly_publication_volume_csv": "analysis/combined/yearly_publication_volume_by_query.csv"
+  }
+}

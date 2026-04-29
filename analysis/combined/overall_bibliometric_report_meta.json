@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-04-28T19:59:47.784218",
+  "queries": [
+    "ephemeroptera",
+    "mosquitoes",
+    "odonata",
+    "plecoptera",
+    "trichoptera"
+  ],
+  "outputs": {
+    "markdown": "analysis/combined/overall_bibliometric_report.md",
+    "yearly_publication_volume_csv": "analysis/combined/yearly_publication_volume_by_query.csv"
+  }
+}
