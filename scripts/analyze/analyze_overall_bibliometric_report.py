@@ -25,35 +25,62 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from lib.format_metrics import fmt_integerish, fmt_ratio_or_pct, round_one_decimal  # noqa: E402
 from lib.pipeline import PROJECT_ROOT, load_queries_config  # noqa: E402
 
 import analyze_cross_taxa_summary as xtax  # noqa: E402
 
+# Row labels (after metric_label_map) whose cells are counts/years, not % or ratios.
+_RQ1_INT_METRIC_ROWS = frozenset(
+    {
+        "Benchmark year",
+        "Scopus total",
+        "Google Scholar total",
+        "Overlap (both)",
+    }
+)
+_RQ2_VOLUME_INT_METRIC_ROWS = frozenset(
+    {
+        "All coded papers (2010–2025)",
+        "Taxon-focused papers (2010–2025)",
+        "Taxon-focused (2010–2015)",
+        "Taxon-focused (2020–2025)",
+    }
+)
 
-def _md_table(df: pd.DataFrame, columns: list[str] | None = None) -> str:
-    def _fmt(v) -> str:
-        if pd.isna(v):
-            return ""
-        if isinstance(v, bool):
-            return str(v)
-        if isinstance(v, int):
-            return str(v)
-        if isinstance(v, float):
-            # Render integer-like floats cleanly, otherwise trim trailing zeros.
-            if abs(v - round(v)) < 1e-9:
-                return str(int(round(v)))
-            s = f"{v:.3f}".rstrip("0").rstrip(".")
-            return s
-        return str(v)
 
+def _md_table(
+    df: pd.DataFrame,
+    columns: list[str] | None = None,
+    *,
+    count_columns: frozenset[str] | None = None,
+    int_metric_rows: frozenset[str] | None = None,
+) -> str:
+    count_columns = count_columns or frozenset()
+    int_metric_rows = int_metric_rows or frozenset()
     cols = list(columns or df.columns)
     sub = df[cols].copy()
+    has_metric = "metric" in cols
     lines = [
         "| " + " | ".join(str(c) for c in sub.columns) + " |",
         "| " + " | ".join(["---"] * len(sub.columns)) + " |",
     ]
     for _, row in sub.iterrows():
-        lines.append("| " + " | ".join(_fmt(row[c]) for c in sub.columns) + " |")
+        mname = str(row["metric"]) if has_metric else ""
+        cells: list[str] = []
+        for c in cols:
+            v = row[c]
+            if c == "metric":
+                cells.append(str(v))
+            elif pd.isna(v):
+                cells.append("")
+            elif c in count_columns:
+                cells.append(fmt_integerish(v))
+            elif has_metric and mname in int_metric_rows:
+                cells.append(fmt_integerish(v))
+            else:
+                cells.append(fmt_ratio_or_pct(v))
+        lines.append("| " + " | ".join(cells) + " |")
     return "\n".join(lines) + "\n"
 
 
@@ -61,6 +88,8 @@ def _transposed_metrics_table(
     df: pd.DataFrame,
     value_cols: list[str],
     metric_label_map: dict[str, str] | None = None,
+    *,
+    int_metric_rows: frozenset[str] | None = None,
 ) -> str:
     """
     Render a comparison-first table:
@@ -78,7 +107,7 @@ def _transposed_metrics_table(
     tdf = tdf.reset_index()
     col_order = ["metric"] + q_order
     tdf = tdf[[c for c in col_order if c in tdf.columns]]
-    return _md_table(tdf, col_order)
+    return _md_table(tdf, col_order, int_metric_rows=int_metric_rows)
 
 
 def _yearly_wide_md(df_long: pd.DataFrame, value_col: str, title: str, query_order: list[str]) -> str:
@@ -90,7 +119,7 @@ def _yearly_wide_md(df_long: pd.DataFrame, value_col: str, title: str, query_ord
         if q not in w.columns:
             w[q] = 0
     col_order = ["Year"] + query_order
-    return f"### {title}\n\n" + _md_table(w[col_order], col_order) + "\n"
+    return f"### {title}\n\n" + _md_table(w[col_order], col_order, count_columns=frozenset(col_order)) + "\n"
 
 
 def parse_rq1_coverage(text: str) -> dict[str, str | int | float | None]:
@@ -155,7 +184,14 @@ def build_report(
     display = df_rq1.copy()
     s = pd.to_numeric(display["rq1_scopus_total"], errors="coerce")
     o = pd.to_numeric(display["rq1_overlap_both"], errors="coerce")
-    display["rq1_overlap_pct_of_scopus"] = (o / s * 100.0).where(s > 0).round(2)
+    overlap_pct = (o / s * 100.0).where(s > 0)
+    display["rq1_overlap_pct_of_scopus"] = overlap_pct.map(
+        lambda x: round_one_decimal(float(x)) if pd.notna(x) else x
+    )
+    ratio_num = pd.to_numeric(display["rq1_gs_scopus_ratio"], errors="coerce")
+    display["rq1_gs_scopus_ratio"] = ratio_num.map(
+        lambda x: round_one_decimal(float(x)) if pd.notna(x) else x
+    )
     rq1_value_cols = [
         "rq1_benchmark_year",
         "rq1_scopus_total",
@@ -176,6 +212,7 @@ def build_report(
                 "rq1_overlap_pct_of_scopus": "Overlap / Scopus (%)",
                 "rq1_gs_scopus_ratio": "GS/Scopus ratio",
             },
+            int_metric_rows=_RQ1_INT_METRIC_ROWS,
         )
     )
     parts.append("")
@@ -208,6 +245,7 @@ def build_report(
                 "papers_2020_2025": "Taxon-focused (2020–2025)",
                 "pct_change_papers_recent_vs_early": "Pct change 2010–15 vs 2020–25 (taxon-focused)",
             },
+            int_metric_rows=_RQ2_VOLUME_INT_METRIC_ROWS,
         )
     )
     parts.append("")

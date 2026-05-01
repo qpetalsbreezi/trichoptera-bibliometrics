@@ -18,58 +18,58 @@ Generated from `data/processed/*/scopus_api_coded.csv` with the same filters as 
 
 | query_id | papers_2010_2015 | papers_2020_2025 | pct_change_papers_recent_vs_early |
 | --- | --- | --- | --- |
-| ephemeroptera | 411 | 791 | 92.46 |
-| mosquitoes | 5528 | 11862 | 114.58 |
-| odonata | 413 | 2943 | 612.59 |
-| plecoptera | 260 | 537 | 106.54 |
-| trichoptera | 925 | 1273 | 37.62 |
+| ephemeroptera | 411 | 791 | 92.5 |
+| mosquitoes | 5528 | 11862 | 114.6 |
+| odonata | 413 | 2943 | 612.6 |
+| plecoptera | 260 | 537 | 106.5 |
+| trichoptera | 925 | 1273 | 37.6 |
 
 ### Top research themes (overall distribution)
 
 | query_id | theme_top1 | theme_top1_pct | theme_top2 | theme_top2_pct | theme_top3 | theme_top3_pct | theme_not_specified_pct |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| ephemeroptera | Ecology/Behavior | 41.79 | Biomonitoring/Water Quality | 25.71 | Taxonomy/Systematics | 8.28 | 20.86 |
-| mosquitoes | Ecology/Behavior | 37.95 | Applied Ecology | 25.9 | Physiology | 13.69 | 12.4 |
-| odonata | Ecology/Behavior | 30.4 | Taxonomy/Systematics | 20.81 | Biomonitoring/Water Quality | 5.39 | 32.61 |
-| plecoptera | Ecology/Behavior | 36.9 | Biomonitoring/Water Quality | 26.3 | Taxonomy/Systematics | 25.45 | 4.35 |
-| trichoptera | Ecology/Behavior | 35.44 | Taxonomy/Systematics | 31.46 | Biomonitoring/Water Quality | 20.94 | 3.07 |
+| ephemeroptera | Ecology/Behavior | 41.8 | Biomonitoring/Water Quality | 25.7 | Taxonomy/Systematics | 8.3 | 20.9 |
+| mosquitoes | Ecology/Behavior | 38.0 | Applied Ecology | 25.9 | Physiology | 13.7 | 12.4 |
+| odonata | Ecology/Behavior | 30.4 | Taxonomy/Systematics | 20.8 | Biomonitoring/Water Quality | 5.4 | 32.6 |
+| plecoptera | Ecology/Behavior | 36.9 | Biomonitoring/Water Quality | 26.3 | Taxonomy/Systematics | 25.4 | 4.4 |
+| trichoptera | Ecology/Behavior | 35.4 | Taxonomy/Systematics | 31.5 | Biomonitoring/Water Quality | 20.9 | 3.1 |
 
 ### Geography: average continental shares (RQ2-style buckets)
 
 | query_id | geo_avg_south_america_pct | geo_avg_asia_pct | geo_avg_europe_pct | geo_avg_north_america_pct | geo_avg_unknown_pct |
 | --- | --- | --- | --- | --- | --- |
-| ephemeroptera | 15.86 | 12.78 | 23.9 | 23.27 | 15.61 |
-| mosquitoes | 13.31 | 25.36 | 12.23 | 18.26 | 13.97 |
-| odonata | 14.5 | 17.4 | 21.9 | 11.39 | 28.51 |
-| plecoptera | 14.16 | 22.28 | 27.47 | 23.3 | 4.2 |
-| trichoptera | 18.62 | 18.92 | 29.97 | 19.51 | 4.95 |
+| ephemeroptera | 15.9 | 12.8 | 23.9 | 23.3 | 15.6 |
+| mosquitoes | 13.3 | 25.4 | 12.2 | 18.3 | 14.0 |
+| odonata | 14.5 | 17.4 | 21.9 | 11.4 | 28.5 |
+| plecoptera | 14.2 | 22.3 | 27.5 | 23.3 | 4.2 |
+| trichoptera | 18.6 | 18.9 | 30.0 | 19.5 | 5.0 |
 
 ### Geography: mean early (2010–2012) vs recent (2023–2025) continental % (percentage-point change)
 
 | query_id | geo_delta_pp_south_america_2010_2012_vs_2023_2025 | geo_delta_pp_asia_2010_2012_vs_2023_2025 | geo_delta_pp_europe_2010_2012_vs_2023_2025 | geo_delta_pp_north_america_2010_2012_vs_2023_2025 |
 | --- | --- | --- | --- | --- |
-| ephemeroptera | -3.73 | 1.34 | 2.56 | -29.13 |
-| mosquitoes | -1.98 | 7.1 | 1.31 | -11.62 |
-| odonata | -5.33 | 6.36 | -5.27 | -12.98 |
-| plecoptera | 3 | 18.47 | 10.8 | -28.01 |
-| trichoptera | 2.98 | 3.9 | 6.74 | -14.54 |
+| ephemeroptera | -3.7 | 1.3 | 2.6 | -29.1 |
+| mosquitoes | -2.0 | 7.1 | 1.3 | -11.6 |
+| odonata | -5.3 | 6.4 | -5.3 | -13.0 |
+| plecoptera | 3.0 | 18.5 | 10.8 | -28.0 |
+| trichoptera | 3.0 | 3.9 | 6.7 | -14.5 |
 
 ### RQ4A: Authorship structure (OpenAlex counts when available)
 
 | query_id | authors_mean | authors_median | authors_mean_early_2010_2015 | authors_mean_recent_2020_2025 | authors_mean_applied | authors_mean_taxonomic |
 | --- | --- | --- | --- | --- | --- | --- |
-| ephemeroptera | 4.243 | 4 | 3.723 | 4.506 | 4.511 | 3.246 |
-| mosquitoes | 6.467 | 5 | 5.627 | 6.99 | 6.717 | 6.353 |
-| odonata | 4.968 | 4 | 4.107 | 5.214 | 5.059 | 3.323 |
-| plecoptera | 3.994 | 4 | 3.602 | 4.243 | 4.381 | 2.944 |
-| trichoptera | 4.047 | 3 | 3.39 | 4.522 | 4.752 | 3.217 |
+| ephemeroptera | 4.2 | 4.0 | 3.7 | 4.5 | 4.5 | 3.2 |
+| mosquitoes | 6.5 | 5.0 | 5.6 | 7.0 | 6.7 | 6.4 |
+| odonata | 5.0 | 4.0 | 4.1 | 5.2 | 5.1 | 3.3 |
+| plecoptera | 4.0 | 4.0 | 3.6 | 4.2 | 4.4 | 2.9 |
+| trichoptera | 4.0 | 3.0 | 3.4 | 4.5 | 4.8 | 3.2 |
 
 ### RQ4B: International collaboration (affiliation-country heuristic)
 
 | query_id | intl_collab_info_coverage_pct | intl_collab_pct_overall | intl_collab_pct_known_only_overall | intl_collab_pct_applied | intl_collab_pct_taxonomic |
 | --- | --- | --- | --- | --- | --- |
-| ephemeroptera | 94.44 | 25.64 | 27.16 | 20.1 | 27.87 |
-| mosquitoes | 95.18 | 37.49 | 39.39 | 36.46 | 38.06 |
-| odonata | 92.16 | 33.1 | 35.91 | 26.87 | 39.07 |
-| plecoptera | 96.02 | 25.24 | 26.28 | 21.09 | 23.42 |
-| trichoptera | 95.55 | 27.3 | 28.57 | 24.96 | 29.21 |
+| ephemeroptera | 94.4 | 25.6 | 27.2 | 20.1 | 27.9 |
+| mosquitoes | 95.2 | 37.5 | 39.4 | 36.5 | 38.1 |
+| odonata | 92.2 | 33.1 | 35.9 | 26.9 | 39.1 |
+| plecoptera | 96.0 | 25.2 | 26.3 | 21.1 | 23.4 |
+| trichoptera | 95.6 | 27.3 | 28.6 | 25.0 | 29.2 |

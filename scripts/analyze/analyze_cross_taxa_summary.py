@@ -28,6 +28,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
+from lib.format_metrics import fmt_integerish, fmt_ratio_or_pct, round_one_decimal  # noqa: E402
 from lib.pipeline import PipelinePaths, load_queries_config  # noqa: E402
 
 
@@ -427,53 +428,63 @@ def metrics_to_row(m: TaxonMetrics) -> dict:
         "n_papers_2010_2025_focused": m.n_papers,
         "papers_2010_2015": m.early_2010_2015,
         "papers_2020_2025": m.recent_2020_2025,
-        "pct_change_papers_recent_vs_early": round(m.pct_change_recent_vs_early, 2),
+        "pct_change_papers_recent_vs_early": round_one_decimal(m.pct_change_recent_vs_early),
         "theme_top1": m.theme_top1,
-        "theme_top1_pct": round(m.theme_top1_pct, 2),
+        "theme_top1_pct": round_one_decimal(m.theme_top1_pct),
         "theme_top2": m.theme_top2,
-        "theme_top2_pct": round(m.theme_top2_pct, 2),
+        "theme_top2_pct": round_one_decimal(m.theme_top2_pct),
         "theme_top3": m.theme_top3,
-        "theme_top3_pct": round(m.theme_top3_pct, 2),
-        "theme_not_specified_pct": round(m.theme_not_specified_pct, 2),
-        "geo_avg_south_america_pct": round(m.geo_sa_avg_pct, 2),
-        "geo_avg_asia_pct": round(m.geo_asia_avg_pct, 2),
-        "geo_avg_europe_pct": round(m.geo_europe_avg_pct, 2),
-        "geo_avg_north_america_pct": round(m.geo_na_avg_pct, 2),
-        "geo_avg_unknown_pct": round(m.geo_unknown_avg_pct, 2),
-        "geo_delta_pp_south_america_2010_2012_vs_2023_2025": round(m.geo_sa_delta_2010_2012_vs_2023_2025_pp, 2),
-        "geo_delta_pp_asia_2010_2012_vs_2023_2025": round(m.geo_asia_delta_pp, 2),
-        "geo_delta_pp_europe_2010_2012_vs_2023_2025": round(m.geo_europe_delta_pp, 2),
-        "geo_delta_pp_north_america_2010_2012_vs_2023_2025": round(m.geo_na_delta_pp, 2),
-        "authors_mean": round(m.authors_mean, 3),
-        "authors_median": round(m.authors_median, 3),
-        "authors_mean_early_2010_2015": round(m.authors_early_mean, 3),
-        "authors_mean_recent_2020_2025": round(m.authors_recent_mean, 3),
-        "authors_mean_applied": round(m.applied_mean_authors, 3),
-        "authors_mean_taxonomic": round(m.taxonomic_mean_authors, 3),
-        "intl_collab_pct_overall": round(m.intl_pct_overall, 2),
-        "intl_collab_info_coverage_pct": round(m.intl_info_coverage_pct, 2),
-        "intl_collab_pct_known_only_overall": round(m.intl_pct_known_only_overall, 2),
-        "intl_collab_pct_applied": round(m.intl_pct_applied, 2),
-        "intl_collab_pct_taxonomic": round(m.intl_pct_taxonomic, 2),
+        "theme_top3_pct": round_one_decimal(m.theme_top3_pct),
+        "theme_not_specified_pct": round_one_decimal(m.theme_not_specified_pct),
+        "geo_avg_south_america_pct": round_one_decimal(m.geo_sa_avg_pct),
+        "geo_avg_asia_pct": round_one_decimal(m.geo_asia_avg_pct),
+        "geo_avg_europe_pct": round_one_decimal(m.geo_europe_avg_pct),
+        "geo_avg_north_america_pct": round_one_decimal(m.geo_na_avg_pct),
+        "geo_avg_unknown_pct": round_one_decimal(m.geo_unknown_avg_pct),
+        "geo_delta_pp_south_america_2010_2012_vs_2023_2025": round_one_decimal(
+            m.geo_sa_delta_2010_2012_vs_2023_2025_pp
+        ),
+        "geo_delta_pp_asia_2010_2012_vs_2023_2025": round_one_decimal(m.geo_asia_delta_pp),
+        "geo_delta_pp_europe_2010_2012_vs_2023_2025": round_one_decimal(m.geo_europe_delta_pp),
+        "geo_delta_pp_north_america_2010_2012_vs_2023_2025": round_one_decimal(m.geo_na_delta_pp),
+        "authors_mean": round_one_decimal(m.authors_mean),
+        "authors_median": round_one_decimal(float(m.authors_median)),
+        "authors_mean_early_2010_2015": round_one_decimal(m.authors_early_mean),
+        "authors_mean_recent_2020_2025": round_one_decimal(m.authors_recent_mean),
+        "authors_mean_applied": round_one_decimal(m.applied_mean_authors),
+        "authors_mean_taxonomic": round_one_decimal(m.taxonomic_mean_authors),
+        "intl_collab_pct_overall": round_one_decimal(m.intl_pct_overall),
+        "intl_collab_info_coverage_pct": round_one_decimal(m.intl_info_coverage_pct),
+        "intl_collab_pct_known_only_overall": round_one_decimal(m.intl_pct_known_only_overall),
+        "intl_collab_pct_applied": round_one_decimal(m.intl_pct_applied),
+        "intl_collab_pct_taxonomic": round_one_decimal(m.intl_pct_taxonomic),
     }
 
 
 def render_markdown(rows: list[dict]) -> str:
     df = pd.DataFrame(rows).sort_values("query_id")
 
+    count_columns = frozenset(
+        {
+            "n_papers_2010_2025_raw",
+            "n_papers_2010_2025_focused",
+            "papers_2010_2015",
+            "papers_2020_2025",
+            # After rename in the sample-size table:
+            "All coded (2010–2025)",
+            "Taxon-focused (2010–2025)",
+        }
+    )
+
     def tbl(cols: list[str], title: str) -> str:
-        def _fmt(v) -> str:
-            if pd.isna(v):
+        def _fmt_cell(column: str, v) -> str:
+            if column != "query_id" and pd.isna(v):
                 return ""
-            if isinstance(v, bool):
+            if column == "query_id":
                 return str(v)
-            if isinstance(v, int):
-                return str(v)
-            if isinstance(v, float):
-                if abs(v - round(v)) < 1e-9:
-                    return str(int(round(v)))
-                return f"{v:.3f}".rstrip("0").rstrip(".")
-            return str(v)
+            if column in count_columns:
+                return fmt_integerish(v)
+            return fmt_ratio_or_pct(v)
 
         sub = df[["query_id"] + cols].copy()
         if cols == ["n_papers_2010_2025_raw", "n_papers_2010_2025_focused"]:
@@ -487,7 +498,7 @@ def render_markdown(rows: list[dict]) -> str:
         lines.append("| " + " | ".join(sub.columns) + " |")
         lines.append("| " + " | ".join(["---"] * len(sub.columns)) + " |")
         for _, r in sub.iterrows():
-            lines.append("| " + " | ".join(_fmt(r[c]) for c in sub.columns) + " |")
+            lines.append("| " + " | ".join(_fmt_cell(c, r[c]) for c in sub.columns) + " |")
         lines.append("")
         return "\n".join(lines)
 

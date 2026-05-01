@@ -10,8 +10,8 @@
 | Scopus total | 409 | 4307 | 903 | 153 | 261 |
 | Google Scholar total | 997 | 1000 | 1000 | 980 | 993 |
 | Overlap (both) | 369 | 863 | 400 | 136 | 230 |
-| Overlap / Scopus (%) | 90.22 | 20.04 | 44.3 | 88.89 | 88.12 |
-| GS/Scopus ratio | 2.44 | 0.23 | 1.11 | 6.41 | 3.8 |
+| Overlap / Scopus (%) | 90.2 | 20.0 | 44.3 | 88.9 | 88.1 |
+| GS/Scopus ratio | 2.4 | 0.2 | 1.1 | 6.4 | 3.8 |
 
 
 ## RQ2 — Publication volume (2010–2025)
@@ -22,7 +22,7 @@
 | Taxon-focused papers (2010–2025) | 1486 | 22664 | 4079 | 1057 | 2870 |
 | Taxon-focused (2010–2015) | 411 | 5528 | 413 | 260 | 925 |
 | Taxon-focused (2020–2025) | 791 | 11862 | 2943 | 537 | 1273 |
-| Pct change 2010–15 vs 2020–25 (taxon-focused) | 92.46 | 114.58 | 612.59 | 106.54 | 37.62 |
+| Pct change 2010–15 vs 2020–25 (taxon-focused) | 92.5 | 114.6 | 612.6 | 106.5 | 37.6 |
 
 
 ### RQ2 — Year-by-year N (taxon-focused)
@@ -51,21 +51,21 @@
 
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
-| Mean South America % | 15.86 | 13.31 | 14.5 | 14.16 | 18.62 |
-| Mean Asia % | 12.78 | 25.36 | 17.4 | 22.28 | 18.92 |
-| Mean Europe % | 23.9 | 12.23 | 21.9 | 27.47 | 29.97 |
-| Mean North America % | 23.27 | 18.26 | 11.39 | 23.3 | 19.51 |
-| Mean Unknown % | 15.61 | 13.97 | 28.51 | 4.2 | 4.95 |
+| Mean South America % | 15.9 | 13.3 | 14.5 | 14.2 | 18.6 |
+| Mean Asia % | 12.8 | 25.4 | 17.4 | 22.3 | 18.9 |
+| Mean Europe % | 23.9 | 12.2 | 21.9 | 27.5 | 30.0 |
+| Mean North America % | 23.3 | 18.3 | 11.4 | 23.3 | 19.5 |
+| Mean Unknown % | 15.6 | 14.0 | 28.5 | 4.2 | 5.0 |
 
 
 ## RQ2 — Continental % change (pp): mean 2010–2012 vs mean 2023–2025
 
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
-| Delta South America (pp) | -3.73 | -1.98 | -5.33 | 3 | 2.98 |
-| Delta Asia (pp) | 1.34 | 7.1 | 6.36 | 18.47 | 3.9 |
-| Delta Europe (pp) | 2.56 | 1.31 | -5.27 | 10.8 | 6.74 |
-| Delta North America (pp) | -29.13 | -11.62 | -12.98 | -28.01 | -14.54 |
+| Delta South America (pp) | -3.7 | -2.0 | -5.3 | 3.0 | 3.0 |
+| Delta Asia (pp) | 1.3 | 7.1 | 6.4 | 18.5 | 3.9 |
+| Delta Europe (pp) | 2.6 | 1.3 | -5.3 | 10.8 | 6.7 |
+| Delta North America (pp) | -29.1 | -11.6 | -13.0 | -28.0 | -14.5 |
 
 
 ## RQ3 — `Research_Theme` (top 3 ranks exclude Not Specified; includes Not Specified %)
@@ -73,33 +73,33 @@
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
 | Top theme #1 | Ecology/Behavior | Ecology/Behavior | Ecology/Behavior | Ecology/Behavior | Ecology/Behavior |
-| Top theme #1 % | 41.79 | 37.95 | 30.4 | 36.9 | 35.44 |
+| Top theme #1 % | 41.8 | 38.0 | 30.4 | 36.9 | 35.4 |
 | Top theme #2 | Biomonitoring/Water Quality | Applied Ecology | Taxonomy/Systematics | Biomonitoring/Water Quality | Taxonomy/Systematics |
-| Top theme #2 % | 25.71 | 25.9 | 20.81 | 26.3 | 31.46 |
+| Top theme #2 % | 25.7 | 25.9 | 20.8 | 26.3 | 31.5 |
 | Top theme #3 | Taxonomy/Systematics | Physiology | Biomonitoring/Water Quality | Taxonomy/Systematics | Biomonitoring/Water Quality |
-| Top theme #3 % | 8.28 | 13.69 | 5.39 | 25.45 | 20.94 |
-| Not Specified % | 20.86 | 12.4 | 32.61 | 4.35 | 3.07 |
+| Top theme #3 % | 8.3 | 13.7 | 5.4 | 25.4 | 20.9 |
+| Not Specified % | 20.9 | 12.4 | 32.6 | 4.4 | 3.1 |
 
 
 ## RQ4A — Authorship structure
 
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
-| Mean authors | 4.243 | 6.467 | 4.968 | 3.994 | 4.047 |
-| Median authors | 4 | 5 | 4 | 4 | 3 |
-| Mean authors early (2010-2015) | 3.723 | 5.627 | 4.107 | 3.602 | 3.39 |
-| Mean authors recent (2020-2025) | 4.506 | 6.99 | 5.214 | 4.243 | 4.522 |
-| Mean authors (applied) | 4.511 | 6.717 | 5.059 | 4.381 | 4.752 |
-| Mean authors (taxonomic) | 3.246 | 6.353 | 3.323 | 2.944 | 3.217 |
+| Mean authors | 4.2 | 6.5 | 5.0 | 4.0 | 4.0 |
+| Median authors | 4.0 | 5.0 | 4.0 | 4.0 | 3.0 |
+| Mean authors early (2010-2015) | 3.7 | 5.6 | 4.1 | 3.6 | 3.4 |
+| Mean authors recent (2020-2025) | 4.5 | 7.0 | 5.2 | 4.2 | 4.5 |
+| Mean authors (applied) | 4.5 | 6.7 | 5.1 | 4.4 | 4.8 |
+| Mean authors (taxonomic) | 3.2 | 6.4 | 3.3 | 2.9 | 3.2 |
 
 
 ## RQ4B — International collaboration %
 
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
-| Papers with known affiliation-country signal (%) | 94.44 | 95.18 | 92.16 | 96.02 | 95.55 |
-| Intl collaboration % (overall) | 25.64 | 37.49 | 33.1 | 25.24 | 27.3 |
-| Intl collaboration % (known affiliations only) | 27.16 | 39.39 | 35.91 | 26.28 | 28.57 |
-| Intl collaboration % (applied) | 20.1 | 36.46 | 26.87 | 21.09 | 24.96 |
-| Intl collaboration % (taxonomic) | 27.87 | 38.06 | 39.07 | 23.42 | 29.21 |
+| Papers with known affiliation-country signal (%) | 94.4 | 95.2 | 92.2 | 96.0 | 95.6 |
+| Intl collaboration % (overall) | 25.6 | 37.5 | 33.1 | 25.2 | 27.3 |
+| Intl collaboration % (known affiliations only) | 27.2 | 39.4 | 35.9 | 26.3 | 28.6 |
+| Intl collaboration % (applied) | 20.1 | 36.5 | 26.9 | 21.1 | 25.0 |
+| Intl collaboration % (taxonomic) | 27.9 | 38.1 | 39.1 | 23.4 | 29.2 |
 
