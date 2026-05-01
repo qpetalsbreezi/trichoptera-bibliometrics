@@ -58,18 +58,18 @@ Generated from `data/processed/*/scopus_api_coded.csv` with the same filters as 
 
 | query_id | authors_mean | authors_median | authors_mean_early_2010_2015 | authors_mean_recent_2020_2025 | authors_mean_applied | authors_mean_taxonomic |
 | --- | --- | --- | --- | --- | --- | --- |
-| ephemeroptera | 4.257 | 4 | 3.74 | 4.514 | 4.546 | 3.246 |
-| mosquitoes | 6.499 | 5 | 5.661 | 7.023 | 6.746 | 6.37 |
-| odonata | 4.99 | 4 | 4.122 | 5.242 | 5.073 | 3.331 |
-| plecoptera | 4.008 | 4 | 3.602 | 4.257 | 4.398 | 2.97 |
-| trichoptera | 4.051 | 3 | 3.387 | 4.529 | 4.748 | 3.217 |
+| ephemeroptera | 4.243 | 4 | 3.723 | 4.506 | 4.511 | 3.246 |
+| mosquitoes | 6.467 | 5 | 5.627 | 6.99 | 6.717 | 6.353 |
+| odonata | 4.968 | 4 | 4.107 | 5.214 | 5.059 | 3.323 |
+| plecoptera | 3.994 | 4 | 3.602 | 4.243 | 4.381 | 2.944 |
+| trichoptera | 4.047 | 3 | 3.39 | 4.522 | 4.752 | 3.217 |
 
 ### RQ4B: International collaboration (affiliation-country heuristic)
 
 | query_id | intl_collab_info_coverage_pct | intl_collab_pct_overall | intl_collab_pct_known_only_overall | intl_collab_pct_applied | intl_collab_pct_taxonomic |
 | --- | --- | --- | --- | --- | --- |
-| ephemeroptera | 23.85 | 1.49 | 6.27 | 1.49 | 1.64 |
-| mosquitoes | 19.58 | 2.62 | 13.39 | 2.28 | 2.05 |
-| odonata | 21.35 | 2.98 | 13.96 | 3.64 | 4.01 |
-| plecoptera | 24.03 | 2.56 | 10.67 | 1.7 | 2.99 |
-| trichoptera | 20.74 | 2.28 | 11 | 1.19 | 3.12 |
+| ephemeroptera | 94.44 | 25.64 | 27.16 | 20.1 | 27.87 |
+| mosquitoes | 95.18 | 37.49 | 39.39 | 36.46 | 38.06 |
+| odonata | 92.16 | 33.1 | 35.91 | 26.87 | 39.07 |
+| plecoptera | 96.02 | 25.24 | 26.28 | 21.09 | 23.42 |
+| trichoptera | 95.55 | 27.3 | 28.57 | 24.96 | 29.21 |

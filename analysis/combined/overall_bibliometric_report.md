@@ -1,6 +1,6 @@
 # Overall bibliometric data (multi-taxon)
 
-*Generated 2026-04-28.*
+*Generated 2026-04-30.*
 
 ## RQ1 — Database coverage
 
@@ -85,21 +85,21 @@
 
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
-| Mean authors | 4.257 | 6.499 | 4.99 | 4.008 | 4.051 |
+| Mean authors | 4.243 | 6.467 | 4.968 | 3.994 | 4.047 |
 | Median authors | 4 | 5 | 4 | 4 | 3 |
-| Mean authors early (2010-2015) | 3.74 | 5.661 | 4.122 | 3.602 | 3.387 |
-| Mean authors recent (2020-2025) | 4.514 | 7.023 | 5.242 | 4.257 | 4.529 |
-| Mean authors (applied) | 4.546 | 6.746 | 5.073 | 4.398 | 4.748 |
-| Mean authors (taxonomic) | 3.246 | 6.37 | 3.331 | 2.97 | 3.217 |
+| Mean authors early (2010-2015) | 3.723 | 5.627 | 4.107 | 3.602 | 3.39 |
+| Mean authors recent (2020-2025) | 4.506 | 6.99 | 5.214 | 4.243 | 4.522 |
+| Mean authors (applied) | 4.511 | 6.717 | 5.059 | 4.381 | 4.752 |
+| Mean authors (taxonomic) | 3.246 | 6.353 | 3.323 | 2.944 | 3.217 |
 
 
 ## RQ4B — International collaboration %
 
 | metric | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
 | --- | --- | --- | --- | --- | --- |
-| Papers with known affiliation-country signal (%) | 23.85 | 19.58 | 21.35 | 24.03 | 20.74 |
-| Intl collaboration % (overall) | 1.49 | 2.62 | 2.98 | 2.56 | 2.28 |
-| Intl collaboration % (known affiliations only) | 6.27 | 13.39 | 13.96 | 10.67 | 11 |
-| Intl collaboration % (applied) | 1.49 | 2.28 | 3.64 | 1.7 | 1.19 |
-| Intl collaboration % (taxonomic) | 1.64 | 2.05 | 4.01 | 2.99 | 3.12 |
+| Papers with known affiliation-country signal (%) | 94.44 | 95.18 | 92.16 | 96.02 | 95.55 |
+| Intl collaboration % (overall) | 25.64 | 37.49 | 33.1 | 25.24 | 27.3 |
+| Intl collaboration % (known affiliations only) | 27.16 | 39.39 | 35.91 | 26.28 | 28.57 |
+| Intl collaboration % (applied) | 20.1 | 36.46 | 26.87 | 21.09 | 24.96 |
+| Intl collaboration % (taxonomic) | 27.87 | 38.06 | 39.07 | 23.42 | 29.21 |
 

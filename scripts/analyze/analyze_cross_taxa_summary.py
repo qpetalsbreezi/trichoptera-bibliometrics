@@ -158,8 +158,11 @@ def merge_authors_like_rq4(df: pd.DataFrame, paths: PipelinePaths) -> tuple[pd.D
 
     authors_df = pd.read_csv(authors_csv)
     merge_cols = ["DOI"] if "DOI" in df.columns and "DOI" in authors_df.columns else ["Title", "Year"]
+    author_cols = ["Author_Count_Actual", "Author_Affiliations", "All_Authors"]
+    if "Author_Country_Codes" in authors_df.columns:
+        author_cols.append("Author_Country_Codes")
     merged = df.merge(
-        authors_df[merge_cols + ["Author_Count_Actual", "Author_Affiliations", "All_Authors"]],
+        authors_df[merge_cols + author_cols],
         on=merge_cols,
         how="left",
         suffixes=("", "_author"),
@@ -197,6 +200,16 @@ def compute_author_count(df: pd.DataFrame, has_full_author_data: bool) -> pd.Ser
 
 def detect_international_collab(row, has_affiliations: bool) -> str:
     """Same heuristic as analyze_rq4_collaboration.py (abbreviated)."""
+    codes_raw = str(row.get("Author_Country_Codes", "") or "").strip()
+    if codes_raw and codes_raw.lower() != "nan":
+        tokens = [t.strip().upper() for t in codes_raw.replace("|", ";").replace(",", ";").split(";")]
+        codes = {t for t in tokens if len(t) == 2 and t.isalpha()}
+        if len(codes) > 1:
+            return "International"
+        if len(codes) == 1:
+            return "National"
+        return "Unknown"
+
     if has_affiliations:
         affiliations = str(row.get("Author_Affiliations", ""))
         if pd.isna(affiliations) or not affiliations or affiliations == "nan":

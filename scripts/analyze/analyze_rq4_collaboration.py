@@ -36,8 +36,11 @@ def analyze_collaboration(paths: PipelinePaths):
         authors_df = pd.read_csv(authors_csv)
         # Merge on a unique identifier (DOI or Title+Year)
         merge_cols = ['DOI'] if 'DOI' in df.columns and 'DOI' in authors_df.columns else ['Title', 'Year']
+        author_cols = ['Author_Count_Actual', 'Author_Affiliations', 'All_Authors']
+        if 'Author_Country_Codes' in authors_df.columns:
+            author_cols.append('Author_Country_Codes')
         df = df.merge(
-            authors_df[merge_cols + ['Author_Count_Actual', 'Author_Affiliations', 'All_Authors']],
+            authors_df[merge_cols + author_cols],
             on=merge_cols,
             how='left',
             suffixes=('', '_author')
@@ -260,6 +263,17 @@ def analyze_collaboration(paths: PipelinePaths):
     
     def detect_international_collab(row):
         """Detect if paper likely has international collaboration"""
+        codes_raw = str(row.get('Author_Country_Codes', '') or '').strip()
+        if codes_raw and codes_raw.lower() != 'nan':
+            tokens = [t.strip().upper() for t in codes_raw.replace('|', ';').replace(',', ';').split(';')]
+            codes = {t for t in tokens if len(t) == 2 and t.isalpha()}
+            if len(codes) > 1:
+                return 'International'
+            elif len(codes) == 1:
+                return 'National'
+            else:
+                return 'Unknown'
+
         # Method 1: Check if Author_Affiliations contains multiple country indicators
         if has_affiliations:
             affiliations = str(row.get('Author_Affiliations', ''))

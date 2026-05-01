@@ -38,7 +38,7 @@ def get_authors_openalex(
 ):
     doi_norm = clean_doi(doi)
     if not doi_norm:
-        return None, None, None
+        return None, None, None, None
 
     url = openalex_work_url(doi_norm)
     headers = headers or openalex_headers()
@@ -51,6 +51,7 @@ def get_authors_openalex(
 
                 authors = []
                 affiliations = []
+                country_codes = set()
 
                 if "authorships" in data:
                     for authorship in data["authorships"]:
@@ -65,6 +66,9 @@ def get_authors_openalex(
                                 inst_name = inst.get("display_name", "")
                                 if inst_name:
                                     author_affiliations.append(inst_name)
+                                cc = str(inst.get("country_code", "") or "").strip().upper()
+                                if len(cc) == 2:
+                                    country_codes.add(cc)
 
                             if author_affiliations:
                                 affiliations.append("; ".join(author_affiliations))
@@ -74,29 +78,30 @@ def get_authors_openalex(
                 all_authors_str = "; ".join(authors) if authors else None
                 author_count = len(authors) if authors else 0
                 affiliations_str = " | ".join(affiliations) if affiliations else None
+                country_codes_str = "; ".join(sorted(country_codes)) if country_codes else None
 
-                return all_authors_str, author_count, affiliations_str
+                return all_authors_str, author_count, affiliations_str, country_codes_str
 
             if r.status_code == 404:
-                return None, None, None
+                return None, None, None, None
             if r.status_code == 429:
                 wait = retry_after_seconds(r) or min(10.0 * (attempt + 1), 60.0)
                 time.sleep(wait)
                 if attempt < max_retries - 1:
                     continue
-                return None, None, None
+                return None, None, None, None
             if attempt < max_retries - 1:
                 time.sleep(2 ** attempt)
                 continue
-            return None, None, None
+            return None, None, None, None
 
         except (requests.exceptions.Timeout, requests.exceptions.RequestException):
             if attempt < max_retries - 1:
                 time.sleep(2 ** attempt)
                 continue
-            return None, None, None
+            return None, None, None, None
 
-    return None, None, None
+    return None, None, None, None
 
 
 def _configure_output_streams() -> None:
@@ -141,20 +146,31 @@ def run_fetch_authors(
         df["Author_Affiliations"] = ""
     else:
         df["Author_Affiliations"] = df["Author_Affiliations"].fillna("").astype("string")
+    if "Author_Country_Codes" not in df.columns:
+        df["Author_Country_Codes"] = ""
+    else:
+        df["Author_Country_Codes"] = df["Author_Country_Codes"].fillna("").astype("string")
 
     needs_authors = (
         df["All_Authors"].fillna("").astype(str).str.strip().eq("")
         & df["DOI"].notna()
         & df["DOI"].astype(str).str.strip().ne("")
     )
-    pending_indices = df.index[needs_authors].tolist()
+    needs_country_codes = (
+        df["Author_Country_Codes"].fillna("").astype(str).str.strip().eq("")
+        & df["DOI"].notna()
+        & df["DOI"].astype(str).str.strip().ne("")
+    )
+    pending_indices = df.index[needs_authors | needs_country_codes].tolist()
     already_filled = len(df) - len(pending_indices)
 
     print(f"\nquery_id={paths.query_id}")
     print(f"\nFetching author data from OpenAlex API...")
     print(f"Starting from index {start_index} of {len(df)} papers")
     print(f"Already have author data for {already_filled} papers")
-    print(f"Pending DOI lookups: {len(pending_indices)}\n")
+    print(f"Pending DOI lookups: {len(pending_indices)}")
+    print(f"  Missing All_Authors: {int(needs_authors.sum())}")
+    print(f"  Missing Author_Country_Codes: {int(needs_country_codes.sum())}\n")
 
     headers = openalex_headers()
     session = requests.Session()
@@ -168,7 +184,7 @@ def run_fetch_authors(
         mininterval=0.5,
     ):
         doi = df.at[idx, "DOI"]
-        all_authors, author_count, affiliations = get_authors_openalex(
+        all_authors, author_count, affiliations, country_codes = get_authors_openalex(
             doi,
             session=session,
             headers=headers,
@@ -179,6 +195,8 @@ def run_fetch_authors(
             df.at[idx, "Author_Count_Actual"] = author_count
             if affiliations:
                 df.at[idx, "Author_Affiliations"] = affiliations
+        if country_codes:
+            df.at[idx, "Author_Country_Codes"] = country_codes
 
         processed += 1
         time.sleep(request_delay)
