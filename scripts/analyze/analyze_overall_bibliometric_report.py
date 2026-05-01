@@ -6,7 +6,7 @@ Combines:
 - RQ2–RQ4: same metrics as `analyze_cross_taxa_summary.py`
 
 Outputs:
-- analysis/combined/overall_bibliometric_report.md
+- analysis/combined/overall_bibliometric_report.md (appends bibliometric_tables_glossary.md when present)
 - analysis/combined/overall_bibliometric_report_meta.json
 - analysis/combined/yearly_publication_volume_by_query.csv (long format; same as cross_taxa script)
 """
@@ -178,6 +178,8 @@ def build_report(
     parts.append("")
     parts.append(f"*Generated {pd.Timestamp.now().strftime('%Y-%m-%d')}.*")
     parts.append("")
+    parts.append("Definitions of table rows are in the **Glossary** at the end of this file.")
+    parts.append("")
 
     parts.append("## RQ1 — Database coverage")
     parts.append("")
@@ -243,7 +245,7 @@ def build_report(
                 "n_papers_2010_2025_focused": "Taxon-focused papers (2010–2025)",
                 "papers_2010_2015": "Taxon-focused (2010–2015)",
                 "papers_2020_2025": "Taxon-focused (2020–2025)",
-                "pct_change_papers_recent_vs_early": "Pct change 2010–15 vs 2020–25 (taxon-focused)",
+                "pct_change_papers_recent_vs_early": "Percent change 2010–15 vs 2020–25 (taxon-focused)",
             },
             int_metric_rows=_RQ2_VOLUME_INT_METRIC_ROWS,
         )
@@ -321,7 +323,12 @@ def build_report(
     )
     parts.append("")
 
-    parts.append("## RQ3 — `Research_Theme` (top 3 ranks exclude Not Specified; includes Not Specified %)")
+    parts.append("## RQ3 — Research themes")
+    parts.append("")
+    parts.append(
+        "Each paper carries one **primary research theme** label. The three ranked rows (#1–#3) list the most common themes after excluding “Not Specified” from the ranking. "
+        "**Not Specified %** is reported on its own: the proportion of papers left in that category."
+    )
     parts.append("")
     th_cols = [
         "query_id",
@@ -385,8 +392,8 @@ def build_report(
             metric_label_map={
                 "authors_mean": "Mean authors",
                 "authors_median": "Median authors",
-                "authors_mean_early_2010_2015": "Mean authors early (2010-2015)",
-                "authors_mean_recent_2020_2025": "Mean authors recent (2020-2025)",
+                "authors_mean_early_2010_2015": "Mean authors early (2010–2015)",
+                "authors_mean_recent_2020_2025": "Mean authors recent (2020–2025)",
                 "authors_mean_applied": "Mean authors (applied)",
                 "authors_mean_taxonomic": "Mean authors (taxonomic)",
             },
@@ -429,6 +436,30 @@ def build_report(
     return "\n".join(parts)
 
 
+def _increase_markdown_heading_depth(text: str, add: int = 1) -> str:
+    """Nest a snippet under the report H1 by adding ``add`` '#' to each heading line."""
+    out: list[str] = []
+    for line in text.splitlines():
+        m = re.match(r"^(#+)(\s.*)$", line)
+        if m:
+            hashes = m.group(1)
+            rest = m.group(2)
+            out.append("#" * (len(hashes) + add) + rest)
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
+def _append_glossary_if_present(md: str, glossary_path: Path) -> str:
+    if not glossary_path.is_file():
+        return md
+    body = glossary_path.read_text(encoding="utf-8").strip()
+    if not body:
+        return md
+    nested = _increase_markdown_heading_depth(body, add=1)
+    return md.rstrip() + "\n\n---\n\n" + nested + "\n"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate single overall bibliometric report (all taxa).")
     parser.add_argument(
@@ -460,6 +491,8 @@ def main() -> None:
     yearly_long.to_csv(yearly_path, index=False)
 
     md = build_report(metrics_rows, rq1_rows, yearly_long, queries)
+    glossary_path = out_dir / "bibliometric_tables_glossary.md"
+    md = _append_glossary_if_present(md, glossary_path)
     md_path = out_dir / "overall_bibliometric_report.md"
     md_path.write_text(md, encoding="utf-8")
 
@@ -469,6 +502,9 @@ def main() -> None:
         "outputs": {
             "markdown": str(md_path.relative_to(PROJECT_ROOT)),
             "yearly_publication_volume_csv": str(yearly_path.relative_to(PROJECT_ROOT)),
+            "glossary_source": str(glossary_path.relative_to(PROJECT_ROOT))
+            if glossary_path.is_file()
+            else None,
         },
     }
     (out_dir / "overall_bibliometric_report_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")

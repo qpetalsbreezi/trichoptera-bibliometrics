@@ -24,7 +24,9 @@ Generated from `data/processed/*/scopus_api_coded.csv` with the same filters as 
 | plecoptera | 260 | 537 | 106.5 |
 | trichoptera | 925 | 1273 | 37.6 |
 
-### Top research themes (overall distribution)
+Each paper has one **primary research theme** label. Ranks #1–#3 omit “Not Specified” when choosing the three most common themes. **Not Specified %** is separate: the share of papers without a more specific theme.
+
+### Research themes by query
 
 | query_id | theme_top1 | theme_top1_pct | theme_top2 | theme_top2_pct | theme_top3 | theme_top3_pct | theme_not_specified_pct |
 | --- | --- | --- | --- | --- | --- | --- | --- |

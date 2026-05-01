@@ -519,6 +519,11 @@ def render_markdown(rows: list[dict]) -> str:
         ["papers_2010_2015", "papers_2020_2025", "pct_change_papers_recent_vs_early"],
         "Temporal volume (2010–2015 vs 2020–2025)",
     ))
+    out.append(
+        "Each paper has one **primary research theme** label. Ranks #1–#3 omit “Not Specified” when choosing the three most common themes. "
+        "**Not Specified %** is separate: the share of papers without a more specific theme."
+    )
+    out.append("")
     out.append(tbl(
         [
             "theme_top1",
@@ -529,7 +534,7 @@ def render_markdown(rows: list[dict]) -> str:
             "theme_top3_pct",
             "theme_not_specified_pct",
         ],
-        "Top research themes (overall distribution)",
+        "Research themes by query",
     ))
     out.append(tbl(
         [
