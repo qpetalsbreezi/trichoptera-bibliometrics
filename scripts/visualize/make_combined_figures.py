@@ -28,6 +28,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.colors as mcolors  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
@@ -42,16 +43,63 @@ import analyze_cross_taxa_summary as xtax  # noqa: E402
 from analyze_overall_bibliometric_report import load_rq1_row  # noqa: E402
 from lib.pipeline import PROJECT_ROOT, PipelinePaths, load_queries_config  # noqa: E402
 
-# Okabe–Ito palette (colorblind-friendly), one color per taxon in sorted query_id order.
-_TAXON_COLORS: list[tuple[float, float, float]] = [
-    (0.90, 0.62, 0.00),  # orange
-    (0.35, 0.70, 0.90),  # sky blue
-    (0.00, 0.62, 0.45),  # bluish green
-    (0.80, 0.75, 0.00),  # yellow
-    (0.00, 0.45, 0.70),  # blue
-    (0.80, 0.40, 0.00),  # vermillion
-    (0.55, 0.35, 0.64),  # purple
+# ---------------------------------------------------------------------------
+# Color design (journal / color-vision deficiency)
+# - Taxa: Paul Tol "bright" subset (no yellow; strong pairwise separation).
+# - Geography: Tol "muted"–style hues orthogonal to taxa blues/cyans.
+# - RQ1 bars: semantic (indexed corpus vs intersection vs web-scale).
+# - Comparisons (two-bar): single-hue or single-family ramps, not rainbow.
+# ---------------------------------------------------------------------------
+_TAXON_HEX: list[str] = [
+    "#4477AA",  # blue
+    "#EE6677",  # red
+    "#228833",  # green
+    "#AA3377",  # purple
+    "#66CCEE",  # cyan
 ]
+
+# Same keys as Region_Category in analyze_cross_taxa_summary.
+_REGION_HEX: dict[str, str] = {
+    "South America": "#117733",
+    "Asia": "#CC6677",
+    "Europe": "#332288",
+    "North America": "#6699CC",
+    "Unknown": "#BBBBBB",
+    "Other": "#AA4499",
+}
+
+# RQ1 — three databases (meaning-driven; hexes distinct from North America and Europe region colors).
+_RQ1_SCOPUS_HEX = "#0D3D5C"
+_RQ1_OVERLAP_HEX = "#5B9BD4"
+_RQ1_GS_HEX = "#EE7733"
+
+# RQ1 — secondary single-metric panels (hexes distinct from taxon green and purple in _TAXON_HEX).
+_RQ1_OVERLAP_PCT_HEX = "#00796B"
+_RQ1_GS_RATIO_HEX = "#88419D"
+
+# Two-bar “before vs after” families (distinct roles; avoid reusing geo reds).
+_PAIR_AUTHORS_TIME = ("#B8C9E0", "#1C3D5A")  # early, recent
+_PAIR_WINDOW_COUNTS = ("#E6C8A8", "#7A3E1D")  # early window, recent window
+_PAIR_SAMPLE_SCOPE = ("#D4DCE8", "#3D5A80")  # all coded, taxon-focused
+_PAIR_MEAN_MEDIAN = ("#8DA0CB", "#FC8D62")  # mean, median (Tableau-style pairing)
+_PAIR_APPLIED_TAX = ("#66A61E", "#E6AB02")  # applied, taxonomic (brown-yellow)
+
+# RQ3 — ranked shares + NS (sequential purple ramp; first swatch ≠ Europe indigo used in geo charts).
+_THEME_RANK_HEX = ["#5C4E75", "#8A7CA8", "#BEB3D4", "#AEAEAE"]
+
+# RQ4B — four collaboration definitions (hexes distinct from taxon green and purple in _TAXON_HEX).
+_INTL_DEFINITION_HEX = [
+    "#555555",  # overall
+    "#2A6F97",  # known affiliations (steel teal)
+    "#D95F0E",  # applied subset
+    "#8067AC",  # taxonomic subset
+]
+
+# Diverging Δpp heatmap (ColorBrewer-style, balanced around white).
+_DIVERGING_PP = mcolors.LinearSegmentedColormap.from_list(
+    "delta_pp",
+    ["#2166AC", "#92C5DE", "#F7F7F7", "#F4A582", "#B2182B"],
+)
 
 
 def _setup_rc() -> None:
@@ -75,8 +123,8 @@ def _query_order(cfg: dict) -> list[str]:
     return sorted((cfg.get("queries") or {}).keys())
 
 
-def _taxon_color_map(query_ids: list[str]) -> dict[str, tuple]:
-    return {q: _TAXON_COLORS[i % len(_TAXON_COLORS)] for i, q in enumerate(query_ids)}
+def _taxon_color_map(query_ids: list[str]) -> dict[str, str]:
+    return {q: _TAXON_HEX[i % len(_TAXON_HEX)] for i, q in enumerate(query_ids)}
 
 
 def _short_label(cfg: dict, qid: str) -> str:
@@ -122,7 +170,7 @@ def _save(fig: plt.Figure, out_dir: Path, stem: str) -> dict[str, str]:
 def fig_rq2_temporal_facets(
     yearly: pd.DataFrame,
     query_ids: list[str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     labels: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
@@ -149,7 +197,7 @@ def fig_rq2_temporal_facets(
 def fig_rq2_temporal_log_overlay(
     yearly: pd.DataFrame,
     query_ids: list[str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     labels: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
@@ -187,9 +235,9 @@ def fig_rq1_database_coverage(
     fig, ax = plt.subplots(figsize=(7.5, 4))
     x = np.arange(len(query_ids))
     w = 0.25
-    ax.bar(x - w, df["scopus"], width=w, label="Scopus total", color="#333333", edgecolor="none")
-    ax.bar(x, df["overlap"], width=w, label="Overlap (both)", color="#888888", edgecolor="none")
-    ax.bar(x + w, df["gs"], width=w, label="Google Scholar total", color="#BBBBBB", edgecolor="none")
+    ax.bar(x - w, df["scopus"], width=w, label="Scopus total", color=_RQ1_SCOPUS_HEX, edgecolor="none")
+    ax.bar(x, df["overlap"], width=w, label="Overlap (both)", color=_RQ1_OVERLAP_HEX, edgecolor="none")
+    ax.bar(x + w, df["gs"], width=w, label="Google Scholar total", color=_RQ1_GS_HEX, edgecolor="none")
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=25, ha="right")
     ax.set_ylabel("Publication count (RQ1 benchmark year)")
@@ -216,14 +264,16 @@ def fig_rq2_geo_mean_stacked(
     mat = np.array([[float(m.loc[q, col]) for col, _ in cats] for q in query_ids])
     fig, ax = plt.subplots(figsize=(7, 4))
     left = np.zeros(len(query_ids))
-    stack_colors = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#999999"]
     for i, (col, name) in enumerate(cats):
+        reg_key = ["South America", "Asia", "Europe", "North America", "Unknown"][i]
         ax.barh(
             [labels[q] for q in query_ids],
             mat[:, i],
             left=left,
             label=name,
-            color=stack_colors[i % len(stack_colors)],
+            color=_REGION_HEX[reg_key],
+            edgecolor="white",
+            linewidth=0.4,
         )
         left = left + mat[:, i]
     ax.set_xlabel("Mean continental share (% of papers, 2010–2025)")
@@ -250,7 +300,7 @@ def fig_rq2_geo_delta_heatmap(
     mat = np.array([[float(m.loc[q, c]) for c, _ in cols] for q in query_ids])
     fig, ax = plt.subplots(figsize=(5.5, 4))
     vmax = max(np.abs(mat).max(), 1e-6)
-    im = ax.imshow(mat, aspect="auto", cmap="RdBu_r", vmin=-vmax, vmax=vmax)
+    im = ax.imshow(mat, aspect="auto", cmap=_DIVERGING_PP, vmin=-vmax, vmax=vmax)
     ax.set_xticks(range(len(cols)))
     ax.set_xticklabels([lbl for _, lbl in cols], rotation=20, ha="right")
     ax.set_yticks(range(len(query_ids)))
@@ -278,7 +328,15 @@ def fig_rq3_theme_top_shares(
         ("theme_not_specified_pct", "Not specified %"),
     ]
     for i, (col, leg) in enumerate(parts):
-        ax.bar(x + (i - 1.5) * w, [float(m.loc[q, col]) for q in query_ids], width=w, label=leg)
+        ax.bar(
+            x + (i - 1.5) * w,
+            [float(m.loc[q, col]) for q in query_ids],
+            width=w,
+            label=leg,
+            color=_THEME_RANK_HEX[i],
+            edgecolor="white",
+            linewidth=0.35,
+        )
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
     ax.set_ylabel("Share of taxon-focused papers (%)")
@@ -292,7 +350,7 @@ def fig_rq4_authorship_collaboration(
     metrics: pd.DataFrame,
     query_ids: list[str],
     labels: dict[str, str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
     m = metrics.set_index("query_id").loc[query_ids]
@@ -301,8 +359,9 @@ def fig_rq4_authorship_collaboration(
     w = 0.35
     early = [float(m.loc[q, "authors_mean_early_2010_2015"]) for q in query_ids]
     recent = [float(m.loc[q, "authors_mean_recent_2020_2025"]) for q in query_ids]
-    ax1.bar(x - w / 2, early, width=w, label="2010–2015", color="#6BAED6", edgecolor="none")
-    ax1.bar(x + w / 2, recent, width=w, label="2020–2025", color="#08519C", edgecolor="none")
+    c_early, c_recent = _PAIR_AUTHORS_TIME
+    ax1.bar(x - w / 2, early, width=w, label="2010–2015", color=c_early, edgecolor="none")
+    ax1.bar(x + w / 2, recent, width=w, label="2020–2025", color=c_recent, edgecolor="none")
     ax1.set_xticks(x)
     ax1.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
     ax1.set_ylabel("Mean author count")
@@ -338,14 +397,14 @@ def fig_rq1_overlap_pct_and_ratio(
         ratios.append(float(r.get("rq1_gs_scopus_ratio") or 0.0))
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3.6))
     x = np.arange(len(query_ids))
-    ax1.bar(x, overlap_pct, color="#4DAF4A", edgecolor="none")
+    ax1.bar(x, overlap_pct, color=_RQ1_OVERLAP_PCT_HEX, edgecolor="none")
     ax1.set_xticks(x)
     ax1.set_xticklabels([labels[q] for q in query_ids], rotation=22, ha="right")
     ax1.set_ylabel("Overlap / Scopus (%)")
     ax1.set_title("RQ1 — Records appearing in both databases")
     ax1.set_ylim(0, min(105, max(overlap_pct) * 1.2 if overlap_pct else 100))
 
-    ax2.bar(x, ratios, color="#984EA3", edgecolor="none")
+    ax2.bar(x, ratios, color=_RQ1_GS_RATIO_HEX, edgecolor="none")
     ax2.set_xticks(x)
     ax2.set_xticklabels([labels[q] for q in query_ids], rotation=22, ha="right")
     ax2.set_ylabel("Google Scholar / Scopus ratio")
@@ -369,8 +428,9 @@ def fig_rq2_sample_size_raw_vs_focused(
     w = 0.35
     raw = [float(m.loc[q, "n_papers_2010_2025_raw"]) for q in query_ids]
     foc = [float(m.loc[q, "n_papers_2010_2025_focused"]) for q in query_ids]
-    ax.bar(x - w / 2, raw, width=w, label="All coded (2010–2025)", color="#9ECAE1", edgecolor="none")
-    ax.bar(x + w / 2, foc, width=w, label="Taxon-focused (2010–2025)", color="#3182BD", edgecolor="none")
+    c_raw, c_foc = _PAIR_SAMPLE_SCOPE
+    ax.bar(x - w / 2, raw, width=w, label="All coded (2010–2025)", color=c_raw, edgecolor="none")
+    ax.bar(x + w / 2, foc, width=w, label="Taxon-focused (2010–2025)", color=c_foc, edgecolor="none")
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=22, ha="right")
     ax.set_ylabel("Publication count")
@@ -392,8 +452,9 @@ def fig_rq2_early_vs_recent_window_counts(
     w = 0.35
     early = [float(m.loc[q, "papers_2010_2015"]) for q in query_ids]
     recent = [float(m.loc[q, "papers_2020_2025"]) for q in query_ids]
-    ax.bar(x - w / 2, early, width=w, label="Taxon-focused 2010–2015", color="#FDAE6B", edgecolor="none")
-    ax.bar(x + w / 2, recent, width=w, label="Taxon-focused 2020–2025", color="#D95F0E", edgecolor="none")
+    c_early, c_recent = _PAIR_WINDOW_COUNTS
+    ax.bar(x - w / 2, early, width=w, label="Taxon-focused 2010–2015", color=c_early, edgecolor="none")
+    ax.bar(x + w / 2, recent, width=w, label="Taxon-focused 2020–2025", color=c_recent, edgecolor="none")
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=22, ha="right")
     ax.set_ylabel("Publication count")
@@ -407,7 +468,7 @@ def fig_rq2_pct_change_recent_vs_early(
     metrics: pd.DataFrame,
     query_ids: list[str],
     labels: dict[str, str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
     m = metrics.set_index("query_id").loc[query_ids]
@@ -427,7 +488,7 @@ def fig_rq2_pct_change_recent_vs_early(
 def fig_rq2_temporal_all_coded_facets(
     yearly: pd.DataFrame,
     query_ids: list[str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     labels: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
@@ -454,7 +515,7 @@ def fig_rq2_temporal_all_coded_facets(
 def fig_rq2_temporal_all_coded_log_overlay(
     yearly: pd.DataFrame,
     query_ids: list[str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     labels: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
@@ -473,16 +534,6 @@ def fig_rq2_temporal_all_coded_log_overlay(
 
 
 # --- RQ2 geography (additional) ---
-
-
-_GEO_REGION_LINE_COLORS: dict[str, tuple] = {
-    "South America": (0.90, 0.62, 0.00),
-    "Asia": (0.35, 0.70, 0.90),
-    "Europe": (0.00, 0.62, 0.45),
-    "North America": (0.80, 0.40, 0.00),
-    "Unknown": (0.55, 0.55, 0.55),
-    "Other": (0.55, 0.35, 0.64),
-}
 
 
 def _yearly_continental_props_by_query(query_ids: list[str]) -> dict[str, pd.DataFrame]:
@@ -531,19 +582,20 @@ def fig_rq2_geo_temporal_lines_by_taxon(
                 props.index,
                 props[reg].values,
                 label=reg if ax is legend_ax else "_nolegend_",
-                color=_GEO_REGION_LINE_COLORS.get(reg, (0.2, 0.2, 0.2)),
-                linewidth=1.2,
+                color=_REGION_HEX.get(reg, "#222222"),
+                linewidth=1.35,
             )
         ax.set_title(labels[q])
         ax.set_xlim(2009.5, 2025.5)
         ax.set_xticks([2010, 2015, 2020, 2025])
-        ax.set_ylim(0, 100)
+        # Cap at 50% so typical continental shares use more vertical space (full 0–100 looks squeezed).
+        ax.set_ylim(0, 50)
     axes[0].set_ylabel("Share of taxon-focused papers (%)")
     fig.supxlabel("Publication year", y=0.02)
     handles, leg_labels = (legend_ax or axes[0]).get_legend_handles_labels()
     if handles:
         fig.legend(handles, leg_labels, loc="upper center", ncol=3, bbox_to_anchor=(0.5, 1.08), fontsize=7)
-    fig.suptitle("RQ2 — Continental composition over time (yearly %)", y=1.12)
+    fig.suptitle("RQ2 — Continental composition over time (yearly %; y-axis 0–50%)", y=1.12)
     fig.tight_layout()
     return _save(fig, out_dir, "fig_rq2_geo_continental_share_over_time_facets")
 
@@ -566,10 +618,19 @@ def fig_rq2_geo_mean_grouped_vertical(
     x = np.arange(len(query_ids))
     n_c = len(cats)
     w = 0.15
+    reg_keys = ["South America", "Asia", "Europe", "North America", "Unknown"]
     for i, (col, name) in enumerate(cats):
         offset = (i - (n_c - 1) / 2) * w
         heights = [float(m.loc[q, col]) for q in query_ids]
-        ax.bar(x + offset, heights, width=w * 0.95, label=name)
+        ax.bar(
+            x + offset,
+            heights,
+            width=w * 0.95,
+            label=name,
+            color=_REGION_HEX[reg_keys[i]],
+            edgecolor="white",
+            linewidth=0.35,
+        )
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
     ax.set_ylabel("Mean yearly % (2010–2025)")
@@ -597,10 +658,19 @@ def fig_rq2_geo_delta_grouped_bars(
     x = np.arange(len(query_ids))
     n_c = len(cols)
     w = 0.18
+    reg_keys = ["South America", "Asia", "Europe", "North America"]
     for i, (col, name) in enumerate(cols):
         offset = (i - (n_c - 1) / 2) * w
         heights = [float(m.loc[q, col]) for q in query_ids]
-        ax.bar(x + offset, heights, width=w * 0.9, label=name)
+        ax.bar(
+            x + offset,
+            heights,
+            width=w * 0.9,
+            label=name,
+            color=_REGION_HEX[reg_keys[i]],
+            edgecolor="white",
+            linewidth=0.35,
+        )
     ax.axhline(0, color="black", linewidth=0.8)
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
@@ -618,6 +688,7 @@ def fig_rq3_top1_theme_labeled_bars(
     metrics: pd.DataFrame,
     query_ids: list[str],
     labels: dict[str, str],
+    colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
     m = metrics.set_index("query_id").loc[query_ids]
@@ -625,7 +696,7 @@ def fig_rq3_top1_theme_labeled_bars(
     y_pos = np.arange(len(query_ids))
     pcts = [float(m.loc[q, "theme_top1_pct"]) for q in query_ids]
     names = [str(m.loc[q, "theme_top1"])[:28] for q in query_ids]
-    ax.barh(y_pos, pcts, color="#66C2A5", edgecolor="none")
+    ax.barh(y_pos, pcts, color=[colors[q] for q in query_ids], edgecolor="none")
     ax.set_yticks(y_pos)
     ax.set_yticklabels([labels[q] for q in query_ids])
     ax.set_xlabel("Share of taxon-focused papers (%)")
@@ -655,7 +726,7 @@ def fig_rq3_theme_top3_heatmap(
         ]
     )
     fig, ax = plt.subplots(figsize=(4.5, 4.8))
-    im = ax.imshow(mat, aspect="auto", cmap="YlGnBu", vmin=0, vmax=max(mat.max(), 1))
+    im = ax.imshow(mat, aspect="auto", cmap="BuPu", vmin=0, vmax=max(mat.max(), 1))
     ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(["#1 %", "#2 %", "#3 %"])
     ax.set_yticks(range(len(query_ids)))
@@ -670,7 +741,7 @@ def fig_rq3_theme_top3_heatmap(
                 f"{v:.1f}",
                 ha="center",
                 va="center",
-                color="white" if v > 25 else "black",
+                color="white" if v > 22 else "#1a1a1a",
                 fontsize=8,
             )
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="% of papers")
@@ -682,7 +753,7 @@ def fig_rq3_not_specified_only(
     metrics: pd.DataFrame,
     query_ids: list[str],
     labels: dict[str, str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
     m = metrics.set_index("query_id").loc[query_ids]
@@ -714,8 +785,9 @@ def fig_rq4_mean_vs_median_authors(
     w = 0.35
     mean_v = [float(m.loc[q, "authors_mean"]) for q in query_ids]
     med_v = [float(m.loc[q, "authors_median"]) for q in query_ids]
-    ax.bar(x - w / 2, mean_v, width=w, label="Mean", color="#8DA0CB", edgecolor="none")
-    ax.bar(x + w / 2, med_v, width=w, label="Median", color="#FC8D62", edgecolor="none")
+    c_mean, c_med = _PAIR_MEAN_MEDIAN
+    ax.bar(x - w / 2, mean_v, width=w, label="Mean", color=c_mean, edgecolor="none")
+    ax.bar(x + w / 2, med_v, width=w, label="Median", color=c_med, edgecolor="none")
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
     ax.set_ylabel("Author count")
@@ -737,8 +809,9 @@ def fig_rq4_authors_applied_vs_taxonomic(
     w = 0.35
     ap = [float(m.loc[q, "authors_mean_applied"]) for q in query_ids]
     tx = [float(m.loc[q, "authors_mean_taxonomic"]) for q in query_ids]
-    ax.bar(x - w / 2, ap, width=w, label="Applied themes", color="#A6D854", edgecolor="none")
-    ax.bar(x + w / 2, tx, width=w, label="Taxonomic theme", color="#FFD92F", edgecolor="none")
+    c_ap, c_tx = _PAIR_APPLIED_TAX
+    ax.bar(x - w / 2, ap, width=w, label="Applied themes", color=c_ap, edgecolor="none")
+    ax.bar(x + w / 2, tx, width=w, label="Taxonomic theme", color=c_tx, edgecolor="none")
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
     ax.set_ylabel("Mean author count")
@@ -768,7 +841,15 @@ def fig_rq4_intl_collab_definitions_comparison(
     for i, (col, name) in enumerate(keys):
         offset = (i - (n_k - 1) / 2) * w
         vals = [float(m.loc[q, col]) for q in query_ids]
-        ax.bar(x + offset, vals, width=w * 0.92, label=name)
+        ax.bar(
+            x + offset,
+            vals,
+            width=w * 0.92,
+            label=name,
+            color=_INTL_DEFINITION_HEX[i],
+            edgecolor="white",
+            linewidth=0.35,
+        )
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=22, ha="right")
     ax.set_ylabel("International collaboration %")
@@ -784,7 +865,7 @@ def fig_rq4_affiliation_signal_coverage(
     metrics: pd.DataFrame,
     query_ids: list[str],
     labels: dict[str, str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
     m = metrics.set_index("query_id").loc[query_ids]
@@ -805,7 +886,7 @@ def fig_rq4_scatter_mean_authors_vs_intl_known(
     metrics: pd.DataFrame,
     query_ids: list[str],
     labels: dict[str, str],
-    colors: dict[str, tuple],
+    colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
     m = metrics.set_index("query_id").loc[query_ids]
@@ -816,8 +897,8 @@ def fig_rq4_scatter_mean_authors_vs_intl_known(
             float(m.loc[q, "intl_collab_pct_known_only_overall"]),
             s=120,
             color=colors[q],
-            edgecolors="black",
-            linewidths=0.4,
+            edgecolors="#2C2C2C",
+            linewidths=0.5,
             zorder=3,
         )
         ax.annotate(labels[q], (float(m.loc[q, "authors_mean"]), float(m.loc[q, "intl_collab_pct_known_only_overall"])), fontsize=7, xytext=(4, 4), textcoords="offset points")
@@ -889,7 +970,7 @@ def main() -> None:
     outputs.append(fig_rq2_geo_temporal_lines_by_taxon(query_ids, labels, out_dir))
     # RQ3
     outputs.append(fig_rq3_theme_top_shares(metrics, query_ids, labels, out_dir))
-    outputs.append(fig_rq3_top1_theme_labeled_bars(metrics, query_ids, labels, out_dir))
+    outputs.append(fig_rq3_top1_theme_labeled_bars(metrics, query_ids, labels, colors, out_dir))
     outputs.append(fig_rq3_theme_top3_heatmap(metrics, query_ids, labels, out_dir))
     outputs.append(fig_rq3_not_specified_only(metrics, query_ids, labels, colors, out_dir))
     # RQ4
