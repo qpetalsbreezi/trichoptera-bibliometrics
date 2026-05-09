@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-05-09T16:31:22.994127+00:00",
+  "git_commit": "e1510b7ad69e4b84b0a454bd6b8761439beb5f71",
+  "query_ids": [
+    "ephemeroptera",
+    "mosquitoes",
+    "odonata",
+    "plecoptera",
+    "trichoptera"
+  ],
+  "inputs": {
+    "yearly_publication_volume_by_query.csv": {
+      "path": "analysis/combined/yearly_publication_volume_by_query.csv",
+      "sha256": "8a5f8a0c83e39e69c69cef5ab26da8dd41734cf908ec817334538a28d946d10d",
+      "n_rows": 80
+    },
+    "cross_taxa_metrics.csv": {
+      "path": "analysis/combined/cross_taxa_metrics.csv",
+      "sha256": "d46d2c83bb4d044dcb6abef8f8bc33aa8cac44ff4d4745c4b31d31e3ae5ae39c",
+      "n_rows": 5
+    }
+  },
+  "figures": [
+    {
+      "pdf": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_facets.pdf",
+      "png": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_facets.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_log_overlay.pdf",
+      "png": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_log_overlay.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq1_database_counts.pdf",
+      "png": "analysis/combined/figures/fig_rq1_database_counts.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq2_geo_mean_continental_stacked.pdf",
+      "png": "analysis/combined/figures/fig_rq2_geo_mean_continental_stacked.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq2_geo_delta_heatmap.pdf",
+      "png": "analysis/combined/figures/fig_rq2_geo_delta_heatmap.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq3_theme_ranked_shares.pdf",
+      "png": "analysis/combined/figures/fig_rq3_theme_ranked_shares.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq4_authors_and_intl_collab.pdf",
+      "png": "analysis/combined/figures/fig_rq4_authors_and_intl_collab.png"
+    }
+  ]
+}

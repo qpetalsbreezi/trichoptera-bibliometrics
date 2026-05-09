@@ -1,0 +1,5 @@
+# Figure pipeline (scripts/visualize/make_combined_figures.py) and analysis stack.
+# For a fully pinned environment, run: pip install -r requirements.txt && pip freeze > requirements.lock
+matplotlib>=3.7.0
+numpy>=1.24.0
+pandas>=2.0.0

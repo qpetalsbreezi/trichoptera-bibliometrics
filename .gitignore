@@ -1,5 +1,6 @@
-# PDF files
+# PDF files (allow reproducible bibliometric figure exports)
 *.pdf
+!analysis/combined/figures/**/*.pdf
 
 # macOS
 .DS_Store
