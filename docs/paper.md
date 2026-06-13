@@ -1,153 +1,103 @@
-# 1. Introduction
+# Geographic Shifts and Thematic Evolution in Aquatic Insect Research: A Comparative Bibliometric Analysis of Culicidae, EPT Taxa, and Odonata (2010–2025)
 
-Trichoptera (caddisflies) are ecologically important aquatic insects. Their larvae are key components of stream food webs and are widely used in water-quality monitoring and conservation. Research on this group spans many areas, including taxonomy, ecology, evolution, water quality, and applied studies. However, few studies synthesize the broader picture: how publications are distributed over time and across regions, which topics dominate, how authors collaborate, and how different databases compare.
+## 1. Introduction
 
-This study uses bibliometrics (the statistical analysis of scientific publications) to map the Trichoptera literature. It addresses four questions: (1) How complete and comparable are different databases? (2) How has publication output changed over time and across regions? (3) How have research themes shifted? (4) What are the patterns of authorship and international collaboration, including differences between applied work and taxonomy? The goal is a quantitative, reproducible synthesis of the literature as represented in bibliographic databases, rather than a narrative review based on a small hand-picked set of studies.
+Aquatic insects are among the most important organisms in freshwater ecosystems, contributing to nutrient cycling, energy transfer, decomposition, and predator–prey interactions. Because many species are sensitive to environmental disturbance, aquatic insects are also widely used as indicators of water quality and ecosystem health. Consequently, they have been the focus of extensive research across ecology, conservation, biomonitoring, taxonomy, evolution, and environmental management.
 
-The manuscript is structured as follows: Methods (§2), Results (§3), and Discussion (§4). Results follow the order of the questions above.
+The aquatic insect groups examined in this study differ substantially in both their ecological roles and relevance to human society. Ephemeroptera (mayflies), Plecoptera (stoneflies), and Trichoptera (caddisflies), collectively EPT taxa, are widely used in freshwater biomonitoring because many species are sensitive to pollution and habitat degradation. Odonata (dragonflies and damselflies) are important aquatic predators and are frequently studied as indicators of biodiversity and habitat quality. In contrast, Culicidae (mosquitoes) are among the most intensively studied aquatic insects because of their role as vectors of diseases affecting humans and wildlife. These differences in ecological function and societal importance may influence research priorities, publication output, the geographic distribution of studies, and patterns of scientific collaboration.
+
+Despite the large volume of literature on these taxa, few studies have systematically compared publication patterns across groups or tracked how research effort has changed over time. Bibliometric analysis provides a quantitative framework for examining scientific activity through publication trends, research themes, authorship structure, and collaboration networks. Using Scopus records from 2010 to 2025 for each taxon, with a Scopus–Google Scholar comparison for a benchmark year, we analyzed temporal and geographic patterns, thematic composition, and authorship and collaboration across Culicidae, EPT taxa, and Odonata.
+
+We addressed four questions:
+
+1. How do Scopus and Google Scholar overlap in their coverage of literature on each taxon?
+2. How has publication output changed over time and across geographic regions?
+3. What research themes dominate the literature for each taxon, and how have they shifted over time?
+4. What are the patterns of authorship and international collaboration across taxa and among research specialties?
+
+By systematically comparing these groups, we sought to characterize geographic shifts and thematic evolution in aquatic insect research across disciplines, regions, and the 2010–2025 study period.
 
 ## 2. Methods
 
-### 2.1 Overview
+### 2.1 Study design and data collection
 
-The Methods section follows the workflow used to construct and analyze the bibliographic dataset. First, records were collected from the Scopus database, and a smaller dataset was collected from Google Scholar for database comparison. Second, records were cleaned and duplicates were removed. Third, missing metadata such as abstracts, author lists, and affiliations were added from other bibliographic sources. Fourth, each paper was classified into predefined thematic and geographic categories using a large language model. Finally, the resulting dataset was analyzed to address the research questions. The subsections below describe each stage of this process; subsection 2.7 summarizes software, credentials, and reproducibility.
+We applied one bibliometric workflow to five aquatic insect taxa (Table 1): Culicidae; Ephemeroptera, Plecoptera, and Trichoptera (EPT, three separate searches); and Odonata. Each taxon had its own Scopus and Google Scholar searches, processed files, and coded dataset (records were not merged across taxa).
 
-### 2.2 Data collection
+**Table 1. Scopus search queries by taxon** (terms searched in title, abstract, and keywords)
 
-#### 2.2.1 Scopus retrieval
+| Taxon | Search terms |
+| --- | --- |
+| Culicidae | mosquito, mosquitoes, Culicidae |
+| Ephemeroptera | Ephemeroptera, mayfly, mayflies |
+| Plecoptera | Plecoptera, stonefly, stoneflies |
+| Trichoptera | Trichoptera, caddisfly, caddisflies, caddis fly, caddis flies |
+| Odonata | Odonata, dragonfly, dragonflies, damselfly, damselflies |
 
-Relevant publications were retrieved from the Scopus database using Elsevier’s Scopus Search API (an application programming interface for automated queries). The search was limited to records in which Trichoptera or common English names for caddisflies (e.g., caddisfly, caddisflies) appeared in the title, abstract, or keywords. To obtain complete coverage for each calendar year, the search period was sometimes divided into months or quarters and records were retrieved sequentially. The default metadata supplied by this interface includes core bibliographic information such as title, journal, publication year, DOI, citation count, document type, and pagination fields. However, full abstracts and complete author lists were often missing, so this information was obtained from other sources as described below.
+Publications were retrieved with Elsevier’s Scopus Search API using the queries in Table 1. Calendar years 2010–2025 were fetched sequentially; large years were subdivided into months or quarters to stay within API pagination limits. The API supplied standard bibliographic metadata (title, journal, year, DOI, citations, document type). Full abstracts and complete author lists were often missing and were obtained as described in section 2.2.
 
-#### 2.2.2 Google Scholar
+For database comparison, taxon-matched Google Scholar results for 2023 were retrieved with Publish or Perish using the same search terms as in Table 1 (1,000-result cap per query). Scopus records for the same year used the workflow above.
 
-For database coverage, records from Scopus were compared with Trichoptera-related results from Google Scholar for one publication year (the same calendar year for both sources). Google Scholar results were retrieved using the Publish or Perish software, whereas Scopus records were retrieved through the API described above. The two sources therefore differ in how queries are defined and in how complete the returned lists are. The comparison reports overlap between the two lists, records unique to each database, and basic citation statistics, without assuming equivalent search logic or coverage.
+### 2.2 Data processing and metadata enrichment
 
-### 2.3 Data cleaning
+Yearly Scopus exports were combined and deduplicated in two steps: one row per DOI when present, then one row per normalized title (lowercase, trimmed whitespace; first occurrence retained). Each record kept its publication year for temporal analysis and downstream linking.
 
-Yearly Scopus exports were combined into a single dataset so that publication counts by year would not double-count the same article. Duplicate removal proceeded in two steps. First, when a digital object identifier (DOI) was present, we retained a single row per DOI. Second, we removed remaining duplicates by title: titles were normalized to lowercase with leading and trailing whitespace removed, and the first occurrence of each normalized title was kept. Each retained record kept its publication year for later temporal analysis and for linking to downstream metadata and analyses.
+Where a DOI was available, missing abstracts were retrieved in fixed order: OpenAlex, Semantic Scholar, CrossRef, then PubMed for biomedical items; the first hit was used. Records without abstracts were still classified; missing abstract text was noted for downstream use. Author lists, author counts, and affiliations were retrieved from OpenAlex via DOI lookup for collaboration analyses and as supplemental geographic context.
 
-### 2.4 Metadata completion
+### 2.3 Automated classification
 
-#### 2.4.1 Abstract retrieval
+Each record retained Scopus bibliographic fields plus four LLM-assigned variables:
 
-Thematic and geographic coding required abstracts, which were often not included in the Scopus records. Where a DOI was available, abstracts were retrieved from other open bibliographic services in a fixed order: OpenAlex, then Semantic Scholar, then CrossRef, and then PubMed for biomedical items. The first source that returned an abstract was used. We tracked how many abstracts were recovered from each source and how many records still lacked an abstract. Records without abstracts were still classified later but were marked as missing abstract text.
+- **Country:** primary study country (standard name), or blank if unknown.
+- **Global biogeographic region:** Oriental, Neotropical, Nearctic, Palearctic, East Palearctic, Afrotropical, Australasian, Global, or Not Specified (formal biogeographic labels, not map coordinates).
+- **Primary research theme:** Taxonomy/Systematics, Ecology/Behavior, Biomonitoring/Water Quality, Evolution/Phylogeny, Conservation, Materials Science (Silk), Physiology, Applied Ecology, Other, or Not Specified. Materials Science (Silk) applies mainly to Trichoptera.
+- **Taxon relevance:** Primary focus, Secondary mention, Peripheral, or Not target-taxon-focused.
 
+For continental summaries, biogeographic regions were mapped to South America, Asia, Europe, North America, Other, or Unknown (e.g., Nearctic and Neotropical to North and South America, Palearctic and East Palearctic to Europe and Asia). For selected collaboration comparisons (section 2.4.3), themes were also grouped as *applied* (Biomonitoring/Water Quality, Applied Ecology, Conservation, Materials Science [Silk]), *taxonomic* (Taxonomy/Systematics), or *other* (all remaining themes).
 
-#### 2.4.2 Author and affiliation data
+Papers were classified with OpenAI GPT-4o-mini (temperature 0) from title, abstract (or a statement that no abstract was available), and title-matched affiliations. Instructions and category definitions were shared across taxa; each run named the target taxon in the prompt (e.g., Culicidae vs Trichoptera). The model was instructed to assign labels only when supported by the title or abstract, to prefer the most specific applicable category, and not to infer missing study details. Geography prioritized explicit study locations in title/abstract, then other text cues, then affiliations; one primary location when several were mentioned. Theme was a single primary category, with prompt cues separating overlapping labels (taxonomy vs phylogeny, ecology vs biomonitoring, silk-focused materials work). Taxon relevance excluded keyword hits not centered on the taxon. The full prompt is available on request.
 
-Complete author lists and affiliation information were retrieved from OpenAlex using DOI-based record lookups. For each publication, we retained full author names, total author count, and affiliation context linked to the listed authors. These metadata supported collaboration analyses, including international co-authorship patterns, and provided additional geographic context when study location was not explicit in the title or abstract.
+### 2.4 Bibliometric analysis
 
-#### 2.4.3 Terminology, abbreviations, and coded fields
+The analyses below correspond to the four questions in the Introduction. Analyses of publication volume, geography, themes, and collaboration used 2010–2025 papers not classified as not target-taxon-focused (Primary focus, Secondary mention, and Peripheral retained). Metrics were computed per taxon with identical rules; combined tables and figures compare all five corpora side by side. The database-overlap analysis (section 2.4.1) used all 2023 records from section 2.1, without the taxon-relevance filter.
 
-The following terms appear in the Results tables and text. Where replication matters, the analysis files use the column names shown in parentheses.
+#### 2.4.1 Database overlap and coverage
 
-Abbreviations: API = application programming interface (here, Elsevier’s programmatic access to Scopus). LLM = large language model (OpenAI GPT-4o-mini was used for coding). Section cross-references use the § symbol (for example, §3.2 means Section 3.2).
+For each taxon, 2023 Scopus and Google Scholar records were paired by DOI, or by title similarity of at least 0.85 on normalized titles when DOIs were absent. We reported overlap, database-unique records, and citation summaries. Language was flagged with a simple character-based rule (non-Latin scripts or common diacritics), not full language identification. Journals were labeled regional when the title suggested national/regional scope, otherwise international/general; missing names were set aside.
 
-The coded exports include: assigned biogeographic region (Region_Global); assigned primary research theme (Research_Theme); author count from OpenAlex after linking records (Author_Count_Actual); and international collaboration class—International, National, or Unknown—from the rules in subsection 2.6.5 (affiliation-based country cues when OpenAlex affiliation text was used in the analysis, otherwise the assigned global region).
+#### 2.4.2 Temporal, geographic, and thematic patterns
 
-Biogeographic category names (Oriental, Neotropical, Palearctic, Afrotropical, and others in subsection 2.5.1) follow a standard global biogeographic scheme. They are coding labels, not map coordinates. In particular, Oriental names a formal biogeographic region and is used here only in that sense.
+Publication volume and geography used each taxon’s filtered dataset described above. Countries were harmonized; one primary location was kept when multiple appeared. Summaries were by region and year, with country-level concentration across 2010–2025. Continental shifts compared mean within-year shares between early and recent multi-year periods within the study window. Locations reflect LLM-inferred study geography from text, not geocoding of addresses. Theme counts used each paper’s assigned primary research theme, summarized in multi-year bands and by year; ranked cross-taxa theme summaries exclude Not Specified.
 
-For readability, some tables map global region categories to simplified continental groups (South America, Asia, Europe, North America, Other, Unknown), as described in Section 3.2.
+#### 2.4.3 Authorship and collaboration
 
-### 2.5 Classification
+Team size used OpenAlex author counts, binned as single author, two, three to five, six to ten, or more than ten. Research specialties were primary themes; selected tables use the applied, taxonomic, and other theme groups defined in section 2.3. International collaboration labels used, in order: multiple vs single ISO country codes in author metadata; if missing, country keywords in affiliation text; if still missing, assigned global region (Global → International; any other specified region → National; Not Specified or missing → Unknown). Rates and team size were compared across taxa and among specialties, and among applied, taxonomic, and other groups in selected tables.
 
-#### 2.5.1 Schema
+### 2.5 Software and reproducibility
 
-Classification added four variables to each record, while bibliographic fields such as title and year continued to come from Scopus. Country was recorded as free text, representing the primary country where the research was conducted, expressed as a standard country name, or left blank when no location could be inferred. Global biogeographic region was assigned as one of the following categories: Oriental, Neotropical, Nearctic, Palearctic, East Palearctic, Afrotropical, Australasian, Global, or Not Specified. Research theme was assigned as one of the following categories: Taxonomy/Systematics, Ecology/Behavior, Biomonitoring/Water Quality, Evolution/Phylogeny, Conservation, Materials Science (Silk), Physiology, Applied Ecology, Other, or Not Specified. Trichoptera relevance was assigned as one of the following categories: Primary focus, Secondary mention, Peripheral, or Not Trichoptera-focused.
-
-#### 2.5.2 LLM classification
-
-Each paper was classified automatically using OpenAI’s GPT-4o-mini model with deterministic settings and the coding schema described above. For each record, the model received the title, abstract (if available), and affiliations when available. Affiliations were matched to the Scopus record by title and appended after the abstract. The same written instructions and category definitions were applied to every paper so that the coding process could be documented and reproduced (see subsection 2.7). Each record was then represented by the original bibliographic fields, the coded variables, and an indicator of whether an abstract was available for that paper.
-
-#### 2.5.3 Prompt instructions
-
-A single standardized instruction set was used for all records to ensure consistent classification across the dataset. For each paper, the model received the title, abstract (or an explicit indication that no abstract was available), and affiliation context when available. The instructions required evidence-based coding, emphasized choosing the most specific category supported by the text, and prohibited inventing missing study details.
-
-Geographic coding followed a structured decision order. The model prioritized explicit study-location information in the title or abstract, then other geographic cues in the study description, and used affiliation context only when direct location information was unavailable. When multiple locations were mentioned, the model selected the primary research location. Global region labels were then assigned from the inferred location, with reserved categories for genuinely global studies and for cases where location could not be determined. Outputs were constrained to a consistent structured format so classifications could be recorded and analyzed reproducibly.
-
-Research theme was assigned as a single primary category from the schema in subsection 2.5.1. The prompt directed the model to base the choice on the title and abstract (and general study focus), to prefer the most specific label the text supported, and to reserve “Other” for papers that did not fit any named theme and “Not Specified” when the work’s main thrust could not be determined. Short cues in the instructions distinguished overlapping themes (for example, taxonomy or species work versus phylogenetic analysis, ecology and behavior versus use of caddisflies as bioindicators in monitoring, and materials work limited to silk-focused studies). The theme counts and percentages in Section 3.3 are simple tallies of each paper’s assigned primary research theme, not separate keyword searches.
-
-### 2.6 Analysis
-
-#### 2.6.1 Analytical sample (years and relevance filter)
-
-Analyses for research questions 2–4 were restricted to publications from 2010 to 2025 and to papers classified as having at least some substantive Trichoptera focus. Papers classified as not Trichoptera-focused were excluded. The resulting set was used for geographic, thematic, and collaboration analyses, with the usual limitations of automated relevance classification.
-
-#### 2.6.2 Database overlap, citations, language, and journal type
-
-For the 2023 comparison year, records in Scopus and Google Scholar were paired where possible by matching DOIs, and when DOIs were missing, by high similarity between titles so that minor formatting differences still identified the same article. We reported how many records appeared in both databases, how many were unique to each database, and summarized citation-related measures for comparison. Language of the title and abstract was described using a simple rule based on character patterns, for example non-Latin scripts or common diacritics associated with non-English text. This is a rough indicator only and not full language identification. Journals were classified from their titles as regional when the name suggested a national or regional scope. When no such cue appeared but a journal name was present, the outlet was treated as international or general. Names that were missing or unusable were set aside separately. This rule avoids treating most major journals as “unknown” solely because the title does not name a country.
-
-#### 2.6.3 Temporal and geographic variation
-
-Publication volume and geographic patterns were summarized over time using the filtered, coded dataset. Country labels were harmonized to standard forms, and when multiple countries were present in a single record, one primary study location was retained for consistency. The main temporal summaries were reported at the regional level by year, with country-level summaries used to describe overall geographic concentration across the study period. These results reflect locations inferred from text during classification, not locations produced by a separate step that assigns coordinates from maps or postal addresses.
-
-#### 2.6.4 Thematic evolution
-
-Theme frequencies were taken from the primary research theme produced by the automated coding step. Themes were summarized across three multi-year bands (early, middle, and recent within 2010–2025) and also year by year, so that short-term fluctuations and longer trends could both be observed.
-
-#### 2.6.5 Authorship, collaboration size, and international collaboration
-
-Authorship and collaboration were analyzed using enriched author metadata, with records grouped into predefined collaboration-size categories. For thematic comparisons, papers were collapsed into applied, taxonomic, and other groups. International collaboration labels were assigned in one of two ways, depending on whether OpenAlex author data with full affiliation text were included in the analysis. When they were, a fixed list of country and institutional keywords was applied to each paper’s affiliation text: multiple distinct country cues yielded International, a single cue National, and no clear cue or missing text Unknown; the LLM-assigned global region was not used in that case. When OpenAlex affiliation text was not used in the analysis, labels were inferred only from the LLM-assigned global biogeographic region instead: Global was labeled International, any other non–Not Specified region National, and Not Specified or missing Unknown. Collaboration rates were compared across thematic groups, and team size was summarized over time. Team size and internationality were interpreted as related but distinct dimensions of collaboration.
-
-### 2.7 Software, credentials, and reproducibility
-
-The steps above were implemented in Python using common tools for data tables, web requests, and the OpenAI service. Access credentials for Scopus and OpenAI were stored locally and not distributed with any public code archive. Reproducibility rests on the documented coding scheme, prompts, and analysis rules rather than on sharing full intermediate files, which can be large; such files may be archived outside the code repository when needed.
+Analyses were implemented in Python using pandas and provider API clients for Scopus, OpenAlex, and OpenAI. The same workflow was repeated for each taxon with taxon-specific search strings (Table 1) and classification prompts. Query definitions, prompts, and analysis code are available on request.
 
 ## 3. Results
 
 ### 3.1 Database overlap and coverage (2023)
 
-Records from 2023 were compared between the Scopus retrieval described in subsection 2.2.1 and Google Scholar results from Publish or Perish. Pairs were matched by DOI when possible, otherwise by high title similarity (Methods, subsection 2.6.2). The tables below report list sizes, overlap, journal and language splits, and citation summaries.
+Scopus search volume in 2023 differed by more than an order of magnitude across taxa (Table 2). For example, Culicidae returned 4,307 records whereas Plecoptera returned 153. Google Scholar totals were retrieved with the same search terms but were capped at 1,000 records per query (Methods, section 2.1).
 
-#### Basic statistics
+Analytical sample: all deduplicated 2023 Scopus records from section 2.1 and taxon-matched Google Scholar results from Publish or Perish (Methods, sections 2.1 and 2.4.1). Records were paired by DOI when present, otherwise by normalized-title similarity of at least 0.85. This comparison did not apply the taxon-relevance filter used in sections 3.2–3.4; it describes database retrieval for the raw search terms in Table 1.
 
-| | Scopus | Google Scholar |
-|---|--------|----------------|
-| Total papers | 261 | 993 |
-| Ratio (Google Scholar / Scopus) | — | 3.80 |
+**Table 2. Scopus and Google Scholar coverage by taxon (2023)**
 
-#### Overlap analysis
+| Metric | Culicidae | Ephemeroptera | Plecoptera | Trichoptera | Odonata |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Scopus total | 4,307 | 409 | 153 | 261 | 903 |
+| Google Scholar total | 1,000 | 997 | 980 | 993 | 1,000 |
+| Overlap (both) | 863 | 369 | 136 | 230 | 400 |
+| Overlap / Scopus (%) | 20.0 | 90.2 | 88.9 | 88.1 | 44.3 |
 
-| | Count |
-|---|------:|
-| Papers in both databases | 230 |
-| Matched by DOI | 88 |
-| Matched by title similarity | 142 |
-| Unique to Scopus only | 31 (11.9% of Scopus records) |
-| Unique to Google Scholar only | 763 (76.8% of Google Scholar records) |
-
-#### Journal type distribution
-
-Journal labels are International, Regional, or Unknown (Methods, subsection 2.6.2).
-
-| Label | Scopus | Google Scholar |
-|-------|--------|----------------|
-| International | 243 (93.1%) | 794 (80.0%) |
-| Regional | 18 (6.9%) | 28 (2.8%) |
-| Unknown | — | 171 (17.2%) |
-
-#### Language distribution
-
-| | Scopus | Google Scholar |
-|---|--------|----------------|
-| English | 244 (93.5%) | 842 (84.8%) |
-| Non-English | 17 (6.5%) | 151 (15.2%) |
-
-#### Citation statistics
-
-These values are each database’s count of how many times a given paper has been cited there (per-record totals, as stored by Scopus and Google Scholar).
-
-| | Scopus | Google Scholar |
-|---|--------|----------------|
-| Mean citations per record | 4.51 | 7.32 |
-| Median | 2.00 | 1.00 |
-| Minimum | 0 | 0 |
-| Maximum | 49 | 598 |
-| Sum of citation counts (all records) | 1,177 | 7,272 |
+Google Scholar list sizes clustered at or just below 1,000 for every taxon (Table 2). Overlap with Scopus ranged from 20.0% (Culicidae) to 88–90% (Ephemeroptera, Plecoptera, and Trichoptera) and was 44.3% for Odonata. The number of records appearing in both databases was 136–863 depending on taxon.
 
 ### 3.2 Temporal and geographic variation (2010–2025)
 
-Analytical sample: *N* = 2,870 papers (2010–2025), excluding records classified as not Trichoptera–focused (Methods, subsection 2.6.1). Each publication appears at most once: Scopus-based records were deduplicated first by DOI, then by normalized title, so the counts do not double-count the same article.
+Analytical sample: *N* = 2,870 papers (2010–2025), excluding records classified as not Trichoptera–focused (Methods, section 2.4). Each publication appears at most once: Scopus-based records were deduplicated first by DOI, then by normalized title, so the counts do not double-count the same article.
 
 Country and global biogeographic region come from the automated coding step (title, abstract, affiliations when used). They describe where the study was inferred to take place, not a separate analysis of author mailing addresses alone.
 
@@ -215,7 +165,7 @@ Each cell is the count followed by the percent of that year’s total.
 
 ### 3.3 Thematic evolution (2010–2025)
 
-Analytical sample: same *N* and filters as §3.2. Each paper has one primary research theme from the LLM (Methods, subsections 2.5–2.6.4; see subsection 2.4.3 for abbreviations).
+Analytical sample: same *N* and filters as §3.2. Each paper has one primary research theme from the LLM (Methods, sections 2.3–2.4.2).
 
 The following tables summarize overall theme frequencies, year-by-year shares for the most common themes, and theme composition within each biogeographic region.
 
@@ -341,11 +291,11 @@ Percentages are within each region. Each block lists the five most frequent prim
 
 ### 3.4 Authorship and collaboration (2010–2025)
 
-This subsection reports team size, author-count groups (for example, single author versus three to five authors), year-by-year splits for taxonomic versus non-taxonomic papers, and international collaboration class (subsection 2.4.3).
+This subsection reports team size, author-count groups (for example, single author versus three to five authors), year-by-year splits for taxonomic versus non-taxonomic papers, and international collaboration class (section 2.4.3).
 
 Analytical sample: *N* = 2,845 after combining OpenAlex author metadata and excluding papers with no authors recorded (author count zero). That filter makes this sample slightly smaller than §3.2–3.3.
 
-Study-type groups for comparison: *Applied* = Biomonitoring/Water Quality, Applied Ecology, Conservation, Materials Science (Silk); *taxonomic* = Taxonomy/Systematics; *other* = all remaining themes. *Non-taxonomic* tables combine applied and other papers. Team sizes use the OpenAlex author count (Methods, subsection 2.6.5).
+Study-type groups for comparison: *Applied* = Biomonitoring/Water Quality, Applied Ecology, Conservation, Materials Science (Silk); *taxonomic* = Taxonomy/Systematics; *other* = all remaining themes. *Non-taxonomic* tables combine applied and other papers. Team sizes use the OpenAlex author count (Methods, section 2.4.3).
 
 #### Overall authorship
 
@@ -462,7 +412,7 @@ Percentages are within each study-type group.
 
 #### International collaboration
 
-Labels follow subsection 2.6.5: affiliation-based country cues when OpenAlex affiliation text was used in the analysis, otherwise inference from the assigned global biogeographic region.
+Labels follow section 2.4.3: affiliation-based country cues when OpenAlex affiliation text was used in the analysis, otherwise inference from the assigned global biogeographic region.
 
 ##### Overall (*n* = 2,845)
 
@@ -486,11 +436,11 @@ Percentages sum to 100% within each study-type group.
 
 ### 4.1 Database overlap and coverage
 
-For 2023, Google Scholar returned many more records than Scopus (993 vs. 261; ratio 3.8×). The two sources use different query and completeness logic, so these totals should not be read as unbiased estimates of a single underlying “true” population.
+The RQ1 comparison in section 3.1 is constrained most strongly by the Publish or Perish retrieval cap of 1,000 Google Scholar records per query. Because that ceiling binds for every taxon, Google Scholar list sizes near 1,000 do not support rank-order claims about which taxa have the largest literature online. They only describe the first tranche of hits returned under a fixed export limit.
 
-Overlap was nonetheless substantial: 230 papers (88.1% of the Scopus list) appeared in both databases, including 88 matched by DOI and 142 by title similarity. Thirty-one records were unique to Scopus (11.9% of Scopus records) and 763 were unique to Google Scholar (76.8% of Google Scholar records). Journal-type and language splits show how each export records those attributes. Citation statistics reflect each database’s own citation counts, not a hand-checked audit across the open literature.
+Pairing a complete 2023 Scopus slice with a truncated Google Scholar sample also limits how overlap percentages should be read. For Ephemeroptera, Plecoptera, and Trichoptera, where Scopus returned fewer than about 1,000 records, 88–90% of the Scopus list also appeared in the Google Scholar export (Table 2). That pattern is consistent with substantial agreement on a bounded set of records, but it does not reveal how many additional Google Scholar hits lie beyond the first 1,000. For Culicidae, Scopus alone returned 4,307 records—more than four times the export limit—so the 20.0% overlap with Scopus mainly reflects incomplete Google Scholar sampling rather than a direct estimate of database disagreement across the full corpus. Odonata (903 Scopus records; 44.3% overlap) falls between these cases, and the same truncation issue applies.
 
-The Google Scholar export was limited by Publish or Perish’s retrieval cap (1,000 results), so its list size reflects that ceiling as well as the query. Language labels use a simple character-based rule and can misclassify some text. Journal categories are rule-based and coarse; they are not a formal measure of journal prestige.
+We therefore treat RQ1 as a feasibility check, not a definitive audit of either database. Scopus offers consistent metadata retrieval across 2010–2025 without the export ceiling that affects Google Scholar in this workflow, so it remains the primary source for sections 3.2–3.4. Title- and DOI-based matching also leaves some records unpaired, and the two platforms index different source types and apply different completeness rules; those differences were not resolved here. Stronger statements about database equivalence would require an uncapped or otherwise comparable Google Scholar retrieval strategy, ideally with independent validation of missed records.
 
 ### 4.2 Temporal and geographic patterns
 
@@ -516,6 +466,6 @@ Applied-themed papers (§3.4) averaged more authors (4.74) than taxonomic papers
 
 In total, 70.6% of papers had three or more authors. Contrasts between author-count groups (for example, more papers with six to ten authors in applied than in taxonomic groups) summarize how collaboration size differs by theme split.
 
-International labels are unreliable for this dataset: only 2.3% of papers were classified as International overall, and 79.2% were Unknown under the rules in subsection 2.6.5. Taxonomic papers had a slightly higher International share (3.1%) than applied papers (1.2%), a −1.9 point gap relative to a simple guess that applied work would be more international. With so much missing signal, between-type gaps should be read as how often the assignment rules produced a label, not as proof of cross-border collaboration rates.
+International labels are unreliable for this dataset: only 2.3% of papers were classified as International overall, and 79.2% were Unknown under the rules in section 2.4.3. Taxonomic papers had a slightly higher International share (3.1%) than applied papers (1.2%), a −1.9 point gap relative to a simple guess that applied work would be more international. With so much missing signal, between-type gaps should be read as how often the assignment rules produced a label, not as proof of cross-border collaboration rates.
 
 Study-type comparisons also depend on how well the primary theme codes match the papers. “Applied” here means only papers whose primary coded theme falls in the four applied categories, not every applied study on caddisflies. Excluding papers with no authors recorded yields a slightly smaller authorship sample (2,845) than the geographic and thematic sample (2,870).
