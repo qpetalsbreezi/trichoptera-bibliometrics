@@ -80,9 +80,9 @@ Analyses were implemented in Python using pandas and provider API clients for Sc
 
 ### 3.1 Database overlap and coverage (2023)
 
-Scopus search volume in 2023 differed by more than an order of magnitude across taxa (Table 2). For example, Culicidae returned 4,307 records whereas Plecoptera returned 153. Google Scholar totals were retrieved with the same search terms but were capped at 1,000 records per query (Methods, section 2.1).
+Scopus returned very different numbers of 2023 records for each taxon (Table 2). For example, Culicidae returned 4,307 records and Plecoptera returned 153. Google Scholar was searched with the same terms, but each query returned at most 1,000 records (Methods, section 2.1).
 
-Analytical sample: all deduplicated 2023 Scopus records from section 2.1 and taxon-matched Google Scholar results from Publish or Perish (Methods, sections 2.1 and 2.4.1). Records were paired by DOI when present, otherwise by normalized-title similarity of at least 0.85. This comparison did not apply the taxon-relevance filter used in sections 3.2–3.4; it describes database retrieval for the raw search terms in Table 1.
+Analytical sample: all 2023 Scopus records after duplicate removal, plus matching Google Scholar results from Publish or Perish (Methods, sections 2.1 and 2.4.1). Records were matched by DOI when available, or by title when standardized titles were at least 85% similar. This comparison did not use the taxon-focus screen applied in sections 3.2–3.4; it includes all records returned by the search terms in Table 1.
 
 **Table 2. Scopus and Google Scholar coverage by taxon (2023)**
 
@@ -93,7 +93,7 @@ Analytical sample: all deduplicated 2023 Scopus records from section 2.1 and tax
 | Overlap (both) | 863 | 369 | 136 | 230 | 400 |
 | Overlap / Scopus (%) | 20.0 | 90.2 | 88.9 | 88.1 | 44.3 |
 
-Google Scholar list sizes clustered at or just below 1,000 for every taxon (Table 2). Overlap with Scopus ranged from 20.0% (Culicidae) to 88–90% (Ephemeroptera, Plecoptera, and Trichoptera) and was 44.3% for Odonata. The number of records appearing in both databases was 136–863 depending on taxon.
+Google Scholar returned close to 1,000 records for every taxon (Table 2), reflecting the export limit. The share of Scopus records also found in Google Scholar ranged from 20.0% (Culicidae) to 88–90% (Ephemeroptera, Plecoptera, and Trichoptera) and was 44.3% for Odonata. Between 136 and 863 records appeared in both databases, depending on taxon.
 
 ### 3.2 Temporal and geographic variation (2010–2025)
 
