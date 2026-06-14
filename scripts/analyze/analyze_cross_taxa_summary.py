@@ -272,8 +272,15 @@ RQ3_THEME_SHIFT_THEMES = [
     "Not Specified",
 ]
 
-THEME_SHIFT_EARLY_YEARS = (2010, 2015)
-THEME_SHIFT_RECENT_YEARS = (2021, 2025)
+# Harmonized early/recent comparison windows (6 years each; 2016–2019 buffer).
+EARLY_WINDOW = (2010, 2015)
+RECENT_WINDOW = (2020, 2025)
+EARLY_YEARS = list(range(EARLY_WINDOW[0], EARLY_WINDOW[1] + 1))
+RECENT_YEARS = list(range(RECENT_WINDOW[0], RECENT_WINDOW[1] + 1))
+EARLY_WINDOW_LABEL = "2010–2015"
+RECENT_WINDOW_LABEL = "2020–2025"
+THEME_SHIFT_EARLY_YEARS = EARLY_WINDOW
+THEME_SHIFT_RECENT_YEARS = RECENT_WINDOW
 
 
 def theme_share_pct(df: pd.DataFrame, theme: str, year_lo: int, year_hi: int) -> float:
@@ -350,7 +357,7 @@ class TaxonMetrics:
     geo_na_avg_pct: float
     geo_unknown_avg_pct: float
 
-    geo_sa_delta_2010_2012_vs_2023_2025_pp: float
+    geo_sa_delta_2010_2015_vs_2020_2025_pp: float
     geo_asia_delta_pp: float
     geo_europe_delta_pp: float
     geo_na_delta_pp: float
@@ -380,8 +387,8 @@ def compute_metrics_for_query(query_id: str) -> TaxonMetrics:
     if n == 0:
         raise SystemExit(f"No rows after filtering for query_id={query_id!r}.")
 
-    early = int(df[df["Year"].between(2010, 2015)].shape[0])
-    recent = int(df[df["Year"].between(2020, 2025)].shape[0])
+    early = int(df[df["Year"].between(*EARLY_WINDOW)].shape[0])
+    recent = int(df[df["Year"].between(*RECENT_WINDOW)].shape[0])
     pct_change = ((recent - early) / early * 100.0) if early > 0 else 0.0
 
     themes = df["Research_Theme"].fillna("").astype(str).str.strip()
@@ -404,7 +411,7 @@ def compute_metrics_for_query(query_id: str) -> TaxonMetrics:
     na_avg = mean_category_share(props, "North America")
     unk_avg = mean_category_share(props, "Unknown")
 
-    deltas = compare_early_recent(props, [2010, 2011, 2012], [2023, 2024, 2025])
+    deltas = compare_early_recent(props, EARLY_YEARS, RECENT_YEARS)
 
     merged, has_authors = merge_authors_like_rq4(df, paths)
     author_count = compute_author_count(merged, has_authors and "Author_Count_Actual" in merged.columns)
@@ -417,8 +424,8 @@ def compute_metrics_for_query(query_id: str) -> TaxonMetrics:
     authors_mean = float(merged["AuthorCount"].mean())
     authors_median = float(merged["AuthorCount"].median())
 
-    early_df = merged[merged["Year"].between(2010, 2015)]
-    recent_df = merged[merged["Year"].between(2020, 2025)]
+    early_df = merged[merged["Year"].between(*EARLY_WINDOW)]
+    recent_df = merged[merged["Year"].between(*RECENT_WINDOW)]
     authors_early_mean = float(early_df["AuthorCount"].mean()) if len(early_df) else 0.0
     authors_recent_mean = float(recent_df["AuthorCount"].mean()) if len(recent_df) else 0.0
 
@@ -465,7 +472,7 @@ def compute_metrics_for_query(query_id: str) -> TaxonMetrics:
         geo_europe_avg_pct=eu_avg,
         geo_na_avg_pct=na_avg,
         geo_unknown_avg_pct=unk_avg,
-        geo_sa_delta_2010_2012_vs_2023_2025_pp=float(deltas["South America_delta_pp"]),
+        geo_sa_delta_2010_2015_vs_2020_2025_pp=float(deltas["South America_delta_pp"]),
         geo_asia_delta_pp=float(deltas["Asia_delta_pp"]),
         geo_europe_delta_pp=float(deltas["Europe_delta_pp"]),
         geo_na_delta_pp=float(deltas["North America_delta_pp"]),
@@ -503,12 +510,12 @@ def metrics_to_row(m: TaxonMetrics) -> dict:
         "geo_avg_europe_pct": round_one_decimal(m.geo_europe_avg_pct),
         "geo_avg_north_america_pct": round_one_decimal(m.geo_na_avg_pct),
         "geo_avg_unknown_pct": round_one_decimal(m.geo_unknown_avg_pct),
-        "geo_delta_pp_south_america_2010_2012_vs_2023_2025": round_one_decimal(
-            m.geo_sa_delta_2010_2012_vs_2023_2025_pp
+        "geo_delta_pp_south_america_2010_2015_vs_2020_2025": round_one_decimal(
+            m.geo_sa_delta_2010_2015_vs_2020_2025_pp
         ),
-        "geo_delta_pp_asia_2010_2012_vs_2023_2025": round_one_decimal(m.geo_asia_delta_pp),
-        "geo_delta_pp_europe_2010_2012_vs_2023_2025": round_one_decimal(m.geo_europe_delta_pp),
-        "geo_delta_pp_north_america_2010_2012_vs_2023_2025": round_one_decimal(m.geo_na_delta_pp),
+        "geo_delta_pp_asia_2010_2015_vs_2020_2025": round_one_decimal(m.geo_asia_delta_pp),
+        "geo_delta_pp_europe_2010_2015_vs_2020_2025": round_one_decimal(m.geo_europe_delta_pp),
+        "geo_delta_pp_north_america_2010_2015_vs_2020_2025": round_one_decimal(m.geo_na_delta_pp),
         "authors_mean": round_one_decimal(m.authors_mean),
         "authors_median": round_one_decimal(float(m.authors_median)),
         "authors_mean_early_2010_2015": round_one_decimal(m.authors_early_mean),
@@ -614,12 +621,12 @@ def render_markdown(rows: list[dict]) -> str:
     ))
     out.append(tbl(
         [
-            "geo_delta_pp_south_america_2010_2012_vs_2023_2025",
-            "geo_delta_pp_asia_2010_2012_vs_2023_2025",
-            "geo_delta_pp_europe_2010_2012_vs_2023_2025",
-            "geo_delta_pp_north_america_2010_2012_vs_2023_2025",
+            "geo_delta_pp_south_america_2010_2015_vs_2020_2025",
+            "geo_delta_pp_asia_2010_2015_vs_2020_2025",
+            "geo_delta_pp_europe_2010_2015_vs_2020_2025",
+            "geo_delta_pp_north_america_2010_2015_vs_2020_2025",
         ],
-        "Geography: mean early (2010–2012) vs recent (2023–2025) continental % (percentage-point change)",
+        f"Geography: mean early ({EARLY_WINDOW_LABEL}) vs recent ({RECENT_WINDOW_LABEL}) continental % (percentage-point change)",
     ))
     out.append(tbl(
         [

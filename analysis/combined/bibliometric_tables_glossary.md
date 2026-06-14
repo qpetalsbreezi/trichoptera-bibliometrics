@@ -52,9 +52,9 @@ Each paper has a region-of-study label, rolled up to continents (South America, 
 
 ---
 
-## RQ2 — Continental % change (pp): mean 2010–2012 vs mean 2023–2025
+## RQ2 — Continental % change (pp): mean 2010–2015 vs mean 2020–2025
 
-We average the yearly continental percentages for 2010–2012 (“early”) and separately for 2023–2025 (“recent”), then subtract: recent − early, in percentage points.
+We average the yearly continental percentages for 2010–2015 (“early”) and separately for 2020–2025 (“recent”), then subtract: recent − early, in percentage points.
 
 | Row title | Definition |
 | --- | --- |
@@ -81,9 +81,9 @@ Percentages use the taxon-focused sample. The three ranked theme rows ignore “
 
 ---
 
-## RQ3 — Theme share change (percentage points): 2010–2015 vs 2021–2025
+## RQ3 — Theme share change (percentage points): 2010–2015 vs 2020–2025
 
-Percentages use taxon-focused papers with one primary theme label. For each theme row, **early** is the share in 2010–2015 and **recent** is the share in 2021–2025; cell values are recent − early in percentage points.
+Percentages use taxon-focused papers with one primary theme label. For each theme row, **early** is the share in 2010–2015 and **recent** is the share in 2020–2025; cell values are recent − early in percentage points.
 
 | Row title | Definition |
 | --- | --- |

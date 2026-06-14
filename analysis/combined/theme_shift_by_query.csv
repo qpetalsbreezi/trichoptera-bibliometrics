@@ -1,26 +1,26 @@
 theme,query_id,early_pct,recent_pct,delta_pp
-Ecology/Behavior,ephemeroptera,52.8,31.4,-21.4
-Taxonomy/Systematics,ephemeroptera,8.8,6.8,-2.0
-Biomonitoring/Water Quality,ephemeroptera,29.0,22.5,-6.5
-Applied Ecology,ephemeroptera,0.5,0.0,-0.5
-Not Specified,ephemeroptera,6.3,36.3,30.0
-Ecology/Behavior,mosquitoes,41.0,35.7,-5.3
-Taxonomy/Systematics,mosquitoes,5.5,5.0,-0.5
+Ecology/Behavior,mosquitoes,41.0,36.3,-4.7
+Taxonomy/Systematics,mosquitoes,5.5,5.1,-0.4
 Biomonitoring/Water Quality,mosquitoes,1.1,1.7,0.7
-Applied Ecology,mosquitoes,23.5,27.4,3.9
-Not Specified,mosquitoes,10.1,14.2,4.1
-Ecology/Behavior,odonata,45.0,26.7,-18.3
-Taxonomy/Systematics,odonata,17.2,19.8,2.7
-Biomonitoring/Water Quality,odonata,6.8,5.3,-1.5
-Applied Ecology,odonata,0.0,0.4,0.4
-Not Specified,odonata,22.0,37.3,15.2
-Ecology/Behavior,plecoptera,53.5,31.5,-21.9
-Taxonomy/Systematics,plecoptera,6.5,28.6,22.0
-Biomonitoring/Water Quality,plecoptera,31.5,29.3,-2.3
+Applied Ecology,mosquitoes,23.5,27.5,4.0
+Not Specified,mosquitoes,10.1,13.4,3.3
+Ecology/Behavior,ephemeroptera,52.8,33.0,-19.8
+Taxonomy/Systematics,ephemeroptera,8.8,7.3,-1.4
+Biomonitoring/Water Quality,ephemeroptera,29.0,23.6,-5.3
+Applied Ecology,ephemeroptera,0.5,0.4,-0.1
+Not Specified,ephemeroptera,6.3,32.5,26.2
+Ecology/Behavior,plecoptera,53.5,30.7,-22.7
+Taxonomy/Systematics,plecoptera,6.5,30.7,24.2
+Biomonitoring/Water Quality,plecoptera,31.5,27.6,-4.0
 Applied Ecology,plecoptera,0.4,0.2,-0.2
-Not Specified,plecoptera,5.4,2.9,-2.4
-Ecology/Behavior,trichoptera,39.9,32.6,-7.2
-Taxonomy/Systematics,trichoptera,29.0,30.1,1.1
-Biomonitoring/Water Quality,trichoptera,19.4,23.9,4.5
+Not Specified,plecoptera,5.4,2.8,-2.6
+Ecology/Behavior,trichoptera,39.9,33.9,-6.0
+Taxonomy/Systematics,trichoptera,29.0,30.4,1.4
+Biomonitoring/Water Quality,trichoptera,19.4,23.3,3.9
 Applied Ecology,trichoptera,0.0,0.1,0.1
-Not Specified,trichoptera,2.7,3.3,0.6
+Not Specified,trichoptera,2.7,3.2,0.5
+Ecology/Behavior,odonata,45.0,27.1,-17.9
+Taxonomy/Systematics,odonata,17.2,20.6,3.4
+Biomonitoring/Water Quality,odonata,6.8,5.5,-1.3
+Applied Ecology,odonata,0.0,0.5,0.5
+Not Specified,odonata,22.0,35.9,13.9

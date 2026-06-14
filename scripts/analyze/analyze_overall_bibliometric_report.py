@@ -306,30 +306,32 @@ def build_report(
     )
     parts.append("")
 
-    parts.append("## RQ2 — Continental % change (pp): mean 2010–2012 vs mean 2023–2025")
+    parts.append(
+        f"## RQ2 — Continental % change (pp): mean {xtax.EARLY_WINDOW_LABEL} vs mean {xtax.RECENT_WINDOW_LABEL}"
+    )
     parts.append("")
     dcols = [
         "query_id",
-        "geo_delta_pp_south_america_2010_2012_vs_2023_2025",
-        "geo_delta_pp_asia_2010_2012_vs_2023_2025",
-        "geo_delta_pp_europe_2010_2012_vs_2023_2025",
-        "geo_delta_pp_north_america_2010_2012_vs_2023_2025",
+        "geo_delta_pp_south_america_2010_2015_vs_2020_2025",
+        "geo_delta_pp_asia_2010_2015_vs_2020_2025",
+        "geo_delta_pp_europe_2010_2015_vs_2020_2025",
+        "geo_delta_pp_north_america_2010_2015_vs_2020_2025",
     ]
     ddf = df[dcols].copy()
     parts.append(
         _transposed_metrics_table(
             ddf,
             [
-                "geo_delta_pp_south_america_2010_2012_vs_2023_2025",
-                "geo_delta_pp_asia_2010_2012_vs_2023_2025",
-                "geo_delta_pp_europe_2010_2012_vs_2023_2025",
-                "geo_delta_pp_north_america_2010_2012_vs_2023_2025",
+                "geo_delta_pp_south_america_2010_2015_vs_2020_2025",
+                "geo_delta_pp_asia_2010_2015_vs_2020_2025",
+                "geo_delta_pp_europe_2010_2015_vs_2020_2025",
+                "geo_delta_pp_north_america_2010_2015_vs_2020_2025",
             ],
             metric_label_map={
-                "geo_delta_pp_south_america_2010_2012_vs_2023_2025": "Delta South America (pp)",
-                "geo_delta_pp_asia_2010_2012_vs_2023_2025": "Delta Asia (pp)",
-                "geo_delta_pp_europe_2010_2012_vs_2023_2025": "Delta Europe (pp)",
-                "geo_delta_pp_north_america_2010_2012_vs_2023_2025": "Delta North America (pp)",
+                "geo_delta_pp_south_america_2010_2015_vs_2020_2025": "Delta South America (pp)",
+                "geo_delta_pp_asia_2010_2015_vs_2020_2025": "Delta Asia (pp)",
+                "geo_delta_pp_europe_2010_2015_vs_2020_2025": "Delta Europe (pp)",
+                "geo_delta_pp_north_america_2010_2015_vs_2020_2025": "Delta North America (pp)",
             },
         )
     )
@@ -380,11 +382,13 @@ def build_report(
 
     if theme_shift_long is not None and len(theme_shift_long) > 0:
         qord = query_order or qord
-        parts.append("## RQ3 — Theme share change (percentage points): 2010–2015 vs 2021–2025")
+        parts.append(
+            f"## RQ3 — Theme share change (percentage points): {xtax.EARLY_WINDOW_LABEL} vs {xtax.RECENT_WINDOW_LABEL}"
+        )
         parts.append("")
         parts.append(
-            "Change in the share of papers assigned each primary theme between the early band (2010–2015) "
-            "and recent band (2021–2025). Values are recent minus early percentage points on taxon-focused papers."
+            f"Change in the share of papers assigned each primary theme between the early band ({xtax.EARLY_WINDOW_LABEL}) "
+            f"and recent band ({xtax.RECENT_WINDOW_LABEL}). Values are recent minus early percentage points on taxon-focused papers."
         )
         parts.append("")
         parts.append(xtax.theme_shift_delta_wide_table(theme_shift_long, qord))

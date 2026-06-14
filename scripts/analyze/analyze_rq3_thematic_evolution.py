@@ -43,7 +43,7 @@ def analyze_thematic_evolution(paths: PipelinePaths):
     # Define time periods
     early_period = df[df['Year'].between(2010, 2015)]
     mid_period = df[df['Year'].between(2016, 2020)]
-    recent_period = df[df['Year'].between(2021, 2025)]
+    recent_period = df[df['Year'].between(2020, 2025)]
     
     # Theme distribution by period
     def get_theme_distribution(period_df, period_name):

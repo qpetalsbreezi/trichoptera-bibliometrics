@@ -382,10 +382,10 @@ def fig_rq2_geo_delta_heatmap(
     out_dir: Path,
 ) -> dict[str, str]:
     cols = [
-        ("geo_delta_pp_south_america_2010_2012_vs_2023_2025", "S. America"),
-        ("geo_delta_pp_asia_2010_2012_vs_2023_2025", "Asia"),
-        ("geo_delta_pp_europe_2010_2012_vs_2023_2025", "Europe"),
-        ("geo_delta_pp_north_america_2010_2012_vs_2023_2025", "N. America"),
+        ("geo_delta_pp_south_america_2010_2015_vs_2020_2025", "S. America"),
+        ("geo_delta_pp_asia_2010_2015_vs_2020_2025", "Asia"),
+        ("geo_delta_pp_europe_2010_2015_vs_2020_2025", "Europe"),
+        ("geo_delta_pp_north_america_2010_2015_vs_2020_2025", "N. America"),
     ]
     m = metrics.set_index("query_id").loc[query_ids]
     mat = np.array([[float(m.loc[q, c]) for c, _ in cols] for q in query_ids])
@@ -396,7 +396,7 @@ def fig_rq2_geo_delta_heatmap(
     ax.set_xticklabels([lbl for _, lbl in cols], rotation=20, ha="right")
     ax.set_yticks(range(len(query_ids)))
     ax.set_yticklabels([labels[q] for q in query_ids])
-    ax.set_title("Δ continental % (mean 2023–2025 minus mean 2010–2012, pp)")
+    ax.set_title(f"Δ continental % (mean {xtax.RECENT_WINDOW_LABEL} minus mean {xtax.EARLY_WINDOW_LABEL}, pp)")
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="Percentage points")
     fig.tight_layout()
     return _save(fig, out_dir, "fig_rq2_geo_delta_heatmap")
@@ -497,7 +497,7 @@ def fig_rq3_theme_shift_delta_grouped_bars(
     ax.set_xticks(x)
     ax.set_xticklabels([labels[q] for q in query_ids], rotation=20, ha="right")
     ax.set_ylabel("Δ percentage points")
-    ax.set_title("Theme share shift (2021–2025 minus 2010–2015)")
+    ax.set_title(f"Theme share shift ({xtax.RECENT_WINDOW_LABEL} minus {xtax.EARLY_WINDOW_LABEL})")
     ylim = abs_max * 1.12
     ax.set_ylim(-ylim, ylim)
     ax.legend(ncol=5, loc="upper right", fontsize=7)
@@ -550,7 +550,7 @@ def fig_rq3_theme_shift_delta_facets(
     )
     _paper_suptitle(
         fig,
-        "Theme share shift (2021–2025 minus 2010–2015; separate y-axis per panel)",
+        f"Theme share shift ({xtax.RECENT_WINDOW_LABEL} minus {xtax.EARLY_WINDOW_LABEL}; separate y-axis per panel)",
     )
     fig.tight_layout()
     fig.subplots_adjust(top=0.78)
@@ -915,10 +915,10 @@ def fig_rq2_geo_delta_grouped_bars(
     out_dir: Path,
 ) -> dict[str, str]:
     cols = [
-        ("geo_delta_pp_south_america_2010_2012_vs_2023_2025", "South America"),
-        ("geo_delta_pp_asia_2010_2012_vs_2023_2025", "Asia"),
-        ("geo_delta_pp_europe_2010_2012_vs_2023_2025", "Europe"),
-        ("geo_delta_pp_north_america_2010_2012_vs_2023_2025", "North America"),
+        ("geo_delta_pp_south_america_2010_2015_vs_2020_2025", "South America"),
+        ("geo_delta_pp_asia_2010_2015_vs_2020_2025", "Asia"),
+        ("geo_delta_pp_europe_2010_2015_vs_2020_2025", "Europe"),
+        ("geo_delta_pp_north_america_2010_2015_vs_2020_2025", "North America"),
     ]
     m = metrics.set_index("query_id").loc[query_ids]
     all_vals = [float(m.loc[q, col]) for q in query_ids for col, _ in cols]
@@ -947,7 +947,7 @@ def fig_rq2_geo_delta_grouped_bars(
     ax.set_xticklabels([name for _, name in cols], ha="center", fontsize=8)
     ax.tick_params(axis="x", pad=6)
     ax.set_ylabel("Δ percentage points")
-    _paper_figure_title(ax, "Continental shift (2010–2012 vs 2023–2025 mean share)")
+    _paper_figure_title(ax, f"Continental shift ({xtax.EARLY_WINDOW_LABEL} vs {xtax.RECENT_WINDOW_LABEL} mean share)")
     ax.legend(
         ncol=len(query_ids),
         loc="upper center",
@@ -990,10 +990,10 @@ def fig_rq2_geo_delta_compositional_matrix(
 ) -> dict[str, str]:
     """Continent × taxon matrix of horizontal Δpp bars (green = increase, red = decrease)."""
     cols = [
-        ("geo_delta_pp_south_america_2010_2012_vs_2023_2025", "S. America"),
-        ("geo_delta_pp_asia_2010_2012_vs_2023_2025", "Asia"),
-        ("geo_delta_pp_europe_2010_2012_vs_2023_2025", "Europe"),
-        ("geo_delta_pp_north_america_2010_2012_vs_2023_2025", "N. America"),
+        ("geo_delta_pp_south_america_2010_2015_vs_2020_2025", "S. America"),
+        ("geo_delta_pp_asia_2010_2015_vs_2020_2025", "Asia"),
+        ("geo_delta_pp_europe_2010_2015_vs_2020_2025", "Europe"),
+        ("geo_delta_pp_north_america_2010_2015_vs_2020_2025", "N. America"),
     ]
     m = metrics.set_index("query_id").loc[query_ids]
     all_vals = [float(m.loc[q, col]) for q in query_ids for col, _ in cols]
@@ -1001,7 +1001,7 @@ def fig_rq2_geo_delta_compositional_matrix(
 
     n_rows = len(cols)
     n_cols = len(query_ids)
-    title_text = "Continental compositional shift (2010–2012 vs 2023–2025 mean share)"
+    title_text = f"Continental compositional shift ({xtax.EARLY_WINDOW_LABEL} vs {xtax.RECENT_WINDOW_LABEL} mean share)"
 
     fig, axes = plt.subplots(
         n_rows,

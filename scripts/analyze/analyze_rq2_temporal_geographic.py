@@ -221,9 +221,9 @@ YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
     europe_avg = geo_dist_table['Europe_Percent'].mean()
     na_avg = geo_dist_table['North America_Percent'].mean()
     
-    # Calculate trends: compare early years (2010-2012) vs recent years (2023-2025)
-    early_years = geo_dist_table[geo_dist_table['Year'].isin([2010, 2011, 2012])]
-    recent_years = geo_dist_table[geo_dist_table['Year'].isin([2023, 2024, 2025])]
+    # Calculate trends: compare early (2010-2015) vs recent (2020-2025)
+    early_years = geo_dist_table[geo_dist_table['Year'].between(2010, 2015)]
+    recent_years = geo_dist_table[geo_dist_table['Year'].between(2020, 2025)]
     
     sa_early = early_years['South America_Percent'].mean()
     sa_recent = recent_years['South America_Percent'].mean()
@@ -254,7 +254,7 @@ KEY FINDINGS
    - Europe: {europe_avg:.1f}% of papers on average
    - North America: {na_avg:.1f}% of papers on average
 
-2. Proportional Trends (Early 2010-2012 vs Recent 2023-2025):
+2. Proportional Trends (Early 2010-2015 vs Recent 2020-2025):
    - South America: {sa_early:.1f}% → {sa_recent:.1f}% ({'+' if sa_change > 0 else ''}{sa_change:.1f}%)
    - Asia: {asia_early:.1f}% → {asia_recent:.1f}% ({'+' if asia_change > 0 else ''}{asia_change:.1f}%)
    - Europe: {europe_early:.1f}% → {europe_recent:.1f}% ({'+' if europe_change > 0 else ''}{europe_change:.1f}%)

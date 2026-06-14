@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-06-13T15:04:02.717929",
+  "generated_at": "2026-06-13T18:48:38.309150",
   "queries": [
-    "ephemeroptera",
     "mosquitoes",
-    "odonata",
+    "ephemeroptera",
     "plecoptera",
-    "trichoptera"
+    "trichoptera",
+    "odonata"
   ],
   "outputs": {
     "markdown": "analysis/combined/overall_bibliometric_report.md",
