@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-05-09T17:23:37.363773+00:00",
-  "git_commit": "44ee73de3617eee2cece47fb19c3dc57e508d2cb",
+  "generated_at": "2026-06-14T00:37:31.327106+00:00",
+  "git_commit": "d6d230edb26ee734c390a109d93c2772ef2e8ec5",
   "query_ids": [
-    "ephemeroptera",
     "mosquitoes",
-    "odonata",
+    "ephemeroptera",
     "plecoptera",
-    "trichoptera"
+    "trichoptera",
+    "odonata"
   ],
   "inputs": {
     "yearly_publication_volume_by_query.csv": {
@@ -19,12 +19,17 @@
       "sha256": "d46d2c83bb4d044dcb6abef8f8bc33aa8cac44ff4d4745c4b31d31e3ae5ae39c",
       "n_rows": 5
     },
+    "theme_shift_by_query.csv": {
+      "path": "analysis/combined/theme_shift_by_query.csv",
+      "sha256": "15a6fe2e64ee64ad5f9494e886ea1a6543b842ed61adfb59b7052b1bdc3eee6f",
+      "n_rows": 25
+    },
     "coded_scopus_api_csv_sha256_by_query": {
-      "ephemeroptera": "648de4be9a6616822a9640c10b1f1e97b902507368c022e58d8d1d5838389534",
       "mosquitoes": "656f307a6719b03da9fe3c7c5fd4b2546d376865636eaa378b2e23bc93bc6a66",
-      "odonata": "b6260a6539eae8ca980d5f25d1589177b206feb611dcf20d82ec5157f62fcaaf",
+      "ephemeroptera": "648de4be9a6616822a9640c10b1f1e97b902507368c022e58d8d1d5838389534",
       "plecoptera": "c02e42e3eff57cbc90fc1a3a198a7aa25c376e4824ac8ad14797d79c34a664cf",
-      "trichoptera": "2c80fba2cbce5796aba550dccc3ef7ead2b21fed6adb992eccb6ab83f1bc6384"
+      "trichoptera": "2c80fba2cbce5796aba550dccc3ef7ead2b21fed6adb992eccb6ab83f1bc6384",
+      "odonata": "b6260a6539eae8ca980d5f25d1589177b206feb611dcf20d82ec5157f62fcaaf"
     }
   },
   "figures": [
@@ -87,6 +92,14 @@
     {
       "pdf": "analysis/combined/figures/fig_rq3_theme_ranked_shares.pdf",
       "png": "analysis/combined/figures/fig_rq3_theme_ranked_shares.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq3_theme_shift_delta_grouped_bars.pdf",
+      "png": "analysis/combined/figures/fig_rq3_theme_shift_delta_grouped_bars.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq3_theme_shift_delta_facets.pdf",
+      "png": "analysis/combined/figures/fig_rq3_theme_shift_delta_facets.png"
     },
     {
       "pdf": "analysis/combined/figures/fig_rq3_top_theme_labeled_horizontal.pdf",

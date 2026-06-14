@@ -6,16 +6,16 @@ Aquatic insects are among the most important organisms in freshwater ecosystems,
 
 The aquatic insect groups examined in this study differ substantially in both their ecological roles and relevance to human society. Ephemeroptera (mayflies), Plecoptera (stoneflies), and Trichoptera (caddisflies), collectively EPT taxa, are widely used in freshwater biomonitoring because many species are sensitive to pollution and habitat degradation. Odonata (dragonflies and damselflies) are important aquatic predators and are frequently studied as indicators of biodiversity and habitat quality. In contrast, Culicidae (mosquitoes) are among the most intensively studied aquatic insects because of their role as vectors of diseases affecting humans and wildlife. These differences in ecological function and societal importance may influence research priorities, publication output, the geographic distribution of studies, and patterns of scientific collaboration.
 
-Despite the large volume of literature on these taxa, few studies have systematically compared publication patterns across groups or tracked how research effort has changed over time. Bibliometric analysis provides a quantitative framework for examining scientific activity through publication trends, research themes, authorship structure, and collaboration networks. Using Scopus records from 2010 to 2025 for each taxon, with a Scopus–Google Scholar comparison for a benchmark year, we analyzed temporal and geographic patterns, thematic composition, and authorship and collaboration across Culicidae, EPT taxa, and Odonata.
+Despite extensive literature on each group, few studies have compared publication patterns across aquatic insect taxa with the same methods and time window. We applied one parallel bibliometric workflow to Scopus records from 2010 to 2025 for Culicidae, Ephemeroptera, Plecoptera, Trichoptera, and Odonata—separate searches and coded datasets for each taxon, summarized with identical rules. A secondary Scopus–Google Scholar comparison for 2023 checked database overlap but was not the main focus of the paper.
 
 We addressed four questions:
 
 1. How do Scopus and Google Scholar overlap in their coverage of literature on each taxon?
-2. How has publication output changed over time and across geographic regions?
+2. How has taxon-focused publication output changed over time and across geographic regions?
 3. What research themes dominate the literature for each taxon, and how have they shifted over time?
 4. What are the patterns of authorship and international collaboration across taxa and among research specialties?
 
-By systematically comparing these groups, we sought to characterize geographic shifts and thematic evolution in aquatic insect research across disciplines, regions, and the 2010–2025 study period.
+The study centers on taxon-focused papers (those in which the target taxon is a primary or secondary focus, not a passing mention). We expected Culicidae, as a medically important vector group, to show the largest literature and a more applied thematic profile, whereas EPT taxa and Odonata would emphasize ecology, biomonitoring, and taxonomy. We also examined whether continental distributions of study locations, theme mixes, and collaboration patterns diverged in parallel across groups over the 2010–2025 period.
 
 ## 2. Methods
 
@@ -66,11 +66,11 @@ For each taxon, 2023 Scopus and Google Scholar records were paired by DOI, or by
 
 #### 2.4.2 Temporal, geographic, and thematic patterns
 
-Publication volume and geography used each taxon’s filtered dataset described above. Countries were harmonized; one primary location was kept when multiple appeared. Summaries were by region and year, with country-level concentration across 2010–2025. Continental shifts compared mean within-year shares between early and recent multi-year periods within the study window. Locations reflect LLM-inferred study geography from text, not geocoding of addresses. Theme counts used each paper’s assigned primary research theme, summarized in multi-year bands and by year; ranked cross-taxa theme summaries exclude Not Specified.
+Publication volume and geography used each taxon’s filtered dataset described above. Countries were harmonized; one primary location was kept when multiple appeared. Summaries were by region and year, with country-level concentration across 2010–2025. Continental shifts compared mean within-year shares between early and recent multi-year periods within the study window. Locations reflect LLM-inferred study geography from text, not geocoding of addresses. Theme counts used each paper’s assigned primary research theme, summarized in multi-year bands and by year; ranked cross-taxa theme summaries exclude Not Specified. Theme evolution compared the share of papers in selected primary themes between 2010–2015 (early) and 2021–2025 (recent), reporting the change in percentage points (recent minus early) on taxon-focused papers.
 
 #### 2.4.3 Authorship and collaboration
 
-Team size used OpenAlex author counts, binned as single author, two, three to five, six to ten, or more than ten. Research specialties were primary themes; selected tables use the applied, taxonomic, and other theme groups defined in section 2.3. International collaboration labels used, in order: multiple vs single ISO country codes in author metadata; if missing, country keywords in affiliation text; if still missing, assigned global region (Global → International; any other specified region → National; Not Specified or missing → Unknown). Rates and team size were compared across taxa and among specialties, and among applied, taxonomic, and other groups in selected tables.
+Author counts used OpenAlex author totals, binned as single author, two, three to five, six to ten, or more than ten for optional per-taxon summaries not reported here. Research specialties were primary themes; selected tables use the applied, taxonomic, and other theme groups defined in section 2.3. International collaboration labels used, in order: multiple vs single ISO country codes in author metadata; if missing, country keywords in affiliation text; if still missing, assigned global region (Global → International; any other specified region → National; Not Specified or missing → Unknown). Author counts and collaboration rates were compared across taxa and among applied and taxonomic theme groups in selected tables.
 
 ### 2.5 Software and reproducibility
 
@@ -110,7 +110,9 @@ Taxon-focused publication output rose in every taxon between the early and recen
 
 Culicidae accounted for the largest absolute volume in both windows (Table 3). Annual taxon-focused counts rose steadily for Culicidae and increased sharply for Odonata after about 2017 (Figure 1).
 
-**Figure 1.** Taxon-focused publication counts by year, 2010–2025, for all five taxa. Counts use the same taxon-focus screen and deduplication rules as Table 3.
+<p><img src="./figures/fig_rq2_temporal_taxon_focused_facets.png" alt="Figure 1" style="max-width:100%;height:auto;" /></p>
+
+**Figure 1.** Taxon-focused publication counts by year, 2010–2025 (arithmetic scale), one panel per taxon in order Culicidae through Odonata. Gray bands mark the early (2010–2015) and recent (2020–2025) windows used in Table 3; each panel uses its own y-axis scale. Culicidae accounted for the largest annual totals throughout the period; Odonata showed a marked increase after about 2017.
 
 Continent labels describe where the study took place (Methods, section 2.3), not author addresses alone. Mean continental shares differed across taxa: Culicidae papers were most Asia-weighted (25.4% on average), whereas Ephemeroptera, Plecoptera, and Trichoptera were most Europe-weighted (24–30%). Odonata had the highest Unknown share (28.5%). North America's share fell in every taxon when comparing 2010–2012 with 2023–2025 (Table 4; Figure 2).
 
@@ -123,11 +125,13 @@ Continent labels describe where the study took place (Methods, section 2.3), not
 | Europe | 1.3 | 2.6 | 10.8 | 6.7 | −5.3 |
 | North America | −11.6 | −29.1 | −28.0 | −14.5 | −13.0 |
 
-**Figure 2.** Change in mean continental share (percentage points) from 2010–2012 to 2023–2025. Early and recent values are the mean of within-year continental percentages in each three-year band. Red bars indicate an increase; blue bars indicate a decrease. Values are given in Table 4.
+<p><img src="./figures/fig_rq2_geo_delta_continental_grouped_bars.png" alt="Figure 2" style="max-width:100%;height:auto;" /></p>
+
+**Figure 2.** Change in mean continental share (percentage points) from 2010–2012 to 2023–2025. Early and recent values are the mean of within-year continental percentages in each three-year band. One bar group per continent; bar colors identify taxon (consistent across continents). Bars above zero mark share increases and bars below zero mark decreases. North America's group shows declines for every taxon; Asia and Europe show mixed or positive shifts depending on taxon. Values are given in Table 4.
 
 ### 3.3 Thematic evolution (2010–2025)
 
-Ecology/Behavior was the most common primary research theme for every taxon (Table 5). For example, it accounted for 41.8% of Ephemeroptera papers and 38.0% of Culicidae papers, but the second- and third-ranked themes diverged: Culicidae papers were often classified as Applied Ecology (25.9%) or Physiology (13.7%), whereas Trichoptera papers were often Taxonomy/Systematics (31.5%) or Biomonitoring/Water Quality (20.9%). Results use taxon-focused papers from 2010–2025 with one primary theme label each (Methods, sections 2.3 and 2.4.2). Ranks #1–#3 exclude papers labeled Not Specified; Not Specified is reported separately.
+Ecology/Behavior was the most common primary research theme for every taxon across the full 2010–2025 window (Table 5). For example, it accounted for 41.8% of Ephemeroptera papers and 38.0% of Culicidae papers, but the second- and third-ranked themes diverged: Culicidae papers were often classified as Applied Ecology (25.9%) or Physiology (13.7%), whereas Trichoptera papers were often Taxonomy/Systematics (31.5%) or Biomonitoring/Water Quality (20.9%). Results use taxon-focused papers from 2010–2025 with one primary theme label each (Methods, sections 2.3 and 2.4.2). Ranks #1–#3 exclude papers labeled Not Specified; Not Specified is reported separately.
 
 **Table 5. Ranked primary research themes by taxon (2010–2025)**
 
@@ -142,150 +146,58 @@ Ecology/Behavior was the most common primary research theme for every taxon (Tab
 
 Culicidae stood apart from the EPT taxa and Odonata in its emphasis on applied and physiological work (Table 5). Plecoptera and Trichoptera had high shares of taxonomy and biomonitoring among their top three themes; Ephemeroptera combined ecology, biomonitoring, and a smaller taxonomy share. Not Specified labels were uncommon for Plecoptera and Trichoptera (3–4%) but much more frequent for Odonata (32.6%) and Ephemeroptera (20.9%).
 
-**Figure 3.** Share of papers by ranked primary theme (#1–#3) for each taxon, 2010–2025. Rankings exclude Not Specified; #1, #2, and #3 denote the first, second, and third most frequent themes within each taxon. Not Specified rates are given in Table 5.
+Theme shares also shifted between early (2010–2015) and recent (2021–2025) bands (Table 6; Figure 3). Ecology/Behavior declined in every taxon, by 5.3 percentage points (pp) for Culicidae and by 18–22 pp for Ephemeroptera, Plecoptera, and Odonata. The largest positive shift was Taxonomy/Systematics for Plecoptera (+22.0 pp). Culicidae showed a modest rise in Applied Ecology (+3.9 pp). Trichoptera showed the largest gain in Biomonitoring/Water Quality (+4.5 pp) among EPT taxa. Not Specified rose sharply for Ephemeroptera (+30.0 pp) and Odonata (+15.2 pp) but changed little for Trichoptera (+0.6 pp) and fell slightly for Plecoptera (−2.4 pp).
+
+**Table 6. Change in theme share (percentage points): 2010–2015 vs 2021–2025**
+
+| Theme | Culicidae | Ephemeroptera | Plecoptera | Trichoptera | Odonata |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Ecology/Behavior | −5.3 | −21.4 | −21.9 | −7.2 | −18.3 |
+| Taxonomy/Systematics | −0.5 | −2.0 | +22.0 | +1.1 | +2.7 |
+| Biomonitoring/Water Quality | +0.7 | −6.5 | −2.3 | +4.5 | −1.5 |
+| Applied Ecology | +3.9 | −0.5 | −0.2 | +0.1 | +0.4 |
+| Not Specified | +4.1 | +30.0 | −2.4 | +0.6 | +15.2 |
+
+*Values are recent minus early percentage points on taxon-focused papers with one primary theme label each.*
+
+<p><img src="./figures/fig_rq3_theme_shift_delta_facets.png" alt="Figure 3" style="max-width:100%;height:auto;" /></p>
+
+**Figure 3.** Change in primary theme share (percentage points) from 2010–2015 to 2021–2025, one panel per theme category; bar colors identify taxon (consistent across panels). Each panel uses its own y-axis scale so small and large shifts remain visible. Bars above zero mark share increases; bars below zero mark decreases. Ecology/Behavior declined in every taxon (leftmost panel); Plecoptera showed a large Taxonomy/Systematics rise; Ephemeroptera and Odonata showed sharp Not Specified increases (rightmost panel). Exact values are in Table 6.
 
 ### 3.4 Authorship and collaboration (2010–2025)
 
-This subsection reports team size, author-count groups (for example, single author versus three to five authors), year-by-year splits for taxonomic versus non-taxonomic papers, and international collaboration class (section 2.4.3).
+Mean author counts per paper were highest for Culicidae and rose between early and recent multi-year windows in every taxon (Table 7). For example, Culicidae averaged 6.5 authors per paper overall and 7.0 in 2020–2025, whereas Trichoptera averaged 4.0 authors overall and 4.5 in 2020–2025. Results use taxon-focused papers from 2010–2025 with OpenAlex author counts where available (Methods, sections 2.3 and 2.4.3). Papers with no authors recorded were excluded; 98–100% of taxon-focused papers were retained depending on taxon. *Applied* themes are Biomonitoring/Water Quality, Applied Ecology, Conservation, and Materials Science (Silk); *taxonomic* theme is Taxonomy/Systematics.
 
-Analytical sample: *N* = 2,845 after combining OpenAlex author metadata and excluding papers with no authors recorded (author count zero). That filter makes this sample slightly smaller than §3.2–3.3.
+**Table 7. Authorship structure by taxon (2010–2025)**
 
-Study-type groups for comparison: *Applied* = Biomonitoring/Water Quality, Applied Ecology, Conservation, Materials Science (Silk); *taxonomic* = Taxonomy/Systematics; *other* = all remaining themes. *Non-taxonomic* tables combine applied and other papers. Team sizes use the OpenAlex author count (Methods, section 2.4.3).
+| Metric | Culicidae | Ephemeroptera | Plecoptera | Trichoptera | Odonata |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Mean authors | 6.5 | 4.2 | 4.0 | 4.0 | 5.0 |
+| Median authors | 5.0 | 4.0 | 4.0 | 3.0 | 4.0 |
+| Mean authors (2010–2015) | 5.6 | 3.7 | 3.6 | 3.4 | 4.1 |
+| Mean authors (2020–2025) | 7.0 | 4.5 | 4.2 | 4.5 | 5.2 |
+| Mean authors (applied themes) | 6.7 | 4.5 | 4.4 | 4.8 | 5.1 |
+| Mean authors (taxonomic theme) | 6.4 | 3.2 | 2.9 | 3.2 | 3.3 |
 
-#### Overall authorship
+Mean author counts increased between 2010–2015 and 2020–2025 in every taxon (Table 7; Figure 4, left panel). The gain was largest in absolute terms for Culicidae (+1.4 authors) and smallest for Plecoptera (+0.6). Applied-themed papers averaged more authors than taxonomic papers for Ephemeroptera, Plecoptera, Trichoptera, and Odonata (gaps of 1.3–1.8 authors), whereas Culicidae showed only a small applied–taxonomic difference (6.7 vs 6.4).
 
-| Measure | Value |
-|--------|------:|
-| Mean authors per paper | 4.05 |
-| Median | 3.0 |
-| Standard deviation | 2.95 |
-| Range | 1–49 |
+International collaboration was classified from OpenAlex ISO country codes when present, otherwise from country keywords in affiliation text, otherwise from the assigned global region (Methods, section 2.4.3). Affiliation-country signals were available for 92–96% of papers depending on taxon (Table 8). International collaboration rates were highest for Culicidae (37.5% of all papers; 39.4% among papers with a known signal) and lowest for Ephemeroptera and Plecoptera (25–26% overall; Figure 4, right panel). Among theme groups, taxonomic papers had equal or higher international collaboration rates than applied papers in every taxon (Table 8).
 
-#### Authorship by period
+**Table 8. International collaboration by taxon (2010–2025)**
 
-| Period | Papers | Mean authors | Median authors |
-|--------|-------:|-------------:|---------------:|
-| Early (2010–2015) | 920 | 3.39 | 3.0 |
-| Recent (2020–2025) | 1,261 | 4.53 | 4.0 |
+| Metric | Culicidae | Ephemeroptera | Plecoptera | Trichoptera | Odonata |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Affiliation-country signal coverage (%) | 95.2 | 94.4 | 96.0 | 95.6 | 92.2 |
+| International collaboration (% of all papers) | 37.5 | 25.6 | 25.2 | 27.3 | 33.1 |
+| International collaboration (% among known-signal papers) | 39.4 | 27.2 | 26.3 | 28.6 | 35.9 |
+| International collaboration, applied themes (%) | 36.5 | 20.1 | 21.1 | 25.0 | 26.9 |
+| International collaboration, taxonomic theme (%) | 38.1 | 27.9 | 23.4 | 29.2 | 39.1 |
 
-#### Authorship by study type
+*Applied and taxonomic rows use the theme groups defined in section 2.3. Percentages for applied and taxonomic themes use all papers in each theme group as the denominator (including papers with unknown collaboration status).*
 
-| Study type | Papers | Mean authors | Median authors |
-|------------|-------:|-------------:|---------------:|
-| Applied | 672 | 4.74 | 4.0 |
-| Taxonomic | 896 | 3.22 | 3.0 |
+<p><img src="./figures/fig_rq4_authors_and_intl_collab.png" alt="Figure 4" style="max-width:100%;height:auto;" /></p>
 
-#### Collaboration size (all papers)
-
-Author-count groups: 3–5 and 6–10 are inclusive; 10+ means eleven or more authors.
-
-| Category | Papers | % |
-|----------|-------:|--:|
-| Single author | 246 | 8.7 |
-| 2 authors | 590 | 20.7 |
-| 3–5 authors | 1,442 | 50.7 |
-| 6–10 authors | 498 | 17.5 |
-| 10+ authors | 69 | 2.4 |
-
-#### Collaboration size by study type
-
-Percentages are within each study-type group.
-
-##### Applied (*n* = 672)
-
-| Category | % |
-|----------|--:|
-| Single author | 5.4 |
-| 2 authors | 13.7 |
-| 3–5 authors | 50.9 |
-| 6–10 authors | 26.6 |
-| 10+ authors | 3.4 |
-
-##### Taxonomic (*n* = 896)
-
-| Category | % |
-|----------|--:|
-| Single author | 14.7 |
-| 2 authors | 30.6 |
-| 3–5 authors | 45.3 |
-| 6–10 authors | 7.6 |
-| 10+ authors | 1.8 |
-
-##### Other (*n* = 1,277)
-
-| Category | % |
-|----------|--:|
-| Single author | 6.1 |
-| 2 authors | 17.5 |
-| 3–5 authors | 54.3 |
-| 6–10 authors | 19.7 |
-| 10+ authors | 2.3 |
-
-#### Year-by-year collaboration (taxonomic studies only)
-
-*N* = papers with Taxonomy/Systematics as primary theme that year. The Single through 10+ entries are counts, with percentages out of that year’s taxonomic total.
-
-| Year | *N* | Mean | Median | Min | Max | Single | 2 | 3–5 | 6–10 | 10+ |
-|-----:|----:|-----:|-------:|----:|----:|-------|---:|----:|-----:|----:|
-| 2010 | 53 | 2.21 | 2 | 1 | 7 | 15 (28.3%) | 26 (49.1%) | 10 (18.9%) | 2 (3.8%) | 0 (0.0%) |
-| 2011 | 40 | 2.38 | 2 | 1 | 6 | 9 (22.5%) | 16 (40.0%) | 13 (32.5%) | 2 (5.0%) | 0 (0.0%) |
-| 2012 | 32 | 2.28 | 2 | 1 | 4 | 6 (18.8%) | 13 (40.6%) | 13 (40.6%) | 0 (0.0%) | 0 (0.0%) |
-| 2013 | 52 | 2.92 | 3 | 1 | 8 | 8 (15.4%) | 13 (25.0%) | 27 (51.9%) | 4 (7.7%) | 0 (0.0%) |
-| 2014 | 48 | 2.81 | 2 | 1 | 7 | 9 (18.8%) | 15 (31.2%) | 20 (41.7%) | 4 (8.3%) | 0 (0.0%) |
-| 2015 | 41 | 3.95 | 2 | 1 | 15 | 3 (7.3%) | 18 (43.9%) | 12 (29.3%) | 6 (14.6%) | 2 (4.9%) |
-| 2016 | 58 | 2.93 | 2 | 1 | 15 | 13 (22.4%) | 21 (36.2%) | 19 (32.8%) | 3 (5.2%) | 2 (3.4%) |
-| 2017 | 65 | 2.94 | 3 | 1 | 11 | 15 (23.1%) | 17 (26.2%) | 29 (44.6%) | 2 (3.1%) | 2 (3.1%) |
-| 2018 | 69 | 2.72 | 3 | 1 | 9 | 7 (10.1%) | 26 (37.7%) | 34 (49.3%) | 2 (2.9%) | 0 (0.0%) |
-| 2019 | 54 | 3.31 | 2 | 1 | 16 | 8 (14.8%) | 19 (35.2%) | 22 (40.7%) | 3 (5.6%) | 2 (3.7%) |
-| 2020 | 67 | 3.84 | 3 | 1 | 28 | 6 (9.0%) | 17 (25.4%) | 36 (53.7%) | 5 (7.5%) | 3 (4.5%) |
-| 2021 | 69 | 3.22 | 2 | 1 | 17 | 12 (17.4%) | 26 (37.7%) | 24 (34.8%) | 5 (7.2%) | 2 (2.9%) |
-| 2022 | 60 | 3.47 | 3 | 1 | 10 | 7 (11.7%) | 15 (25.0%) | 31 (51.7%) | 7 (11.7%) | 0 (0.0%) |
-| 2023 | 70 | 3.56 | 3 | 1 | 19 | 5 (7.1%) | 18 (25.7%) | 40 (57.1%) | 6 (8.6%) | 1 (1.4%) |
-| 2024 | 68 | 3.90 | 4 | 1 | 8 | 6 (8.8%) | 8 (11.8%) | 44 (64.7%) | 10 (14.7%) | 0 (0.0%) |
-| 2025 | 50 | 4.38 | 4 | 1 | 22 | 3 (6.0%) | 6 (12.0%) | 32 (64.0%) | 7 (14.0%) | 2 (4.0%) |
-
-#### Year-by-year collaboration (non-taxonomic: applied + other)
-
-| Year | *N* | Mean | Median | Min | Max | Single | 2 | 3–5 | 6–10 | 10+ |
-|-----:|----:|-----:|-------:|----:|----:|-------|---:|----:|-----:|----:|
-| 2010 | 96 | 3.51 | 3 | 1 | 8 | 6 (6.2%) | 22 (22.9%) | 56 (58.3%) | 12 (12.5%) | 0 (0.0%) |
-| 2011 | 109 | 3.58 | 3 | 1 | 10 | 8 (7.3%) | 24 (22.0%) | 65 (59.6%) | 12 (11.0%) | 0 (0.0%) |
-| 2012 | 116 | 3.28 | 3 | 1 | 10 | 13 (11.2%) | 27 (23.3%) | 66 (56.9%) | 10 (8.6%) | 0 (0.0%) |
-| 2013 | 105 | 3.56 | 3 | 1 | 11 | 7 (6.7%) | 30 (28.6%) | 52 (49.5%) | 15 (14.3%) | 1 (1.0%) |
-| 2014 | 103 | 3.72 | 3 | 1 | 17 | 5 (4.9%) | 26 (25.2%) | 59 (57.3%) | 12 (11.7%) | 1 (1.0%) |
-| 2015 | 125 | 4.13 | 4 | 1 | 12 | 5 (4.0%) | 30 (24.0%) | 64 (51.2%) | 25 (20.0%) | 1 (0.8%) |
-| 2016 | 117 | 4.69 | 4 | 1 | 37 | 5 (4.3%) | 17 (14.5%) | 61 (52.1%) | 31 (26.5%) | 3 (2.6%) |
-| 2017 | 100 | 4.62 | 4 | 1 | 15 | 1 (1.0%) | 15 (15.0%) | 57 (57.0%) | 24 (24.0%) | 3 (3.0%) |
-| 2018 | 97 | 4.27 | 4 | 1 | 12 | 6 (6.2%) | 14 (14.4%) | 55 (56.7%) | 21 (21.6%) | 1 (1.0%) |
-| 2019 | 104 | 5.20 | 4 | 1 | 41 | 4 (3.8%) | 14 (13.5%) | 56 (53.8%) | 25 (24.0%) | 5 (4.8%) |
-| 2020 | 143 | 4.39 | 4 | 1 | 12 | 7 (4.9%) | 15 (10.5%) | 86 (60.1%) | 31 (21.7%) | 4 (2.8%) |
-| 2021 | 163 | 4.66 | 4 | 1 | 21 | 14 (8.6%) | 22 (13.5%) | 79 (48.5%) | 41 (25.2%) | 7 (4.3%) |
-| 2022 | 142 | 4.82 | 4 | 1 | 22 | 10 (7.0%) | 15 (10.6%) | 79 (55.6%) | 30 (21.1%) | 8 (5.6%) |
-| 2023 | 140 | 4.71 | 4 | 1 | 18 | 8 (5.7%) | 20 (14.3%) | 68 (48.6%) | 40 (28.6%) | 4 (2.9%) |
-| 2024 | 144 | 5.42 | 5 | 1 | 49 | 8 (5.6%) | 12 (8.3%) | 66 (45.8%) | 51 (35.4%) | 7 (4.9%) |
-| 2025 | 145 | 5.37 | 5 | 1 | 33 | 7 (4.8%) | 13 (9.0%) | 67 (46.2%) | 50 (34.5%) | 8 (5.5%) |
-
-#### International collaboration
-
-Labels follow section 2.4.3: affiliation-based country cues when OpenAlex affiliation text was used in the analysis, otherwise inference from the assigned global biogeographic region.
-
-##### Overall (*n* = 2,845)
-
-| Label | Papers | % |
-|-------|-------:|--:|
-| International | 65 | 2.3 |
-| National | 526 | 18.5 |
-| Unknown | 2,254 | 79.2 |
-
-##### By study type
-
-Percentages sum to 100% within each study-type group.
-
-| Study type | International | National | Unknown |
-|------------|----------------:|---------:|--------:|
-| Applied | 1.2 | 20.7 | 78.1 |
-| Taxonomic | 3.1 | 15.4 | 81.5 |
-| Other | 2.3 | 19.5 | 78.2 |
+**Figure 4.** Left: mean number of authors per paper by year, 2010–2025, one line per taxon (OpenAlex author counts; gray bands = early and recent windows). Right: international collaboration rate across all papers in 2010–2025 (Methods, section 2.4.3). Mean author counts rose in every taxon and were highest for Culicidae; international collaboration was also highest for Culicidae and lowest for Ephemeroptera and Plecoptera. Values are in Tables 7 and 8.
 
 ## 4. Discussion
 
@@ -311,22 +223,26 @@ Together, the volume and geography results support a comparative picture—high-
 
 ### 4.3 Thematic evolution
 
-Section 3.3 shows a shared headline—Ecology/Behavior ranks first for every taxon—yet the secondary themes separate Culicidae from the stream-insect groups. Culicidae’s profile (Applied Ecology and Physiology among the top three) fits a literature dominated by vector biology, disease transmission, and control-oriented work rather than freshwater community ecology alone. Ephemeroptera, Plecoptera, and Trichoptera instead combine Ecology/Behavior with Biomonitoring/Water Quality and/or Taxonomy/Systematics, which aligns with the long use of EPT taxa in water-quality assessment and systematic description. Trichoptera and Plecoptera show the strongest taxonomy signals among the top three (31.5% and 25.4%, respectively), whereas Ephemeroptera places more weight on biomonitoring (25.7%) with a smaller taxonomy share (8.3%).
+Section 3.3 shows a shared headline across the full 2010–2025 window—Ecology/Behavior ranks first for every taxon—yet the secondary themes separate Culicidae from the stream-insect groups. Culicidae’s profile (Applied Ecology and Physiology among the top three) fits a literature dominated by vector biology, disease transmission, and control-oriented work rather than freshwater community ecology alone. Ephemeroptera, Plecoptera, and Trichoptera instead combine Ecology/Behavior with Biomonitoring/Water Quality and/or Taxonomy/Systematics, which aligns with the long use of EPT taxa in water-quality assessment and systematic description. Trichoptera and Plecoptera show the strongest taxonomy signals among the top three (31.5% and 25.4%, respectively), whereas Ephemeroptera places more weight on biomonitoring (25.7%) with a smaller taxonomy share (8.3%).
 
-Odonata resembles EPT taxa in ranking ecology and taxonomy highly, but its top three themes account for a smaller fraction of papers overall because Not Specified is much more common (32.6%). Ephemeroptera also has a elevated Not Specified rate (20.9%). For those taxa, the ranked themes in Table 5 describe the papers the model could classify confidently, not the full thematic landscape. Low Not Specified rates for Plecoptera and Trichoptera (3–4%) suggest more stable theme assignment there, but that could reflect clearer abstracts, taxon-specific wording, or classifier behavior rather than inherently simpler research topics.
+Odonata resembles EPT taxa in ranking ecology and taxonomy highly, but its top three themes account for a smaller fraction of papers overall because Not Specified is much more common (32.6%). Ephemeroptera also has an elevated Not Specified rate (20.9%). For those taxa, the ranked themes in Table 5 describe the papers the model could classify confidently, not the full thematic landscape. Low Not Specified rates for Plecoptera and Trichoptera (3–4%) suggest more stable theme assignment there, but that could reflect clearer abstracts, taxon-specific wording, or classifier behavior rather than inherently simpler research topics.
 
-Several methodological limits apply across taxa. Each paper received only one primary theme, so interdisciplinary studies were forced into a single category and co-occurring topics are lost. Rankings exclude Not Specified when choosing #1–#3, which raises the apparent share of named themes among classifiable papers. Infrequent categories—including Materials Science (Silk) for Trichoptera—can fall outside the top three even when they matter for a subset of the literature. We report overall ranked composition for 2010–2025 rather than formal tests of theme change over time; describing how theme mixes shifted between early and recent periods would require band-by-band comparisons for each taxon.
+Table 6 and Figure 3 add a temporal layer: theme shares shifted between 2010–2015 and 2021–2025 in every taxon. Ecology/Behavior declined everywhere (−5.3 to −21.9 pp), so the cross-taxa dominance of ecology in Table 5 partly reflects the early band and masks recent redistribution toward other labels. The direction of change differed by taxon. Plecoptera showed a large rise in Taxonomy/Systematics (+22.0 pp) with a matching drop in Ecology/Behavior (−21.9 pp), consistent with a recent literature more weighted toward systematic work than broad ecological studies—though we did not verify whether that reflects new research priorities, journal coverage, or classification drift. Trichoptera moved modestly toward Biomonitoring/Water Quality (+4.5 pp) while ecology fell (−7.2 pp), aligning with its biomonitoring-heavy profile in Table 5. Culicidae shifted only slightly toward Applied Ecology (+3.9 pp) and away from Ecology/Behavior (−5.3 pp), suggesting a relatively stable applied vector-biology mix over these bands.
 
-Despite these limits, the thematic comparison still supports the paper’s broader contrast: Culicidae literature reads as applied and biomedical, EPT taxa as ecology-, biomonitoring-, and taxonomy-oriented, and Odonata as mixed but harder to classify with the current labels. Richer theme analysis would need manual coding audits, multi-label schemes, or region-specific breakdowns beyond the cross-taxa summary in Table 5.
+The largest Not Specified increases were for Ephemeroptera (+30.0 pp) and Odonata (+15.2 pp). Because Not Specified means the model could not assign a supported primary theme, those spikes may indicate weaker abstracts, broader interdisciplinary titles, or inconsistent coding over time—not necessarily a real loss of ecological or biomonitoring research. Ephemeroptera’s biomonitoring share also fell (−6.5 pp) while Not Specified rose, so part of the apparent ecology decline (−21.4 pp) may be reassignment to Not Specified rather than a switch to another named theme. Trichoptera and Plecoptera had small Not Specified changes (+0.6 and −2.4 pp), which makes their named-theme shifts easier to interpret.
+
+Several methodological limits apply across taxa. Each paper received only one primary theme, so interdisciplinary studies were forced into a single category and co-occurring topics are lost. Rankings exclude Not Specified when choosing #1–#3, which raises the apparent share of named themes among classifiable papers. Infrequent categories—including Physiology for Culicidae and Materials Science (Silk) for Trichoptera—can fall outside Table 6 even when they matter for a subset of the literature. Band comparisons use fixed multi-year windows rather than year-by-year models, and percentage-point changes are descriptive summaries, not formal trend tests.
+
+Despite these limits, the thematic comparison supports the paper’s broader contrast: Culicidae literature reads as applied and biomedical with modest recent drift toward Applied Ecology; EPT taxa combine ecology, biomonitoring, and taxonomy with taxon-specific recent shifts (notably Plecoptera taxonomy and Trichoptera biomonitoring); and Odonata remains mixed but harder to classify, with recent increases in Not Specified that caution against over-interpreting named-theme declines. Richer theme analysis would need manual coding audits, multi-label schemes, or region-specific breakdowns beyond the cross-taxa summaries in Tables 5 and 6.
 
 ### 4.4 Authorship and collaboration
 
-Mean authors per paper was 4.05 (median 3). Mean team size increased between 2010–2015 and 2020–2025 (3.39 vs. 4.53 authors, +1.14); this is descriptive only and does not use a formal statistical model of trends over time.
+Section 3.4 shows two cross-cutting patterns: author counts rose over time in every taxon, and Culicidae papers carried larger author lists than the EPT taxa or Odonata. Culicidae’s mean of 6.5 authors (7.0 in 2020–2025) fits a vector-biology and public-health literature that often involves multi-institution consortia, clinical or field teams, and large genomic or surveillance projects. EPT taxa and Odonata clustered near four authors on average, with Trichoptera having the lowest median (3.0)—consistent with smaller-country field ecology and taxonomy teams, though we did not link individual papers to author nationalities here.
 
-Applied-themed papers (§3.4) averaged more authors (4.74) than taxonomic papers (3.22), a gap of 1.53 authors on average, consistent with larger teams in the applied-theme group under this grouping. Another 1,277 other-theme papers contribute to the overall and yearly tables.
+The applied-versus-taxonomic split in author counts was taxon-dependent. For Ephemeroptera, Plecoptera, Trichoptera, and Odonata, applied-themed papers averaged 1.3–1.8 more authors than taxonomic papers (Table 7), which matches the common expectation that biomonitoring and applied ecology projects assemble broader teams than single-taxon revision work. Culicidae was an exception: applied and taxonomic papers had nearly identical means (6.7 vs 6.4), suggesting that even systematic mosquito work in this corpus often appears in multi-author, consortium-style publications. Temporal increases (+0.6 to +1.4 authors between 2010–2015 and 2020–2025) are descriptive only; they may reflect field-wide growth in co-authorship, improved metadata capture, or both, not a formal trend test.
 
-In total, 70.6% of papers had three or more authors. Contrasts between author-count groups (for example, more papers with six to ten authors in applied than in taxonomic groups) summarize how collaboration size differs by theme split.
+International collaboration rates were much higher here than affiliation-keyword heuristics alone would suggest, because OpenAlex ISO country codes resolved affiliation-country signals for 92–96% of papers (Table 8). Overall international collaboration ranged from 25% (Ephemeroptera, Plecoptera) to 38% (Culicidae) of all papers, and from 26% to 39% among papers with known signals. Culicidae’s higher rate aligns with the global scope of mosquito and vector-control research. Odonata taxonomic papers had the largest theme-specific international rate (39.1%), which may reflect wide-ranging dragonfly/damselfly systematics networks—or noise from sparse taxonomic samples in some years.
 
-International labels are unreliable for this dataset: only 2.3% of papers were classified as International overall, and 79.2% were Unknown under the rules in section 2.4.3. Taxonomic papers had a slightly higher International share (3.1%) than applied papers (1.2%), a −1.9 point gap relative to a simple guess that applied work would be more international. With so much missing signal, between-type gaps should be read as how often the assignment rules produced a label, not as proof of cross-border collaboration rates.
+Contrary to a simple “applied work is more international” expectation, taxonomic papers had equal or higher international collaboration rates than applied papers in every taxon (Table 8). That pattern may mean cross-border taxonomy collaborations are common in these literatures, or that country-code assignment flags any multi-country author list regardless of whether the research itself was transnational. The heuristic also cannot distinguish international co-authorship from nationally diverse teams within one country, and papers labeled National include all single-country author lists even when affiliations were inferred from keywords rather than codes.
 
-Study-type comparisons also depend on how well the primary theme codes match the papers. “Applied” here means only papers whose primary coded theme falls in the four applied categories, not every applied study on caddisflies. Excluding papers with no authors recorded yields a slightly smaller authorship sample (2,845) than the geographic and thematic sample (2,870).
+Study-type comparisons depend on LLM primary-theme labels (section 2.3): “applied” here means only papers whose primary coded theme falls in the four applied categories, not every applied study on a taxon. Excluding papers with no authors recorded removed at most about 2% of taxon-focused papers. Author-count bins and year-by-year collaboration tables were not compared across taxa here because those summaries are uneven in sample size and were not central to the cross-taxon RQ4 design. Stronger collaboration claims would need manual affiliation auditing, explicit cross-border collaboration definitions, and author-network analysis beyond the summary metrics in Tables 7 and 8.

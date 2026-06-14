@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-30T22:34:43.229225",
+  "generated_at": "2026-06-13T15:04:02.717929",
   "queries": [
     "ephemeroptera",
     "mosquitoes",
@@ -10,6 +10,7 @@
   "outputs": {
     "markdown": "analysis/combined/overall_bibliometric_report.md",
     "yearly_publication_volume_csv": "analysis/combined/yearly_publication_volume_by_query.csv",
+    "theme_shift_by_query_csv": "analysis/combined/theme_shift_by_query.csv",
     "glossary_source": "analysis/combined/bibliometric_tables_glossary.md"
   }
 }

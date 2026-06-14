@@ -81,6 +81,16 @@ Percentages use the taxon-focused sample. The three ranked theme rows ignore “
 
 ---
 
+## RQ3 — Theme share change (percentage points): 2010–2015 vs 2021–2025
+
+Percentages use taxon-focused papers with one primary theme label. For each theme row, **early** is the share in 2010–2015 and **recent** is the share in 2021–2025; cell values are recent − early in percentage points.
+
+| Row title | Definition |
+| --- | --- |
+| **Ecology/Behavior** through **Not Specified** | Change in the share of papers assigned that primary theme between the early and recent bands. |
+
+---
+
 ## RQ4A — Authorship structure
 
 Author counts use each paper’s recorded author number when available; papers without a count are omitted from these rows.

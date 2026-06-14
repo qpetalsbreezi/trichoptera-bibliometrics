@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-30T22:31:46.515737",
+  "generated_at": "2026-06-13T15:03:47.155755",
   "queries": [
     "ephemeroptera",
     "mosquitoes",
@@ -10,6 +10,7 @@
   "outputs": {
     "markdown": "analysis/combined/cross_taxa_report.md",
     "csv": "analysis/combined/cross_taxa_metrics.csv",
-    "yearly_publication_volume_csv": "analysis/combined/yearly_publication_volume_by_query.csv"
+    "yearly_publication_volume_csv": "analysis/combined/yearly_publication_volume_by_query.csv",
+    "theme_shift_by_query_csv": "analysis/combined/theme_shift_by_query.csv"
   }
 }

@@ -44,6 +44,50 @@ def get_query_config(query_id: str) -> dict:
     return queries[query_id]
 
 
+# Manuscript table/figure order (Culicidae → Ephemeroptera → Plecoptera → Trichoptera → Odonata).
+PAPER_QUERY_ORDER: list[str] = [
+    "mosquitoes",
+    "ephemeroptera",
+    "plecoptera",
+    "trichoptera",
+    "odonata",
+]
+
+PAPER_TAXON_LABELS: dict[str, str] = {
+    "mosquitoes": "Culicidae",
+    "ephemeroptera": "Ephemeroptera",
+    "plecoptera": "Plecoptera",
+    "trichoptera": "Trichoptera",
+    "odonata": "Odonata",
+}
+
+
+def paper_query_order(
+    cfg: dict | None = None,
+    candidates: list[str] | None = None,
+) -> list[str]:
+    """Return query_ids in manuscript order; append any extras alphabetically."""
+    cfg = cfg or load_queries_config()
+    available = set((cfg.get("queries") or {}).keys())
+    if candidates is not None:
+        available &= set(candidates)
+    ordered = [q for q in PAPER_QUERY_ORDER if q in available]
+    extra = sorted(available - set(ordered))
+    return ordered + extra
+
+
+def paper_taxon_label(query_id: str, cfg: dict | None = None) -> str:
+    """Display name for figures/tables (Culicidae, not mosquitoes)."""
+    if query_id in PAPER_TAXON_LABELS:
+        return PAPER_TAXON_LABELS[query_id]
+    cfg = cfg or load_queries_config()
+    q = (cfg.get("queries") or {}).get(query_id) or {}
+    lab = str(q.get("label") or query_id)
+    if "(" in lab:
+        lab = lab.split("(")[0].strip()
+    return lab
+
+
 def load_dotenv(project_root: Path | None = None) -> None:
     """Load KEY=VALUE lines from .env at project root into os.environ (no override)."""
     root = project_root or PROJECT_ROOT

@@ -29,7 +29,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
 from lib.format_metrics import fmt_integerish, fmt_ratio_or_pct, round_one_decimal  # noqa: E402
-from lib.pipeline import PipelinePaths, load_queries_config  # noqa: E402
+from lib.pipeline import PipelinePaths, load_queries_config, paper_query_order  # noqa: E402
 
 
 NOT_FOCUS_LABELS = {"Not target-taxon-focused", "Not Trichoptera-focused"}
@@ -47,7 +47,7 @@ def yearly_publication_volume_long(query_ids: list[str]) -> pd.DataFrame:
     ``n_all_coded``: year filter only; ``n_taxon_focused``: after relevance exclusion
     (same rules as ``filter_analysis_frame``).
     """
-    query_ids = sorted(query_ids)
+    query_ids = paper_query_order(load_queries_config(), query_ids)
     return pd.concat([_yearly_volume_single_query(q) for q in query_ids], ignore_index=True)
 
 
@@ -264,6 +264,68 @@ def study_type_from_theme(theme: str) -> str:
     return "Other"
 
 
+RQ3_THEME_SHIFT_THEMES = [
+    "Ecology/Behavior",
+    "Taxonomy/Systematics",
+    "Biomonitoring/Water Quality",
+    "Applied Ecology",
+    "Not Specified",
+]
+
+THEME_SHIFT_EARLY_YEARS = (2010, 2015)
+THEME_SHIFT_RECENT_YEARS = (2021, 2025)
+
+
+def theme_share_pct(df: pd.DataFrame, theme: str, year_lo: int, year_hi: int) -> float:
+    sub = df[df["Year"].between(year_lo, year_hi)]
+    if len(sub) == 0:
+        return 0.0
+    themes = sub["Research_Theme"].fillna("").astype(str).str.strip()
+    return float((themes == theme).mean() * 100.0)
+
+
+def theme_shift_long(query_ids: list[str]) -> pd.DataFrame:
+    cfg = load_queries_config()
+    rows: list[dict] = []
+    for q in paper_query_order(cfg, query_ids):
+        paths = PipelinePaths(q)
+        df = filter_analysis_frame(pd.read_csv(paths.coded, low_memory=False))
+        for theme in RQ3_THEME_SHIFT_THEMES:
+            early = theme_share_pct(df, theme, *THEME_SHIFT_EARLY_YEARS)
+            recent = theme_share_pct(df, theme, *THEME_SHIFT_RECENT_YEARS)
+            rows.append(
+                {
+                    "theme": theme,
+                    "query_id": q,
+                    "early_pct": round_one_decimal(early),
+                    "recent_pct": round_one_decimal(recent),
+                    "delta_pp": round_one_decimal(recent - early),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def theme_shift_delta_wide_table(df_long: pd.DataFrame, query_order: list[str]) -> str:
+    """Markdown table: themes as rows, query_id columns, delta_pp values."""
+    pivot = df_long.pivot(index="theme", columns="query_id", values="delta_pp")
+    pivot = pivot.reindex(RQ3_THEME_SHIFT_THEMES)
+    pivot = pivot.reindex(columns=query_order)
+    lines = [
+        "| Theme | " + " | ".join(query_order) + " |",
+        "| --- | " + " | ".join(["---:"] * len(query_order)) + " |",
+    ]
+    for theme in pivot.index:
+        cells = []
+        for q in query_order:
+            val = pivot.loc[theme, q]
+            if pd.isna(val):
+                cells.append("—")
+            else:
+                v = float(val)
+                cells.append(f"{v:+.1f}" if v != 0 else "0.0")
+        lines.append(f"| {theme} | " + " | ".join(cells) + " |")
+    return "\n".join(lines)
+
 @dataclass
 class TaxonMetrics:
     query_id: str
@@ -462,7 +524,11 @@ def metrics_to_row(m: TaxonMetrics) -> dict:
 
 
 def render_markdown(rows: list[dict]) -> str:
-    df = pd.DataFrame(rows).sort_values("query_id")
+    cfg = load_queries_config()
+    df = pd.DataFrame(rows)
+    order = paper_query_order(cfg, df["query_id"].tolist())
+    df["query_id"] = pd.Categorical(df["query_id"], categories=order, ordered=True)
+    df = df.sort_values("query_id")
 
     count_columns = frozenset(
         {
@@ -595,7 +661,7 @@ def main():
     args = parser.parse_args()
 
     cfg = load_queries_config()
-    queries = sorted(args.queries or list((cfg.get("queries") or {}).keys()))
+    queries = paper_query_order(cfg, args.queries or list((cfg.get("queries") or {}).keys()))
     if not queries:
         raise SystemExit("No queries found.")
 
@@ -606,7 +672,9 @@ def main():
     for q in queries:
         rows.append(metrics_to_row(compute_metrics_for_query(q)))
 
-    df = pd.DataFrame(rows).sort_values("query_id")
+    df = pd.DataFrame(rows)
+    df["query_id"] = pd.Categorical(df["query_id"], categories=queries, ordered=True)
+    df = df.sort_values("query_id")
     csv_path = out_dir / "cross_taxa_metrics.csv"
     md_path = out_dir / "cross_taxa_report.md"
     df.to_csv(csv_path, index=False)
@@ -616,6 +684,10 @@ def main():
     yvol_path = out_dir / "yearly_publication_volume_by_query.csv"
     yvol.to_csv(yvol_path, index=False)
 
+    theme_shift = theme_shift_long(queries)
+    theme_shift_path = out_dir / "theme_shift_by_query.csv"
+    theme_shift.to_csv(theme_shift_path, index=False)
+
     meta = {
         "generated_at": pd.Timestamp.now().isoformat(),
         "queries": queries,
@@ -623,6 +695,7 @@ def main():
             "markdown": str(md_path),
             "csv": str(csv_path),
             "yearly_publication_volume_csv": str(yvol_path),
+            "theme_shift_by_query_csv": str(theme_shift_path),
         },
     }
     (out_dir / "cross_taxa_report_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
@@ -630,6 +703,7 @@ def main():
     print(f"Wrote: {md_path}")
     print(f"Wrote: {csv_path}")
     print(f"Wrote: {yvol_path}")
+    print(f"Wrote: {theme_shift_path}")
 
 
 if __name__ == "__main__":

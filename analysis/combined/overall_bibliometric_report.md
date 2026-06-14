@@ -1,6 +1,6 @@
 # Overall bibliometric data (multi-taxon)
 
-*Generated 2026-04-30.*
+*Generated 2026-06-13.*
 
 Definitions of table rows are in the **Glossary** at the end of this file.
 
@@ -84,6 +84,18 @@ Each paper carries one **primary research theme** label. The three ranked rows (
 | Top theme #3 % | 8.3 | 13.7 | 5.4 | 25.4 | 20.9 |
 | Not Specified % | 20.9 | 12.4 | 32.6 | 4.4 | 3.1 |
 
+
+## RQ3 — Theme share change (percentage points): 2010–2015 vs 2021–2025
+
+Change in the share of papers assigned each primary theme between the early band (2010–2015) and recent band (2021–2025). Values are recent minus early percentage points on taxon-focused papers.
+
+| Theme | ephemeroptera | mosquitoes | odonata | plecoptera | trichoptera |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Ecology/Behavior | -21.4 | -5.3 | -18.3 | -21.9 | -7.2 |
+| Taxonomy/Systematics | -2.0 | -0.5 | +2.7 | +22.0 | +1.1 |
+| Biomonitoring/Water Quality | -6.5 | +0.7 | -1.5 | -2.3 | +4.5 |
+| Applied Ecology | -0.5 | +3.9 | +0.4 | -0.2 | +0.1 |
+| Not Specified | +30.0 | +4.1 | +15.2 | -2.4 | +0.6 |
 
 ## RQ4A — Authorship structure
 
@@ -189,6 +201,16 @@ Percentages use the taxon-focused sample. The three ranked theme rows ignore “
 | **Top theme #3** | Third place. |
 | **Top theme #3 %** | % with theme #3. |
 | **Not Specified %** | % of papers assigned the “Not Specified” theme label. |
+
+---
+
+### RQ3 — Theme share change (percentage points): 2010–2015 vs 2021–2025
+
+Percentages use taxon-focused papers with one primary theme label. For each theme row, **early** is the share in 2010–2015 and **recent** is the share in 2021–2025; cell values are recent − early in percentage points.
+
+| Row title | Definition |
+| --- | --- |
+| **Ecology/Behavior** through **Not Specified** | Change in the share of papers assigned that primary theme between the early and recent bands. |
 
 ---
 

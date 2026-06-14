@@ -9,6 +9,7 @@ Outputs:
 - analysis/combined/overall_bibliometric_report.md (appends bibliometric_tables_glossary.md when present)
 - analysis/combined/overall_bibliometric_report_meta.json
 - analysis/combined/yearly_publication_volume_by_query.csv (long format; same as cross_taxa script)
+- analysis/combined/theme_shift_by_query.csv (long format; early/recent/delta by theme and query)
 """
 
 from __future__ import annotations
@@ -26,7 +27,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
 from lib.format_metrics import fmt_integerish, fmt_ratio_or_pct, round_one_decimal  # noqa: E402
-from lib.pipeline import PROJECT_ROOT, load_queries_config  # noqa: E402
+from lib.pipeline import PROJECT_ROOT, load_queries_config, paper_query_order  # noqa: E402
 
 import analyze_cross_taxa_summary as xtax  # noqa: E402
 
@@ -164,14 +165,25 @@ def load_rq1_row(query_id: str) -> dict[str, str | int | float | None]:
     return base
 
 
+def _sort_by_paper_order(df: pd.DataFrame, order: list[str]) -> pd.DataFrame:
+    out = df.copy()
+    out["query_id"] = pd.Categorical(out["query_id"], categories=order, ordered=True)
+    return out.sort_values("query_id")
+
+
 def build_report(
     metrics_rows: list[dict],
     rq1_rows: list[dict],
     yearly_long: pd.DataFrame | None = None,
     query_order: list[str] | None = None,
+    theme_shift_long: pd.DataFrame | None = None,
 ) -> str:
-    df = pd.DataFrame(metrics_rows).sort_values("query_id")
-    df_rq1 = pd.DataFrame(rq1_rows).sort_values("query_id")
+    cfg = load_queries_config()
+    qord = query_order or paper_query_order(
+        cfg, [r["query_id"] for r in metrics_rows if "query_id" in r]
+    )
+    df = _sort_by_paper_order(pd.DataFrame(metrics_rows), qord)
+    df_rq1 = _sort_by_paper_order(pd.DataFrame(rq1_rows), qord)
 
     parts: list[str] = []
     parts.append("# Overall bibliometric data (multi-taxon)")
@@ -252,7 +264,7 @@ def build_report(
     )
     parts.append("")
     if yearly_long is not None and len(yearly_long) > 0:
-        qord = query_order or sorted(yearly_long["query_id"].unique().tolist())
+        qord = query_order or qord
         parts.append(
             _yearly_wide_md(
                 yearly_long,
@@ -366,6 +378,18 @@ def build_report(
     )
     parts.append("")
 
+    if theme_shift_long is not None and len(theme_shift_long) > 0:
+        qord = query_order or qord
+        parts.append("## RQ3 — Theme share change (percentage points): 2010–2015 vs 2021–2025")
+        parts.append("")
+        parts.append(
+            "Change in the share of papers assigned each primary theme between the early band (2010–2015) "
+            "and recent band (2021–2025). Values are recent minus early percentage points on taxon-focused papers."
+        )
+        parts.append("")
+        parts.append(xtax.theme_shift_delta_wide_table(theme_shift_long, qord))
+        parts.append("")
+
     parts.append("## RQ4A — Authorship structure")
     parts.append("")
     a_cols = [
@@ -476,7 +500,7 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_queries_config()
-    queries = sorted(args.queries or list((cfg.get("queries") or {}).keys()))
+    queries = paper_query_order(cfg, args.queries or list((cfg.get("queries") or {}).keys()))
     if not queries:
         raise SystemExit("No queries in config.")
 
@@ -490,7 +514,11 @@ def main() -> None:
     yearly_path = out_dir / "yearly_publication_volume_by_query.csv"
     yearly_long.to_csv(yearly_path, index=False)
 
-    md = build_report(metrics_rows, rq1_rows, yearly_long, queries)
+    theme_shift = xtax.theme_shift_long(queries)
+    theme_shift_path = out_dir / "theme_shift_by_query.csv"
+    theme_shift.to_csv(theme_shift_path, index=False)
+
+    md = build_report(metrics_rows, rq1_rows, yearly_long, queries, theme_shift)
     glossary_path = out_dir / "bibliometric_tables_glossary.md"
     md = _append_glossary_if_present(md, glossary_path)
     md_path = out_dir / "overall_bibliometric_report.md"
@@ -502,6 +530,7 @@ def main() -> None:
         "outputs": {
             "markdown": str(md_path.relative_to(PROJECT_ROOT)),
             "yearly_publication_volume_csv": str(yearly_path.relative_to(PROJECT_ROOT)),
+            "theme_shift_by_query_csv": str(theme_shift_path.relative_to(PROJECT_ROOT)),
             "glossary_source": str(glossary_path.relative_to(PROJECT_ROOT))
             if glossary_path.is_file()
             else None,
@@ -511,6 +540,7 @@ def main() -> None:
 
     print(f"Wrote: {md_path.relative_to(PROJECT_ROOT)}")
     print(f"Wrote: {yearly_path.relative_to(PROJECT_ROOT)}")
+    print(f"Wrote: {theme_shift_path.relative_to(PROJECT_ROOT)}")
 
 
 if __name__ == "__main__":
