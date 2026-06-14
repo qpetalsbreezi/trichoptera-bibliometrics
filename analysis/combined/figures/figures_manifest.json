@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-14T00:37:31.327106+00:00",
-  "git_commit": "d6d230edb26ee734c390a109d93c2772ef2e8ec5",
+  "generated_at": "2026-06-14T01:26:06.248381+00:00",
+  "git_commit": "ae5d5852352a2228106b275be1ff3ffbfba14610",
   "query_ids": [
     "mosquitoes",
     "ephemeroptera",
@@ -84,6 +84,10 @@
     {
       "pdf": "analysis/combined/figures/fig_rq2_geo_delta_continental_grouped_bars.pdf",
       "png": "analysis/combined/figures/fig_rq2_geo_delta_continental_grouped_bars.png"
+    },
+    {
+      "pdf": "analysis/combined/figures/fig_rq2_geo_delta_compositional_matrix.pdf",
+      "png": "analysis/combined/figures/fig_rq2_geo_delta_compositional_matrix.png"
     },
     {
       "pdf": "analysis/combined/figures/fig_rq2_geo_continental_share_over_time_facets.pdf",

@@ -128,6 +128,8 @@ _DIVERGING_PP = mcolors.LinearSegmentedColormap.from_list(
 )
 _DELTA_DECREASE_HEX = "#2166AC"
 _DELTA_INCREASE_HEX = "#B2182B"
+_GEO_SHIFT_POS_HEX = "#228833"
+_GEO_SHIFT_NEG_HEX = "#CC0000"
 
 # Paper figures (Figures 1–4): shared typography
 _PAPER_TITLE_SIZE = 10
@@ -203,12 +205,24 @@ def _git_head() -> str | None:
         return None
 
 
-def _save(fig: plt.Figure, out_dir: Path, stem: str) -> dict[str, str]:
+def _save(
+    fig: plt.Figure,
+    out_dir: Path,
+    stem: str,
+    *,
+    pad_inches: float | None = None,
+    bbox_inches: str | None = "tight",
+) -> dict[str, str]:
     out_dir.mkdir(parents=True, exist_ok=True)
     pdf = out_dir / f"{stem}.pdf"
     png = out_dir / f"{stem}.png"
-    fig.savefig(pdf, bbox_inches="tight")
-    fig.savefig(png, bbox_inches="tight")
+    save_kw: dict[str, object] = {}
+    if bbox_inches is not None:
+        save_kw["bbox_inches"] = bbox_inches
+    if pad_inches is not None:
+        save_kw["pad_inches"] = pad_inches
+    fig.savefig(pdf, **save_kw)
+    fig.savefig(png, **save_kw)
     plt.close(fig)
     return {"pdf": str(pdf.relative_to(PROJECT_ROOT)), "png": str(png.relative_to(PROJECT_ROOT))}
 
@@ -946,6 +960,138 @@ def fig_rq2_geo_delta_grouped_bars(
     return _save(fig, out_dir, "fig_rq2_geo_delta_continental_grouped_bars")
 
 
+def _annotate_pp_barh(ax, val: float, xlim: float) -> None:
+    """Place Δpp label just beyond the bar tip, clear of the zero line."""
+    label = f"{val:+.1f}"
+    pad = max(1.0, xlim * 0.025)
+    if val >= 0:
+        x_pos = max(val + pad, pad)
+        ha = "left"
+    else:
+        x_pos = min(val - pad, -pad)
+        ha = "right"
+    ax.text(
+        x_pos,
+        0,
+        label,
+        ha=ha,
+        va="center",
+        fontsize=7,
+        color="#1a1a1a",
+        clip_on=False,
+    )
+
+
+def fig_rq2_geo_delta_compositional_matrix(
+    metrics: pd.DataFrame,
+    query_ids: list[str],
+    labels: dict[str, str],
+    out_dir: Path,
+) -> dict[str, str]:
+    """Continent × taxon matrix of horizontal Δpp bars (green = increase, red = decrease)."""
+    cols = [
+        ("geo_delta_pp_south_america_2010_2012_vs_2023_2025", "S. America"),
+        ("geo_delta_pp_asia_2010_2012_vs_2023_2025", "Asia"),
+        ("geo_delta_pp_europe_2010_2012_vs_2023_2025", "Europe"),
+        ("geo_delta_pp_north_america_2010_2012_vs_2023_2025", "N. America"),
+    ]
+    m = metrics.set_index("query_id").loc[query_ids]
+    all_vals = [float(m.loc[q, col]) for q in query_ids for col, _ in cols]
+    xlim = max(10, 10 * int(np.ceil(max(abs(v) for v in all_vals) / 10)))
+
+    n_rows = len(cols)
+    n_cols = len(query_ids)
+    title_text = "Continental compositional shift (2010–2012 vs 2023–2025 mean share)"
+
+    fig, axes = plt.subplots(
+        n_rows,
+        n_cols,
+        figsize=(2.05 * n_cols, 0.65 * n_rows + 0.95),
+        sharex=True,
+        gridspec_kw={"hspace": 0.08, "wspace": 0.10},
+    )
+    if n_rows == 1:
+        axes = np.array([axes])
+    if n_cols == 1:
+        axes = axes.reshape(-1, 1)
+
+    grid_ticks = list(range(-xlim, xlim + 1, 10))
+    for r, (col_key, region) in enumerate(cols):
+        for c, q in enumerate(query_ids):
+            ax = axes[r, c]
+            val = float(m.loc[q, col_key])
+            color = _GEO_SHIFT_POS_HEX if val >= 0 else _GEO_SHIFT_NEG_HEX
+            for tick in grid_ticks:
+                if tick != 0:
+                    ax.axvline(tick, color="#E6E6E6", linewidth=0.55, zorder=1)
+            ax.barh(0, val, height=0.58, color=color, edgecolor="none", zorder=3)
+            ax.axvline(0, color="#444444", linewidth=0.65, zorder=2)
+            ax.set_xlim(-xlim, xlim)
+            if r == n_rows - 1:
+                ax.set_ylim(-0.78, 0.48)
+            else:
+                ax.set_ylim(-0.65, 0.65)
+            ax.set_yticks([])
+            ax.grid(False)
+            _annotate_pp_barh(ax, val, xlim)
+            for spine in ("top", "right", "left"):
+                ax.spines[spine].set_visible(False)
+            ax.spines["bottom"].set_visible(r == n_rows - 1)
+            ax.spines["bottom"].set_linewidth(0.55)
+            if r < n_rows - 1:
+                ax.tick_params(axis="x", bottom=False, labelbottom=False)
+            else:
+                ax.xaxis.set_major_locator(mticker.MultipleLocator(10))
+                ax.tick_params(axis="x", labelsize=6.5, length=2, pad=5)
+                if c == n_cols // 2:
+                    ax.set_xlabel(
+                        "Δ percentage points (compositional shift)",
+                        fontsize=9,
+                        labelpad=7,
+                    )
+
+        ax_left = axes[r, 0]
+        ax_left.set_ylabel(
+            region,
+            rotation=0,
+            ha="right",
+            va="center",
+            fontsize=8,
+            labelpad=8,
+        )
+        ax_left.yaxis.set_label_coords(-0.20, 0.5)
+
+    # Reserve headroom above the data grid, then place headers and title in figure coords.
+    fig.subplots_adjust(left=0.11, right=0.99, top=0.50, bottom=0.17, hspace=0.08, wspace=0.10)
+    fig.text(
+        0.5,
+        0.865,
+        title_text,
+        ha="center",
+        va="center",
+        fontsize=_PAPER_TITLE_SIZE,
+        transform=fig.transFigure,
+    )
+    for c, q in enumerate(query_ids):
+        pos = axes[0, c].get_position()
+        fig.text(
+            pos.x0 + pos.width / 2,
+            0.72,
+            labels[q],
+            ha="center",
+            va="center",
+            fontsize=_PAPER_TITLE_SIZE,
+            transform=fig.transFigure,
+        )
+
+    return _save(
+        fig,
+        out_dir,
+        "fig_rq2_geo_delta_compositional_matrix",
+        bbox_inches=None,
+    )
+
+
 # --- RQ3 (additional) ---
 
 
@@ -1236,6 +1382,7 @@ def main() -> None:
     outputs.append(fig_rq2_geo_mean_grouped_vertical(metrics, query_ids, labels, out_dir))
     outputs.append(fig_rq2_geo_delta_heatmap(metrics, query_ids, labels, out_dir))
     outputs.append(fig_rq2_geo_delta_grouped_bars(metrics, query_ids, labels, colors, out_dir))
+    outputs.append(fig_rq2_geo_delta_compositional_matrix(metrics, query_ids, labels, out_dir))
     outputs.append(fig_rq2_geo_temporal_lines_by_taxon(query_ids, labels, out_dir))
     # RQ3
     outputs.append(fig_rq3_theme_top_shares(metrics, query_ids, labels, out_dir))

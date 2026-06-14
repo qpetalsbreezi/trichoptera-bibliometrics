@@ -125,9 +125,9 @@ Continent labels describe where the study took place (Methods, section 2.3), not
 | Europe | 1.3 | 2.6 | 10.8 | 6.7 | −5.3 |
 | North America | −11.6 | −29.1 | −28.0 | −14.5 | −13.0 |
 
-<p><img src="./figures/fig_rq2_geo_delta_continental_grouped_bars.png" alt="Figure 2" style="max-width:100%;height:auto;" /></p>
+<p><img src="./figures/fig_rq2_geo_delta_compositional_matrix.png" alt="Figure 2" style="max-width:100%;height:auto;" /></p>
 
-**Figure 2.** Change in mean continental share (percentage points) from 2010–2012 to 2023–2025. Early and recent values are the mean of within-year continental percentages in each three-year band. One bar group per continent; bar colors identify taxon (consistent across continents). Bars above zero mark share increases and bars below zero mark decreases. North America's group shows declines for every taxon; Asia and Europe show mixed or positive shifts depending on taxon. Values are given in Table 4.
+**Figure 2.** Change in mean continental share (percentage points) from 2010–2012 to 2023–2025. Each cell shows one continent–taxon pair as a horizontal bar; green marks a share increase and red a share decrease relative to zero. Rows are continents and columns are taxa (Culicidae through Odonata). North America shows declines for every taxon; Asia shows the largest gain for Plecoptera (+18.5 pp). Exact values are in Table 4.
 
 ### 3.3 Thematic evolution (2010–2025)
 
