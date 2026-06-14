@@ -35,6 +35,8 @@ We applied one bibliometric workflow to five aquatic insect taxa (Table 1): Culi
 
 Publications were retrieved with Elsevier’s Scopus Search API using the queries in Table 1. Calendar years 2010–2025 were fetched sequentially; large years were subdivided into months or quarters to stay within API pagination limits. The API supplied standard bibliographic metadata (title, journal, year, DOI, citations, document type). Full abstracts and complete author lists were often missing and were obtained as described in section 2.2.
 
+The Scopus API was queried in May 2026. Because Scopus indexing lags publication, 2025 records may be incompletely captured at this retrieval date; counts and shares for 2025 should therefore be read as lower bounds, and recent-window (2020–2025) totals are likely slightly conservative.
+
 For database comparison, taxon-matched Google Scholar results for 2023 were retrieved with Publish or Perish using the same search terms as in Table 1 (1,000-result cap per query). Scopus records for the same year used the workflow above.
 
 ### 2.2 Data processing and metadata enrichment
@@ -124,6 +126,8 @@ Continent labels describe where the study took place (Methods, section 2.3), not
 | Asia | +6.6 | +3.2 | +24.6 | +6.2 | +7.1 |
 | Europe | +0.5 | +0.1 | +2.7 | +2.8 | −6.7 |
 | North America | −8.3 | −22.6 | −23.4 | −10.7 | −10.0 |
+
+*Other (Afrotropical, Australasian, Global) and Unknown are omitted; the four continents shown need not sum to zero in each column (e.g., Culicidae ≈ −1.8 pp).*
 
 <p><img src="./figures/fig_rq2_geo_delta_compositional_matrix.png" alt="Figure 2" style="max-width:100%;height:auto;" /></p>
 
