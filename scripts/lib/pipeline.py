@@ -61,6 +61,21 @@ PAPER_TAXON_LABELS: dict[str, str] = {
     "odonata": "Odonata",
 }
 
+# Legacy LLM label merged into Physiology (manuscript / prof revision).
+SILK_THEME_LEGACY = "Materials Science (Silk)"
+
+
+def normalize_research_theme(value) -> str:
+    """Map deprecated Silk theme to Physiology; pass through other values."""
+    if value is None:
+        return ""
+    s = str(value).strip()
+    if s.lower() in ("", "nan", "none"):
+        return ""
+    if s == SILK_THEME_LEGACY:
+        return "Physiology"
+    return s
+
 
 def paper_query_order(
     cfg: dict | None = None,

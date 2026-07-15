@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-14T01:49:13.452423+00:00",
-  "git_commit": "5693f1a195d20e1ad50487d106a8fc7ef9b5aa73",
+  "generated_at": "2026-07-09T00:44:45.270277+00:00",
+  "git_commit": "0c64404ab28d322860c9d5837d6e95f24f9d09aa",
   "query_ids": [
     "mosquitoes",
     "ephemeroptera",
@@ -8,138 +8,13 @@
     "trichoptera",
     "odonata"
   ],
-  "inputs": {
-    "yearly_publication_volume_by_query.csv": {
-      "path": "analysis/combined/yearly_publication_volume_by_query.csv",
-      "sha256": "5f7d9cc765783207cac016c84327e1bdbc2ebf7a50f1e40bfa4eadf9ff434a3c",
-      "n_rows": 80
-    },
-    "cross_taxa_metrics.csv": {
-      "path": "analysis/combined/cross_taxa_metrics.csv",
-      "sha256": "d06f7e05ed0ba9b31ec8b7cdc486ca6289d50a9a681a86e00f7d331adfea8c08",
-      "n_rows": 5
-    },
-    "theme_shift_by_query.csv": {
-      "path": "analysis/combined/theme_shift_by_query.csv",
-      "sha256": "0b445b5f7d9120158ed36aed3c985773bf96b2a0270fe3998b29f098fbb3c08e",
-      "n_rows": 25
-    },
-    "coded_scopus_api_csv_sha256_by_query": {
-      "mosquitoes": "656f307a6719b03da9fe3c7c5fd4b2546d376865636eaa378b2e23bc93bc6a66",
-      "ephemeroptera": "648de4be9a6616822a9640c10b1f1e97b902507368c022e58d8d1d5838389534",
-      "plecoptera": "c02e42e3eff57cbc90fc1a3a198a7aa25c376e4824ac8ad14797d79c34a664cf",
-      "trichoptera": "2c80fba2cbce5796aba550dccc3ef7ead2b21fed6adb992eccb6ab83f1bc6384",
-      "odonata": "b6260a6539eae8ca980d5f25d1589177b206feb611dcf20d82ec5157f62fcaaf"
-    }
-  },
+  "only": [
+    "fig_rq2_temporal_taxon_focused_facets"
+  ],
   "figures": [
     {
       "pdf": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_facets.pdf",
       "png": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_facets.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_log_overlay.pdf",
-      "png": "analysis/combined/figures/fig_rq2_temporal_taxon_focused_log_overlay.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_temporal_all_coded_facets.pdf",
-      "png": "analysis/combined/figures/fig_rq2_temporal_all_coded_facets.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_temporal_all_coded_log_overlay.pdf",
-      "png": "analysis/combined/figures/fig_rq2_temporal_all_coded_log_overlay.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_sample_size_all_coded_vs_taxon_focused.pdf",
-      "png": "analysis/combined/figures/fig_rq2_sample_size_all_coded_vs_taxon_focused.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_taxon_focused_early_vs_recent_counts.pdf",
-      "png": "analysis/combined/figures/fig_rq2_taxon_focused_early_vs_recent_counts.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_pct_change_taxon_focused_recent_vs_early.pdf",
-      "png": "analysis/combined/figures/fig_rq2_pct_change_taxon_focused_recent_vs_early.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq1_database_counts.pdf",
-      "png": "analysis/combined/figures/fig_rq1_database_counts.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq1_overlap_pct_and_gs_scopus_ratio.pdf",
-      "png": "analysis/combined/figures/fig_rq1_overlap_pct_and_gs_scopus_ratio.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_geo_mean_continental_stacked.pdf",
-      "png": "analysis/combined/figures/fig_rq2_geo_mean_continental_stacked.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_geo_mean_continental_grouped_bars.pdf",
-      "png": "analysis/combined/figures/fig_rq2_geo_mean_continental_grouped_bars.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_geo_delta_heatmap.pdf",
-      "png": "analysis/combined/figures/fig_rq2_geo_delta_heatmap.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_geo_delta_continental_grouped_bars.pdf",
-      "png": "analysis/combined/figures/fig_rq2_geo_delta_continental_grouped_bars.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_geo_delta_compositional_matrix.pdf",
-      "png": "analysis/combined/figures/fig_rq2_geo_delta_compositional_matrix.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq2_geo_continental_share_over_time_facets.pdf",
-      "png": "analysis/combined/figures/fig_rq2_geo_continental_share_over_time_facets.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq3_theme_ranked_shares.pdf",
-      "png": "analysis/combined/figures/fig_rq3_theme_ranked_shares.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq3_theme_shift_delta_grouped_bars.pdf",
-      "png": "analysis/combined/figures/fig_rq3_theme_shift_delta_grouped_bars.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq3_theme_shift_delta_facets.pdf",
-      "png": "analysis/combined/figures/fig_rq3_theme_shift_delta_facets.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq3_top_theme_labeled_horizontal.pdf",
-      "png": "analysis/combined/figures/fig_rq3_top_theme_labeled_horizontal.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq3_ranked_theme_pct_heatmap.pdf",
-      "png": "analysis/combined/figures/fig_rq3_ranked_theme_pct_heatmap.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq3_not_specified_pct_by_taxon.pdf",
-      "png": "analysis/combined/figures/fig_rq3_not_specified_pct_by_taxon.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq4_authors_and_intl_collab.pdf",
-      "png": "analysis/combined/figures/fig_rq4_authors_and_intl_collab.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq4_mean_vs_median_authors.pdf",
-      "png": "analysis/combined/figures/fig_rq4_mean_vs_median_authors.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq4_mean_authors_applied_vs_taxonomic.pdf",
-      "png": "analysis/combined/figures/fig_rq4_mean_authors_applied_vs_taxonomic.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq4_intl_collab_overall_known_applied_taxonomic.pdf",
-      "png": "analysis/combined/figures/fig_rq4_intl_collab_overall_known_applied_taxonomic.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq4_affiliation_country_signal_coverage.pdf",
-      "png": "analysis/combined/figures/fig_rq4_affiliation_country_signal_coverage.png"
-    },
-    {
-      "pdf": "analysis/combined/figures/fig_rq4_scatter_mean_authors_vs_intl_collab_known.pdf",
-      "png": "analysis/combined/figures/fig_rq4_scatter_mean_authors_vs_intl_collab_known.png"
     }
   ]
 }

@@ -16,7 +16,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
+from lib.pipeline import PipelinePaths, add_query_arg, normalize_research_theme  # noqa: E402
 
 
 def analyze_thematic_evolution(paths: PipelinePaths):
@@ -37,6 +37,8 @@ def analyze_thematic_evolution(paths: PipelinePaths):
     not_focused_labels = {"Not target-taxon-focused", "Not Trichoptera-focused"}
     # Filter out papers where the query taxon is not the study focus.
     df = df[~df[relevance_col].isin(not_focused_labels)]
+    if "Research_Theme" in df.columns:
+        df["Research_Theme"] = df["Research_Theme"].map(normalize_research_theme)
     
     print(f"Analyzing {len(df)} papers from 2010-2025")
     
@@ -140,7 +142,7 @@ YEAR-BY-YEAR THEME DISTRIBUTION TABLE
     report += f"{'Year':<6} {'Total':<8} "
     for theme in top_themes_for_table:
         # Shorten theme names for table
-        theme_short = theme.replace('Biomonitoring/Water Quality', 'Biomonitor').replace('Taxonomy/Systematics', 'Taxonomy').replace('Ecology/Behavior', 'Ecology').replace('Evolution/Phylogeny', 'Evolution').replace('Materials Science (Silk)', 'Silk')
+        theme_short = theme.replace('Biomonitoring/Water Quality', 'Biomonitor').replace('Taxonomy/Systematics', 'Taxonomy').replace('Ecology/Behavior', 'Ecology').replace('Evolution/Phylogeny', 'Evolution')
         report += f"{theme_short[:15]:<17} "
     report += f"{'Unknown':<17} "  # Add Unknown column
     report += "\n" + "-" * 120 + "\n"

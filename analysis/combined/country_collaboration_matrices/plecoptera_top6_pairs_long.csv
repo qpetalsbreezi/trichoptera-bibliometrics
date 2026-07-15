@@ -1,0 +1,15 @@
+country_a,country_b,n_papers,pct_of_intl_papers
+CN,HU,20,7.5
+US,CN,13,4.9
+US,DE,8,3.0
+US,ES,6,2.3
+US,GB,6,2.3
+ES,GB,6,2.3
+DE,GB,5,1.9
+CN,ES,4,1.5
+US,HU,3,1.1
+CN,DE,3,1.1
+CN,GB,3,1.1
+DE,ES,3,1.1
+DE,HU,1,0.4
+ES,HU,1,0.4

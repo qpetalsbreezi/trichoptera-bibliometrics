@@ -102,14 +102,14 @@ _THEME_CATEGORY_SHORT: dict[str, str] = {
     "Ecology/Behavior": "Ecology",
     "Taxonomy/Systematics": "Taxonomy",
     "Biomonitoring/Water Quality": "Biomonitoring",
-    "Applied Ecology": "Applied Ecol.",
+    "Applied Ecology": "Vector Mgmt.",
     "Not Specified": "Not spec.",
 }
 _THEME_PANEL_TITLE: dict[str, str] = {
     "Ecology/Behavior": "Ecology/Behavior",
     "Taxonomy/Systematics": "Taxonomy",
     "Biomonitoring/Water Quality": "Biomonitoring",
-    "Applied Ecology": "Applied Ecology",
+    "Applied Ecology": "Vector Management",
     "Not Specified": "Not Specified",
 }
 
@@ -275,12 +275,9 @@ def fig_rq2_temporal_facets(
         ax.set_xlim(2009.5, 2025.5)
         ax.set_xticks([2010, 2015, 2020, 2025])
         ax.set_xticklabels([2010, 2015, 2020, 2025], fontsize=7)
-    axes[0].set_ylabel("Taxon-focused N")
+    axes[0].set_ylabel("Group-focused N")
     fig.supxlabel("Publication year", y=0.04, fontsize=9)
-    _paper_suptitle(
-        fig,
-        "Taxon-focused publication volume by year (2010–2025; gray bands = early and recent windows)",
-    )
+    _paper_suptitle(fig, "Group-focused publication volume by year")
     fig.tight_layout()
     return _save(fig, out_dir, "fig_rq2_temporal_taxon_focused_facets")
 
@@ -410,7 +407,6 @@ def _short_theme_label(name: str) -> str:
         "Applied Ecology": "Applied Ecol.",
         "Physiology": "Physiology",
         "Conservation": "Conservation",
-        "Materials Science (Silk)": "Silk",
     }
     return mapping.get(name, name[:18])
 
@@ -520,7 +516,7 @@ def fig_rq3_theme_shift_delta_facets(
     if n == 1:
         axes = np.array([axes])
     x = np.arange(len(query_ids))
-    for ax, theme in zip(axes, themes, strict=True):
+    for ax, theme in zip(axes, themes):
         heights = [float(pivot.loc[theme, q]) for q in query_ids]
         ax.bar(
             x,
@@ -582,6 +578,51 @@ def _yearly_mean_authors_long(query_ids: list[str]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def _plot_mean_authors_by_year(
+    ax,
+    yearly_authors: pd.DataFrame,
+    query_ids: list[str],
+    labels: dict[str, str],
+    colors: dict[str, str],
+) -> None:
+    """Left panel of fig_rq4_authors_and_intl_collab: yearly mean OpenAlex author counts."""
+    years = np.arange(2010, 2026)
+    ax.axvspan(2010, 2015, color="#888888", alpha=0.07, zorder=0)
+    ax.axvspan(2020, 2025, color="#888888", alpha=0.12, zorder=0)
+    for q in query_ids:
+        sub = yearly_authors[yearly_authors["query_id"] == q].sort_values("year")
+        y = sub.set_index("year")["mean_authors"].reindex(years)
+        ax.plot(
+            years,
+            y,
+            label=labels[q],
+            color=colors[q],
+            linewidth=1.8,
+            marker="o",
+            markersize=3.5,
+            zorder=3,
+        )
+    ax.set_xlim(2009.5, 2025.5)
+    ax.set_xticks([2010, 2015, 2020, 2025])
+    ax.set_ylabel("Mean author count")
+    _paper_panel_title(ax, "Mean authors per paper (2010–2025)")
+    ax.legend(fontsize=7, loc="upper left", frameon=True)
+
+
+def fig_rq4_mean_authors_by_year(
+    query_ids: list[str],
+    labels: dict[str, str],
+    colors: dict[str, str],
+    out_dir: Path,
+) -> dict[str, str]:
+    """Standalone left panel: mean authors per paper by year (Figure 4 left)."""
+    yearly_authors = _yearly_mean_authors_long(query_ids)
+    fig, ax = plt.subplots(1, 1, figsize=(6.2, 4.1))
+    _plot_mean_authors_by_year(ax, yearly_authors, query_ids, labels, colors)
+    fig.tight_layout()
+    return _save(fig, out_dir, "fig_rq4_mean_authors_by_year")
+
+
 def fig_rq4_authorship_collaboration(
     metrics: pd.DataFrame,
     query_ids: list[str],
@@ -592,27 +633,7 @@ def fig_rq4_authorship_collaboration(
     m = metrics.set_index("query_id").loc[query_ids]
     yearly_authors = _yearly_mean_authors_long(query_ids)
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.1))
-    years = np.arange(2010, 2026)
-    ax1.axvspan(2010, 2015, color="#888888", alpha=0.07, zorder=0)
-    ax1.axvspan(2020, 2025, color="#888888", alpha=0.12, zorder=0)
-    for q in query_ids:
-        sub = yearly_authors[yearly_authors["query_id"] == q].sort_values("year")
-        y = sub.set_index("year")["mean_authors"].reindex(years)
-        ax1.plot(
-            years,
-            y,
-            label=labels[q],
-            color=colors[q],
-            linewidth=1.8,
-            marker="o",
-            markersize=3.5,
-            zorder=3,
-        )
-    ax1.set_xlim(2009.5, 2025.5)
-    ax1.set_xticks([2010, 2015, 2020, 2025])
-    ax1.set_ylabel("Mean author count")
-    _paper_panel_title(ax1, "Mean authors per paper (2010–2025)")
-    ax1.legend(fontsize=7, loc="upper left", frameon=True)
+    _plot_mean_authors_by_year(ax1, yearly_authors, query_ids, labels, colors)
 
     x = np.arange(len(query_ids))
     intl = [float(m.loc[q, "intl_collab_pct_overall"]) for q in query_ids]
@@ -1112,7 +1133,7 @@ def fig_rq3_top1_theme_labeled_bars(
     ax.set_yticklabels([labels[q] for q in query_ids])
     ax.set_xlabel("Share of taxon-focused papers (%)")
     ax.set_title("RQ3 — Most common primary theme (#1 rank) with label")
-    for i, (pct, nm) in enumerate(zip(pcts, names, strict=True)):
+    for i, (pct, nm) in enumerate(zip(pcts, names)):
         ax.text(pct + 0.8, i, nm, va="center", fontsize=7, clip_on=False)
     ax.set_xlim(0, max(pcts) * 1.35 if pcts else 50)
     fig.tight_layout()
@@ -1340,6 +1361,11 @@ def main() -> None:
         default="analysis/combined/figures",
         help="Figure output directory (relative to project root).",
     )
+    parser.add_argument(
+        "--only",
+        default="",
+        help="Comma-separated figure stems to build (e.g. fig_rq4_mean_authors_by_year). Default: all.",
+    )
     args = parser.parse_args()
 
     combined = PROJECT_ROOT / args.combined_dir
@@ -1363,6 +1389,44 @@ def main() -> None:
     yearly = pd.read_csv(yearly_path)
     metrics = pd.read_csv(metrics_path)
     theme_shift = pd.read_csv(theme_shift_path)
+
+    only = {s.strip() for s in args.only.split(",") if s.strip()}
+    if only:
+        builders: dict[str, object] = {
+            "fig_rq2_temporal_taxon_focused_facets": lambda: fig_rq2_temporal_facets(
+                yearly, query_ids, colors, labels, out_dir
+            ),
+            "fig_rq3_theme_shift_delta_facets": lambda: fig_rq3_theme_shift_delta_facets(
+                theme_shift, query_ids, labels, colors, out_dir
+            ),
+            "fig_rq3_theme_shift_delta_grouped_bars": lambda: fig_rq3_theme_shift_delta_grouped_bars(
+                theme_shift, query_ids, labels, out_dir
+            ),
+            "fig_rq4_mean_authors_by_year": lambda: fig_rq4_mean_authors_by_year(
+                query_ids, labels, colors, out_dir
+            ),
+            "fig_rq4_authors_and_intl_collab": lambda: fig_rq4_authorship_collaboration(
+                metrics, query_ids, labels, colors, out_dir
+            ),
+        }
+        unknown = only - set(builders)
+        if unknown:
+            raise SystemExit(f"Unknown --only figure(s): {', '.join(sorted(unknown))}")
+        outputs = [builders[stem]() for stem in sorted(only)]
+        manifest = {
+            "generated_at": pd.Timestamp.now(tz="UTC").isoformat(),
+            "git_commit": _git_head(),
+            "query_ids": query_ids,
+            "only": sorted(only),
+            "figures": outputs,
+        }
+        manifest_path = out_dir / "figures_manifest.json"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+        print(f"Wrote {len(outputs)} figure(s) to {out_dir.relative_to(PROJECT_ROOT)}/")
+        for o in outputs:
+            print(f"  {o['png']}")
+        return
 
     outputs: list[dict[str, str]] = []
     # RQ2 temporal (core)
@@ -1393,6 +1457,7 @@ def main() -> None:
     outputs.append(fig_rq3_not_specified_only(metrics, query_ids, labels, colors, out_dir))
     # RQ4
     outputs.append(fig_rq4_authorship_collaboration(metrics, query_ids, labels, colors, out_dir))
+    outputs.append(fig_rq4_mean_authors_by_year(query_ids, labels, colors, out_dir))
     outputs.append(fig_rq4_mean_vs_median_authors(metrics, query_ids, labels, out_dir))
     outputs.append(fig_rq4_authors_applied_vs_taxonomic(metrics, query_ids, labels, out_dir))
     outputs.append(fig_rq4_intl_collab_definitions_comparison(metrics, query_ids, labels, out_dir))

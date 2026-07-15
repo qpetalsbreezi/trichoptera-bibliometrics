@@ -20,7 +20,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
+from lib.pipeline import PipelinePaths, add_query_arg, normalize_research_theme  # noqa: E402
 
 
 def analyze_temporal_geographic(paths: PipelinePaths):
@@ -41,6 +41,8 @@ def analyze_temporal_geographic(paths: PipelinePaths):
     not_focused_labels = {"Not target-taxon-focused", "Not Trichoptera-focused"}
     # Filter out papers where the query taxon is not the study focus.
     df = df[~df[relevance_col].isin(not_focused_labels)]
+    if "Research_Theme" in df.columns:
+        df["Research_Theme"] = df["Research_Theme"].map(normalize_research_theme)
     
     print(f"Analyzing {len(df)} papers from 2010-2025")
     

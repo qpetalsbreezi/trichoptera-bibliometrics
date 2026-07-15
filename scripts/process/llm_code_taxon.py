@@ -109,10 +109,9 @@ Research_Theme:
 - Use "Evolution/Phylogeny" for phylogenetic analyses.
 - Use "Biomonitoring/Water Quality" ONLY if {taxon} are used as indicators.
 - Use "Ecology/Behavior" for life history, traits, distributions, interactions.
-- Use "Materials Science (Silk)" ONLY if silk properties are studied.
+- Use "Physiology" for physiological studies, including caddisfly silk properties and silk-gland biochemistry.
 - Use "Applied Ecology" for applied research that doesn't fit other categories.
 - Use "Conservation" for conservation-focused studies.
-- Use "Physiology" for physiological studies.
 - Use "Other" only if none of the above apply.
 
 Country:

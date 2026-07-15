@@ -1,0 +1,16 @@
+country_a,country_b,n_papers,pct_of_intl_papers
+US,GB,645,7.7
+US,CN,375,4.5
+US,BR,313,3.7
+US,FR,306,3.7
+GB,FR,206,2.5
+US,IN,190,2.3
+GB,BR,103,1.2
+FR,BR,69,0.8
+GB,IN,61,0.7
+CN,IN,55,0.7
+GB,CN,50,0.6
+FR,CN,33,0.4
+FR,IN,26,0.3
+BR,CN,19,0.2
+BR,IN,19,0.2

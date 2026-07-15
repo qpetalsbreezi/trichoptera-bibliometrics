@@ -16,7 +16,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from lib.pipeline import PipelinePaths, add_query_arg  # noqa: E402
+from lib.pipeline import PipelinePaths, add_query_arg, normalize_research_theme  # noqa: E402
 
 
 def analyze_collaboration(paths: PipelinePaths):
@@ -59,6 +59,8 @@ def analyze_collaboration(paths: PipelinePaths):
     not_focused_labels = {"Not target-taxon-focused", "Not Trichoptera-focused"}
     # Filter out papers where the query taxon is not the study focus.
     df = df[~df[relevance_col].isin(not_focused_labels)]
+    if "Research_Theme" in df.columns:
+        df["Research_Theme"] = df["Research_Theme"].map(normalize_research_theme)
     
     # Use accurate author count if available, otherwise try to extract from Authors field
     if has_full_author_data and 'Author_Count_Actual' in df.columns:
@@ -99,7 +101,7 @@ def analyze_collaboration(paths: PipelinePaths):
     recent_period = df[df['Year'].between(2020, 2025)]
     
     # Categorize papers as applied vs taxonomic
-    applied_themes = ['Biomonitoring/Water Quality', 'Applied Ecology', 'Conservation', 'Materials Science (Silk)']
+    applied_themes = ['Biomonitoring/Water Quality', 'Applied Ecology', 'Conservation']
     taxonomic_themes = ['Taxonomy/Systematics']
     
     df['Study_Type'] = df['Research_Theme'].apply(

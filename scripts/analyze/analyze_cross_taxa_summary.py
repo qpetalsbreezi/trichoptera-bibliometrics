@@ -29,7 +29,12 @@ if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
 from lib.format_metrics import fmt_integerish, fmt_ratio_or_pct, round_one_decimal  # noqa: E402
-from lib.pipeline import PipelinePaths, load_queries_config, paper_query_order  # noqa: E402
+from lib.pipeline import (  # noqa: E402
+    PipelinePaths,
+    load_queries_config,
+    normalize_research_theme,
+    paper_query_order,
+)
 
 
 NOT_FOCUS_LABELS = {"Not target-taxon-focused", "Not Trichoptera-focused"}
@@ -98,6 +103,9 @@ def filter_analysis_frame(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
     df = df[df["Year"].between(2010, 2025)]
+
+    if "Research_Theme" in df.columns:
+        df["Research_Theme"] = df["Research_Theme"].map(normalize_research_theme)
 
     rel_col = "Taxon_Relevance" if "Taxon_Relevance" in df.columns else "Trichoptera_Relevance"
     if rel_col not in df.columns:
@@ -255,7 +263,6 @@ def study_type_from_theme(theme: str) -> str:
         "Biomonitoring/Water Quality",
         "Applied Ecology",
         "Conservation",
-        "Materials Science (Silk)",
     ]
     if theme in applied_themes:
         return "Applied"

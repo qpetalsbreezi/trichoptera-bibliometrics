@@ -53,13 +53,12 @@
           "Biomonitoring/Water Quality",
           "Evolution/Phylogeny",
           "Conservation",
-          "Materials Science (Silk)",
           "Physiology",
           "Applied Ecology",
           "Other",
           "Not Specified"
         ],
-        "description": "Primary research theme of the paper. Used in RQ3 (thematic evolution) and RQ4 (applied vs taxonomic collaboration comparison).",
+        "description": "Primary research theme of the paper. Used in RQ3 (thematic evolution) and RQ4 (applied vs taxonomic collaboration comparison). Physiology includes physiological and silk-related studies (formerly a separate Materials Science label for caddisfly silk).",
         "usage": "RQ3, RQ4"
       },
       "Taxon_Relevance": {

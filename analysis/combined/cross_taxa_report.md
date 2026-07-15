@@ -63,8 +63,8 @@ Each paper has one **primary research theme** label. Ranks #1–#3 omit “Not S
 | mosquitoes | 6.5 | 5.0 | 5.6 | 7.0 | 6.7 | 6.4 |
 | ephemeroptera | 4.2 | 4.0 | 3.7 | 4.5 | 4.5 | 3.2 |
 | plecoptera | 4.0 | 4.0 | 3.6 | 4.2 | 4.4 | 2.9 |
-| trichoptera | 4.0 | 3.0 | 3.4 | 4.5 | 4.8 | 3.2 |
-| odonata | 5.0 | 4.0 | 4.1 | 5.2 | 5.1 | 3.3 |
+| trichoptera | 4.0 | 3.0 | 3.4 | 4.5 | 4.7 | 3.2 |
+| odonata | 5.0 | 4.0 | 4.1 | 5.2 | 5.0 | 3.3 |
 
 ### RQ4B: International collaboration (affiliation-country heuristic)
 
@@ -73,5 +73,5 @@ Each paper has one **primary research theme** label. Ranks #1–#3 omit “Not S
 | mosquitoes | 95.2 | 37.5 | 39.4 | 36.5 | 38.1 |
 | ephemeroptera | 94.4 | 25.6 | 27.2 | 20.1 | 27.9 |
 | plecoptera | 96.0 | 25.2 | 26.3 | 21.1 | 23.4 |
-| trichoptera | 95.6 | 27.3 | 28.6 | 25.0 | 29.2 |
-| odonata | 92.2 | 33.1 | 35.9 | 26.9 | 39.1 |
+| trichoptera | 95.6 | 27.3 | 28.6 | 24.9 | 29.2 |
+| odonata | 92.2 | 33.1 | 35.9 | 25.8 | 39.1 |
