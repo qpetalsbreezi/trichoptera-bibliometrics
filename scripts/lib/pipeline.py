@@ -64,9 +64,18 @@ PAPER_TAXON_LABELS: dict[str, str] = {
 # Legacy LLM label merged into Physiology (manuscript / prof revision).
 SILK_THEME_LEGACY = "Materials Science (Silk)"
 
+# Relevance labels that models sometimes wrongly put in Research_Theme.
+_RELEVANCE_AS_THEME = {
+    "primary focus",
+    "secondary mention",
+    "peripheral",
+    "not target-taxon-focused",
+    "not trichoptera-focused",
+}
+
 
 def normalize_research_theme(value) -> str:
-    """Map deprecated Silk theme to Physiology; pass through other values."""
+    """Map deprecated Silk theme to Physiology; strip relevance labels misused as themes."""
     if value is None:
         return ""
     s = str(value).strip()
@@ -74,6 +83,9 @@ def normalize_research_theme(value) -> str:
         return ""
     if s == SILK_THEME_LEGACY:
         return "Physiology"
+    # Never allow Taxon_Relevance values as Research_Theme.
+    if s.lower() in _RELEVANCE_AS_THEME:
+        return "Other"
     return s
 
 

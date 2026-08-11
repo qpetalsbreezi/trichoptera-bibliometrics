@@ -1,35 +1,59 @@
 # LLM validation plan (short)
 
-**Goal.** Check labeling consistency without hand-labeling 2,000 papers.  
-**Status.** Planned — not yet run.
+**Goal.** Check labeling consistency without hand-labeling ~2,000 papers.  
+**Status.** Complete for the frozen n=1,500 sample (prompt_v2).
 
 ## Design
 
 | Item | Choice |
 |------|--------|
-| Model A | GPT-4o-mini (existing coded files) |
-| Model B | Gemini 3.5 Flash (`gemini-3.5-flash`) |
-| Prompt / schema | Same as production (`llm_code_taxon.py`, `taxon_schema.json`) |
-| Sample | 300 articles per group (1,500 total), stratified by year band (2010–2015 / 2016–2019 / 2020–2025) and abstract available vs not when possible |
-| Fields compared | `Taxon_Relevance`, `Research_Theme` |
-| Human review | Spreadsheet of **A vs B disagreements** only (plus a small agree-set spot-check); coauthors adjudicate |
+| Model A | GPT-4o-mini (production coder) |
+| Model B | Gemini 3.1 Pro (`gemini-3.1-pro-preview`) |
+| Prompt / schema | Shared `llm_code_taxon.build_prompt` + `taxon_schema.json` (Taxon_Relevance has no `Not Specified`) |
+| Sample | Frozen `sample_manifest.csv`: 300×5 groups = 1,500, stratified by year band × abstract available |
+| Fields compared | `Taxon_Relevance`, `Research_Theme` (+ binary in-set gate) |
+| Human review | Optional: adjudicate gate disagreements / theme neighbor fights in `disagreements.csv` |
 
-## Steps
+## Canonical results
 
-1. Draw stratified random sample IDs from each group’s coded file; freeze the sample list.
-2. Re-code the sample with Gemini using the same prompt and allowed values.
-3. Join A and B labels; compute agreement % and Cohen’s κ per field (overall and by group).
-4. Export disagreement rows to a review spreadsheet (title, abstract snippet, A label, B label, blank human column).
-5. After adjudication, summarize agreement, disagreement patterns, and with/without-abstract splits.
-6. Add a short Validation subsection + table to the manuscript; keep Limitations honest (two LLMs can share errors).
+| Path | Role |
+|------|------|
+| `analysis/combined/llm_validation/sample_manifest.csv` | Frozen sample IDs |
+| `validation_1500_prompt_v2/` | Final dual-model re-code (mini + 3.1-pro, shared prompt) |
 
-## Deliverables
+Headline agreement (n=1,500): relevance ~81%, theme ~76%, both ~65%, binary gate ~89%.  
+(`before_after_vs_old_prompt.txt` in that folder records the pre–prompt-fix lift; intermediate pilots/baselines were not retained.)
 
-- `analysis/combined/llm_validation/` — sample list, Gemini outputs, agreement metrics, disagreement CSV  
-- Methods note + small results table in the manuscript  
+## How to re-run
+
+```bash
+# Freeze sample (once; --force only to redraw)
+python scripts/process/llm_validation_sample.py
+
+# Dual-model coding (resumable). Example: full frozen sample with current prompt
+python scripts/process/llm_validation_pilot100.py \
+  --manifest analysis/combined/llm_validation/sample_manifest.csv \
+  --out-subdir validation_1500_prompt_v2 \
+  --gpt-model gpt-4o-mini \
+  --gemini-model gemini-3.1-pro-preview \
+  --threads 6
+
+# Compare only (after both CSVs exist)
+python scripts/process/llm_validation_pilot100.py \
+  --manifest analysis/combined/llm_validation/sample_manifest.csv \
+  --out-subdir validation_1500_prompt_v2 \
+  --compare-only
+```
+
+Needs `OPENAI_API_KEY` and `GEMINI_API_KEY` in `.env`.
+
+## Manuscript use
+
+- Lead with **binary gate** agreement (inclusion filter).
+- Report exact relevance / theme with κ; note residual fights are mostly adjacent tiers and Ecology ↔ Applied ↔ Biomonitoring.
+- Keep Limitations honest: two LLMs can share errors; this is reproducibility, not human gold-standard accuracy.
 
 ## Out of scope (for now)
 
-- Full 2,000-article manual gold set  
-- Two-stage exclude-then-label redesign  
-- Re-running all ~71k records on Gemini (sample first; expand only if needed)
+- Full-corpus re-code with the new prompt (~71k)
+- Large manual gold set

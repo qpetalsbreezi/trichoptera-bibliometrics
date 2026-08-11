@@ -1,0 +1,4 @@
+# Before/after prompt_v2 on frozen n=1500
+old: rel=69.6 theme=55.1 both=45.6 gate=72.2
+new: rel=80.7 theme=75.7 both=64.7 gate=88.5
+models_new: ('gpt-4o-mini', 'gemini-3.1-pro-preview')

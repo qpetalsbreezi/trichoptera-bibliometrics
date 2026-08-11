@@ -67,10 +67,9 @@
           "Primary focus",
           "Secondary mention",
           "Peripheral",
-          "Not target-taxon-focused",
-          "Not Specified"
+          "Not target-taxon-focused"
         ],
-        "description": "Degree to which the query taxon is the primary focus of the paper. Used by all RQs to filter out non-target-taxon-focused papers.",
+        "description": "Degree to which the query taxon is the primary focus of the paper. Used by all RQs to filter out non-target-taxon-focused papers. Never use Not Specified; if unclear or not about the taxon, use Not target-taxon-focused.",
         "usage": "RQ2, RQ3, RQ4 (filtering)"
       }
     },

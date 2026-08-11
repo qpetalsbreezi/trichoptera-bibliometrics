@@ -20,7 +20,9 @@ from lib.pipeline import (  # noqa: E402
     add_query_arg,
     get_query_config,
     load_dotenv,
+    normalize_research_theme,
 )
+from lib.llm_validation import abstract_text_ok  # noqa: E402
 
 DEFAULT_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0
@@ -45,11 +47,97 @@ def is_daily_rate_limit_error(exc: Exception) -> bool:
     )
 
 
+def parse_retry_after_seconds(exc: Exception):
+    """Parse OpenAI 'Please try again in Xs' / 'in Nm' hints when present."""
+    import re
+    msg = str(exc)
+    m = re.search(r"try again in\s+([0-9.]+)\s*s", msg, re.I)
+    if m:
+        return float(m.group(1))
+    m = re.search(r"try again in\s+([0-9.]+)\s*m", msg, re.I)
+    if m:
+        return float(m.group(1)) * 60.0
+    m = re.search(r"try again in\s+([0-9.]+)\s*h", msg, re.I)
+    if m:
+        return float(m.group(1)) * 3600.0
+    return None
+
+
 def safe_json_loads(text):
-    try:
-        return json.loads(text)
-    except Exception:
+    """Parse model JSON; strip markdown fences if present."""
+    if text is None:
         return None
+    s = str(text).strip()
+    if not s:
+        return None
+    if s.startswith("```"):
+        s = s[3:].lstrip()
+        if s.lower().startswith("json"):
+            s = s[4:].lstrip()
+        if s.endswith("```"):
+            s = s[:-3].rstrip()
+    try:
+        return json.loads(s)
+    except Exception:
+        # last resort: extract first {...} block
+        start = s.find("{")
+        end = s.rfind("}")
+        if start >= 0 and end > start:
+            try:
+                return json.loads(s[start : end + 1])
+            except Exception:
+                return None
+        return None
+
+
+def placeholder_llm_output(llm_schema: dict) -> dict:
+    """Fallback labels when classification fails; Taxon_Relevance never uses Not Specified."""
+    out = {}
+    for col in llm_schema:
+        if col == RELEVANCE_FIELD:
+            out[col] = "Not target-taxon-focused"
+        elif col == "Country":
+            out[col] = ""
+        elif col == "Research_Theme":
+            # Off-target relevance should not keep a Not Specified theme.
+            out[col] = "Other"
+        else:
+            out[col] = "Not Specified"
+    return out
+
+
+def normalize_classified_output(parsed: dict, llm_schema: dict) -> dict:
+    """Ensure schema keys exist and Taxon_Relevance is never Not Specified.
+
+    Light post-process: Research_Theme Not Specified/empty → Other when
+    Taxon_Relevance is Not target-taxon-focused.
+    """
+    out = {}
+    for col in llm_schema:
+        if col in parsed:
+            val = parsed[col]
+        elif col == RELEVANCE_FIELD and LEGACY_RELEVANCE_FIELD in parsed:
+            val = parsed[LEGACY_RELEVANCE_FIELD]
+        else:
+            val = "" if col == "Country" else "Not Specified"
+        if col == RELEVANCE_FIELD:
+            s = "" if val is None or (isinstance(val, float) and pd.isna(val)) else str(val).strip()
+            if not s or s.lower() in ("not specified", "nan", "none"):
+                val = "Not target-taxon-focused"
+            else:
+                val = s
+        elif col == "Research_Theme":
+            val = normalize_research_theme(val) or "Not Specified"
+        out[col] = val
+
+    if "Research_Theme" in out:
+        theme = "" if out["Research_Theme"] is None else str(out["Research_Theme"]).strip()
+        rel = "" if out.get(RELEVANCE_FIELD) is None else str(out.get(RELEVANCE_FIELD, "")).strip()
+        if (not theme or theme.lower() in ("not specified", "nan", "none")) and (
+            rel == "Not target-taxon-focused"
+        ):
+            out["Research_Theme"] = "Other"
+    return out
 
 
 def build_prompt(
@@ -78,11 +166,13 @@ Paper abstract:
 {abstract}{affiliation_text}
 
 CORE RULES (follow strictly):
-- Do NOT assume {taxon} are the main focus unless clearly stated.
-- Prefer the MOST SPECIFIC allowed value supported by the text.
-- Use "Other" ONLY if no allowed value applies.
+- Prefer the MOST SPECIFIC allowed value supported by the title and abstract.
+- Treat the title as a strong signal of study focus (see TITLE ANCHOR RULE below).
+- Use "Other" when no other allowed Research_Theme value fits.
 - For Country: If information is missing, leave empty (do NOT use "Not Specified").
-- For other fields: If information is missing, use "Not Specified".
+- For {rel_field}: NEVER use "Not Specified". Use "Not target-taxon-focused" only when the taxon is absent/irrelevant, or when the abstract is unavailable AND the title does not name the taxon (see UNCERTAINTY below).
+- For Region_Global: If information is missing, use "Not Specified".
+- For Research_Theme: Prefer a concrete theme. Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
 - Do NOT invent taxa, locations, methods, or conclusions.
 - Output VALID JSON only. No explanations.
 
@@ -96,23 +186,27 @@ GEOGRAPHIC EXTRACTION PRIORITY:
 FOCUS DISCIPLINE RULE:
 Before assigning fields, determine whether {taxon} are:
 - the PRIMARY study organism
-- studied alongside other taxa
+- studied alongside other taxa (including community/EPT/macroinvertebrate samples)
 - mentioned incidentally
-- not a {taxon}-focused paper
+- absent or irrelevant to the paper
 
 Only assign {taxon}-specific taxonomy or themes if supported.
 
 FIELD-SPECIFIC GUIDANCE:
 
 Research_Theme:
-- Use "Taxonomy/Systematics" for species descriptions or classifications.
-- Use "Evolution/Phylogeny" for phylogenetic analyses.
-- Use "Biomonitoring/Water Quality" ONLY if {taxon} are used as indicators.
-- Use "Ecology/Behavior" for life history, traits, distributions, interactions.
+- Prefer a concrete theme from the title/abstract. Do NOT default to "Not Specified".
+- Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
+- If {rel_field} is "Not target-taxon-focused", still assign a real theme from the list; use "Other" (not "Not Specified") when none fits.
+- Use "Taxonomy/Systematics" for species descriptions, revisions, or classifications.
+- Use "Evolution/Phylogeny" for phylogenetic / evolutionary analyses.
+- Use "Ecology/Behavior" for basic ecology, life history, behavior, distribution, traits, or community studies WITHOUT a management / intervention / bioassessment frame.
+- Use "Applied Ecology" for management, control, restoration, pest/vector intervention, applied land-use, or other applied interventions.
+- Use "Biomonitoring/Water Quality" ONLY when {taxon} (or the assemblage including them) are used explicitly as bioindicators / for water-quality assessment.
 - Use "Physiology" for physiological studies, including caddisfly silk properties and silk-gland biochemistry.
-- Use "Applied Ecology" for applied research that doesn't fit other categories.
 - Use "Conservation" for conservation-focused studies.
-- Use "Other" only if none of the above apply.
+- Use "Other" if none of the above apply.
+- NEVER copy {rel_field} values into Research_Theme (e.g. do not use "Not target-taxon-focused", "Primary focus", "Secondary mention", or "Peripheral" as a theme).
 
 Country:
 - Extract the PRIMARY country where the research was conducted (field site, study location, or primary geographic focus).
@@ -132,10 +226,29 @@ Region_Global:
 - Use "Not Specified" ONLY if neither country nor region can be determined.
 
 {rel_field} (JSON field name is fixed in the schema; interpret it as focus on {taxon} for this run):
-- "Primary focus": {taxon} are the main study organism.
-- "Secondary mention": {taxon} are studied alongside other taxa.
+- Allowed values ONLY: Primary focus, Secondary mention, Peripheral, Not target-taxon-focused.
+- "Primary focus": {taxon} (or a species in that group) are the main study organism.
+- "Secondary mention": {taxon} are studied alongside other taxa as a deliberate study component.
 - "Peripheral": {taxon} mentioned but not central to the study.
-- "Not target-taxon-focused": Paper does not primarily focus on {taxon}.
+- "Not target-taxon-focused": {taxon} are absent from / irrelevant to the paper.
+- NEVER use "Not Specified" for {rel_field}.
+
+TITLE ANCHOR RULE:
+- If a scientific name, common name, or "{taxon}" (or clear synonym) appears in the TITLE, do NOT use "Not target-taxon-focused".
+- Prefer "Primary focus" when that taxon/species is the study organism.
+- Use "Secondary mention" for multi-taxon communities that include it.
+- Use "Peripheral" only if the title mention is clearly incidental.
+
+UNCERTAINTY:
+- If the taxon is mentioned in the title or abstract, prefer "Peripheral" over "Not target-taxon-focused" when focus is unclear.
+- Use "Not target-taxon-focused" when the taxon is absent/irrelevant, OR when the abstract is unavailable AND the title does not name the taxon.
+
+COMMUNITY / EPT:
+- Macroinvertebrate, benthic, or EPT papers that include {taxon} as a studied assemblage component → "Secondary mention" (not "Not target-taxon-focused").
+
+VECTOR / DISEASE (especially mosquitoes / Culicidae):
+- Mosquito biology, surveillance, control, vector competence, or vector ecology → "Primary focus" or "Secondary mention" as appropriate.
+- Human disease epidemiology / clinical papers with no mosquito biology → "Peripheral" or "Not target-taxon-focused".
 
 OUTPUT FORMAT:
 - One JSON object
@@ -152,7 +265,7 @@ def classify(
     llm_schema: dict,
     llm_schema_text: str,
     llm_cfg: dict,
-    max_retries=3,
+    max_retries=12,
 ):
     affiliation_text = ""
     if pd.notna(author_affiliations) and str(author_affiliations).strip():
@@ -166,7 +279,8 @@ def classify(
         llm_cfg,
     )
 
-    for attempt in range(max_retries):
+    attempt = 0
+    while True:
         try:
             response = client.chat.completions.create(
                 model=model,
@@ -181,21 +295,26 @@ def classify(
             parsed = safe_json_loads(raw)
 
             if parsed is not None:
-                return parsed
+                return normalize_classified_output(parsed, llm_schema)
 
-            return {col: "Not Specified" for col in llm_schema.keys()}
+            return placeholder_llm_output(llm_schema)
 
         except Exception as e:
             if is_daily_rate_limit_error(e):
+                # Rolling RPD windows often include a short "try again in Xs".
+                # Sleep/retry those; only hard-stop on long/unknown waits.
+                wait = parse_retry_after_seconds(e)
+                if wait is not None and wait <= 120:
+                    time.sleep(wait + 1.0)
+                    continue
                 raise DailyRateLimitExceeded(str(e)) from e
             if attempt < max_retries - 1:
                 wait_time = (2 ** attempt) * 0.5
                 time.sleep(wait_time)
+                attempt += 1
                 continue
             print(f"Warning: Failed to classify after {max_retries} attempts: {e}")
-            return {col: "Not Specified" for col in llm_schema.keys()}
-
-    return {col: "Not Specified" for col in llm_schema.keys()}
+            return placeholder_llm_output(llm_schema)
 
 
 def run_llm_coding(
@@ -251,7 +370,6 @@ def run_llm_coding(
             "Secondary mention",
             "Peripheral",
             "Not target-taxon-focused",
-            "Not Specified",
         ]
 
     llm_coded_fields = ["Country", "Region_Global", "Research_Theme", RELEVANCE_FIELD]
@@ -308,7 +426,7 @@ def run_llm_coding(
         row_key, row = row_data
         title = row.get("Title", "")
         abstract = row.get("Abstract", "")
-        abstract_available = isinstance(abstract, str) and abstract.strip() != ""
+        abstract_available = abstract_text_ok(abstract)
         author_affiliations = row.get("Author_Affiliations", None)
 
         llm_output = classify(
@@ -362,8 +480,8 @@ def run_llm_coding(
                         print(f"\nError processing paper {row_key!r}: {e}")
                         row = df[[make_row_key(r) == row_key for _, r in df.iterrows()]].iloc[0]
                         error_row = row.to_dict()
-                        error_row.update({col: "Not Specified" for col in llm_schema.keys()})
-                        error_row["abstract_available"] = pd.notna(row.get("Abstract"))
+                        error_row.update(placeholder_llm_output(llm_schema))
+                        error_row["abstract_available"] = abstract_text_ok(row.get("Abstract"))
                         coded_dict[row_key] = error_row
                         pbar.update(1)
 
@@ -390,11 +508,10 @@ def run_llm_coding(
                 rows_out.append(coded_dict[k])
             else:
                 d = r.to_dict()
-                for col in llm_schema:
-                    d[col] = "Not Specified"
+                d.update(placeholder_llm_output(llm_schema))
                 d.pop(LEGACY_RELEVANCE_FIELD, None)
                 ab = r.get("Abstract", "")
-                d["abstract_available"] = isinstance(ab, str) and ab.strip() != ""
+                d["abstract_available"] = abstract_text_ok(ab)
                 rows_out.append(d)
         return rows_out
 
@@ -460,8 +577,8 @@ def run_llm_coding(
                     print(f"\nError processing paper {row_key!r}: {e}")
                     row = df_all[[make_row_key(r) == row_key for _, r in df_all.iterrows()]].iloc[0]
                     error_row = row.to_dict()
-                    error_row.update({col: "Not Specified" for col in llm_schema.keys()})
-                    error_row["abstract_available"] = pd.notna(row.get("Abstract"))
+                    error_row.update(placeholder_llm_output(llm_schema))
+                    error_row["abstract_available"] = abstract_text_ok(row.get("Abstract"))
                     coded_dict[row_key] = error_row
                     pbar.update(1)
 
