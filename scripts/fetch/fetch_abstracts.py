@@ -2,6 +2,7 @@ import argparse
 import sys
 import time
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 import requests
@@ -23,9 +24,11 @@ from lib.pipeline import PipelinePaths, add_query_arg, load_dotenv  # noqa: E402
 
 SAVE_INTERVAL = 50
 
-# Written when OpenAlex, Semantic Scholar, CrossRef, and PubMed all return no abstract
-# for this row, so a later run does not burn API quota on the same permanent miss.
+# Written when OpenAlex, Semantic Scholar, CrossRef, Europe PMC, and PubMed all return
+# no abstract for this row, so a later run does not burn API quota on the same permanent miss.
 NO_EXTERNAL_ABSTRACT_MARKER = "__ABSTRACT_UNAVAILABLE__"
+
+EUROPE_PMC_SEARCH_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 
 
 def _is_unavailable_marker(val) -> bool:
@@ -157,6 +160,50 @@ def get_abstract_crossref(doi, max_retries=3):
     return None
 
 
+def get_abstract_europe_pmc(doi, session: Optional[requests.Session] = None, max_retries=3):
+    """Fetch abstract text from Europe PMC by DOI."""
+    doi_norm = clean_doi(doi)
+    if not doi_norm:
+        return None
+
+    http = session if session is not None else requests
+    params = {
+        "query": f'DOI:"{doi_norm}"',
+        "format": "json",
+        "resultType": "core",
+        "pageSize": 1,
+    }
+
+    for attempt in range(max_retries):
+        try:
+            r = http.get(EUROPE_PMC_SEARCH_URL, params=params, timeout=30)
+            if r.status_code == 200:
+                results = r.json().get("resultList", {}).get("result", [])
+                if not results:
+                    return None
+                abstract = results[0].get("abstractText")
+                if abstract and str(abstract).strip():
+                    return str(abstract).strip()
+                return None
+            if r.status_code == 404:
+                return None
+            if r.status_code == 429:
+                time.sleep(min(10.0 * (attempt + 1), 60.0))
+                if attempt < max_retries - 1:
+                    continue
+                return None
+            if attempt < max_retries - 1:
+                time.sleep(2**attempt)
+                continue
+            return None
+        except (requests.exceptions.Timeout, requests.exceptions.RequestException):
+            if attempt < max_retries - 1:
+                time.sleep(1 * (attempt + 1))
+                continue
+            return None
+    return None
+
+
 def get_abstract_pubmed(doi, max_retries=3):
     doi_norm = clean_doi(doi)
     if not doi_norm:
@@ -203,7 +250,42 @@ def get_abstract_pubmed(doi, max_retries=3):
     return None
 
 
-def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL):
+def _fetch_abstract_waterfall(doi, session: requests.Session, stats: dict):
+    """Try sources in order; update stats; return abstract text or None."""
+    abstract = get_abstract_openalex(doi, session)
+    if abstract:
+        stats["openalex"] += 1
+        return abstract
+
+    abstract = get_abstract_semantic(doi)
+    if abstract:
+        stats["semantic"] += 1
+        return abstract
+
+    abstract = get_abstract_crossref(doi)
+    if abstract:
+        stats["crossref"] += 1
+        return abstract
+
+    abstract = get_abstract_europe_pmc(doi, session)
+    if abstract:
+        stats["europe_pmc"] += 1
+        return abstract
+
+    abstract = get_abstract_pubmed(doi)
+    if abstract:
+        stats["pubmed"] += 1
+        return abstract
+
+    stats["failed"] += 1
+    return None
+
+
+def run_fetch_abstracts(
+    paths: PipelinePaths,
+    save_interval: int = SAVE_INTERVAL,
+    retry_unavailable: bool = False,
+):
     _configure_output_streams()
     input_csv = paths.combined_scopus_api
     output_csv = paths.with_abstracts
@@ -212,25 +294,34 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
         "openalex": 0,
         "semantic": 0,
         "crossref": 0,
+        "europe_pmc": 0,
         "pubmed": 0,
         "already_had": 0,
         "failed": 0,
         "marked_unavailable": 0,
+        "cleared_unavailable": 0,
     }
 
     if output_csv.exists():
         print(f"Resuming from existing file: {output_csv}")
         df = pd.read_csv(output_csv)
-        if "Abstract" in df.columns:
-            stats["already_had"] = int(df["Abstract"].map(_should_skip_abstract_fetch).sum())
-        else:
-            stats["already_had"] = 0
     else:
         print(f"Starting fresh from: {input_csv}")
         df = pd.read_csv(input_csv)
 
     if "Abstract" not in df.columns:
         df["Abstract"] = ""
+
+    if retry_unavailable:
+        cleared = df["Abstract"].map(_is_unavailable_marker)
+        stats["cleared_unavailable"] = int(cleared.sum())
+        df.loc[cleared, "Abstract"] = ""
+        print(
+            f"Retry unavailable: cleared {stats['cleared_unavailable']} "
+            f"{NO_EXTERNAL_ABSTRACT_MARKER} markers for re-fetch"
+        )
+
+    stats["already_had"] = int(df["Abstract"].map(_should_skip_abstract_fetch).sum())
 
     processed = 0
     total = len(df)
@@ -244,7 +335,10 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
         f"{stats['already_had']}"
     )
     print(f"Need abstract fetch attempts: {needs_abstract}")
-    print(f"\nTrying sources in order: OpenAlex → Semantic Scholar → CrossRef → PubMed\n")
+    print(
+        "\nTrying sources in order: "
+        "OpenAlex → Semantic Scholar → CrossRef → Europe PMC → PubMed\n"
+    )
 
     session = requests.Session()
     try:
@@ -258,34 +352,13 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
             if _should_skip_abstract_fetch(row.get("Abstract")):
                 continue
 
-            doi = row.get("DOI")
-            abstract = None
+            abstract = _fetch_abstract_waterfall(row.get("DOI"), session, stats)
 
-            abstract = get_abstract_openalex(doi, session)
+            if df["Abstract"].dtype != "object":
+                df["Abstract"] = df["Abstract"].astype(str)
             if abstract:
-                stats["openalex"] += 1
-            else:
-                abstract = get_abstract_semantic(doi)
-                if abstract:
-                    stats["semantic"] += 1
-                else:
-                    abstract = get_abstract_crossref(doi)
-                    if abstract:
-                        stats["crossref"] += 1
-                    else:
-                        abstract = get_abstract_pubmed(doi)
-                        if abstract:
-                            stats["pubmed"] += 1
-                        else:
-                            stats["failed"] += 1
-
-            if abstract:
-                if df["Abstract"].dtype != "object":
-                    df["Abstract"] = df["Abstract"].astype(str)
                 df.at[idx, "Abstract"] = abstract
             else:
-                if df["Abstract"].dtype != "object":
-                    df["Abstract"] = df["Abstract"].astype(str)
                 df.at[idx, "Abstract"] = NO_EXTERNAL_ABSTRACT_MARKER
                 stats["marked_unavailable"] += 1
 
@@ -295,12 +368,17 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
                 output_csv.parent.mkdir(parents=True, exist_ok=True)
                 df.to_csv(output_csv, index=False)
                 current_found = (
-                    stats["openalex"] + stats["semantic"] + stats["crossref"] + stats["pubmed"]
+                    stats["openalex"]
+                    + stats["semantic"]
+                    + stats["crossref"]
+                    + stats["europe_pmc"]
+                    + stats["pubmed"]
                 )
                 tqdm.write(
                     f"Progress: {processed}/{total} | Found: {current_found} | "
                     f"OpenAlex: {stats['openalex']}, Semantic: {stats['semantic']}, "
-                    f"CrossRef: {stats['crossref']}, PubMed: {stats['pubmed']}, "
+                    f"CrossRef: {stats['crossref']}, EuropePMC: {stats['europe_pmc']}, "
+                    f"PubMed: {stats['pubmed']}, "
                     f"Failed: {stats['failed']}, "
                     f"Marked unavailable: {stats['marked_unavailable']}",
                     file=sys.stderr,
@@ -326,11 +404,11 @@ def run_fetch_abstracts(paths: PipelinePaths, save_interval: int = SAVE_INTERVAL
     print(f"  OpenAlex:     {stats['openalex']}")
     print(f"  Semantic Scholar: {stats['semantic']}")
     print(f"  CrossRef:     {stats['crossref']}")
+    print(f"  Europe PMC:   {stats['europe_pmc']}")
     print(f"  PubMed:       {stats['pubmed']}")
     print(f"  Failed:       {stats['failed']}")
     print(f"  Marked {NO_EXTERNAL_ABSTRACT_MARKER} (no text from any source): {stats['marked_unavailable']}")
 
-    total_fetched = stats["openalex"] + stats["semantic"] + stats["crossref"] + stats["pubmed"]
     readable = int(df["Abstract"].map(_abstract_cell_has_text).sum())
     marked = int(df["Abstract"].map(_is_unavailable_marker).sum())
     readable_pct = (readable / total * 100) if total > 0 else 0
@@ -349,5 +427,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetch abstracts for combined Scopus API export")
     add_query_arg(parser)
     parser.add_argument("--save-interval", type=int, default=SAVE_INTERVAL)
+    parser.add_argument(
+        "--retry-unavailable",
+        action="store_true",
+        help=(
+            f"Clear {NO_EXTERNAL_ABSTRACT_MARKER} markers and re-try the full waterfall "
+            "(useful after adding a new source such as Europe PMC)."
+        ),
+    )
     args = parser.parse_args()
-    run_fetch_abstracts(PipelinePaths(args.query_id), save_interval=args.save_interval)
+    run_fetch_abstracts(
+        PipelinePaths(args.query_id),
+        save_interval=args.save_interval,
+        retry_unavailable=args.retry_unavailable,
+    )

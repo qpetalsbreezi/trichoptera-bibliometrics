@@ -1,0 +1,124 @@
+id,taxon,Type,Year,query_id,row_key,EID,DOI,GPT4o_mini,Gemini_3_1_Pro,Taxon_Relevance_GPT4o_mini,Taxon_Relevance_Gemini_3_1_Pro
+1,Culicidae,Article,2010,mosquitoes,eid::2-s2.0-77953272023,2-s2.0-77953272023,10.1016/S1995-7645(10)60088-0,KEEP,DROP,Primary focus,Not target-taxon-focused
+2,Culicidae,Article,2010,mosquitoes,eid::2-s2.0-77953684490,2-s2.0-77953684490,10.1016/j.puhe.2010.02.010,KEEP,DROP,Primary focus,Not target-taxon-focused
+3,Culicidae,Review,2010,mosquitoes,eid::2-s2.0-77954308519,2-s2.0-77954308519,10.1111/j.1462-5822.2010.01454.x,DROP,KEEP,Not target-taxon-focused,Peripheral
+4,Culicidae,Review,2011,mosquitoes,eid::2-s2.0-79952649586,2-s2.0-79952649586,10.1179/136485911X12899838413628,DROP,KEEP,Not target-taxon-focused,Peripheral
+5,Culicidae,Article,2012,mosquitoes,eid::2-s2.0-84857870143,2-s2.0-84857870143,10.1371/journal.pntd.0001520,KEEP,DROP,Peripheral,Not target-taxon-focused
+6,Culicidae,Article,2012,mosquitoes,eid::2-s2.0-84930486361,2-s2.0-84930486361,10.4314/thrb.v14i2.2,KEEP,DROP,Primary focus,Not target-taxon-focused
+7,Culicidae,Article,2013,mosquitoes,eid::2-s2.0-84884772406,2-s2.0-84884772406,10.4103/0972-9062.120928,KEEP,DROP,Primary focus,Not target-taxon-focused
+8,Culicidae,Article,2014,mosquitoes,eid::2-s2.0-84922440536,2-s2.0-84922440536,10.1093/infdis/jiu351,KEEP,DROP,Peripheral,Not target-taxon-focused
+9,Culicidae,Article,2015,mosquitoes,eid::2-s2.0-84924341235,2-s2.0-84924341235,10.1186/s13073-015-0133-7,DROP,KEEP,Not target-taxon-focused,Peripheral
+10,Culicidae,Article,2015,mosquitoes,eid::2-s2.0-84944059456,2-s2.0-84944059456,10.1080/09583157.2015.1066310,KEEP,DROP,Primary focus,Not target-taxon-focused
+11,Culicidae,Article,2015,mosquitoes,eid::2-s2.0-84950997226,2-s2.0-84950997226,10.1016/j.vaccine.2015.09.093,DROP,KEEP,Not target-taxon-focused,Peripheral
+12,Culicidae,Article,2015,mosquitoes,eid::2-s2.0-84958967164,2-s2.0-84958967164,10.12988/ams.2015.58553,KEEP,DROP,Primary focus,Not target-taxon-focused
+13,Culicidae,Review,2016,mosquitoes,eid::2-s2.0-84959094403,2-s2.0-84959094403,10.1017/S0950268816000297,KEEP,DROP,Primary focus,Not target-taxon-focused
+14,Culicidae,Review,2016,mosquitoes,eid::2-s2.0-85008871187,2-s2.0-85008871187,10.1515/dzph-2016-0074,DROP,KEEP,Not target-taxon-focused,Peripheral
+15,Culicidae,Article,2017,mosquitoes,eid::2-s2.0-85009822980,2-s2.0-85009822980,10.1016/j.jtbi.2016.12.014,KEEP,DROP,Primary focus,Not target-taxon-focused
+16,Culicidae,Article,2018,mosquitoes,eid::2-s2.0-85039859356,2-s2.0-85039859356,10.1371/journal.pone.0190637,KEEP,DROP,Peripheral,Not target-taxon-focused
+17,Culicidae,Article,2018,mosquitoes,eid::2-s2.0-85042849208,2-s2.0-85042849208,10.1016/j.micinf.2018.01.007,KEEP,DROP,Peripheral,Not target-taxon-focused
+18,Culicidae,Article,2018,mosquitoes,eid::2-s2.0-85053545397,2-s2.0-85053545397,10.1186/s13071-018-3097-9,KEEP,DROP,Primary focus,Not target-taxon-focused
+19,Culicidae,Article,2018,mosquitoes,eid::2-s2.0-85054726773,2-s2.0-85054726773,10.1111/tmi.13083,KEEP,DROP,Peripheral,Not target-taxon-focused
+20,Culicidae,Article,2020,mosquitoes,eid::2-s2.0-85085265974,2-s2.0-85085265974,10.1128/AAC.02135-19,DROP,KEEP,Not target-taxon-focused,Peripheral
+21,Culicidae,Article,2020,mosquitoes,eid::2-s2.0-85096358399,2-s2.0-85096358399,10.1371/journal.pntd.0008833,KEEP,DROP,Peripheral,Not target-taxon-focused
+22,Culicidae,Article,2021,mosquitoes,eid::2-s2.0-85100219111,2-s2.0-85100219111,10.1016/j.ejim.2021.01.008,KEEP,DROP,Peripheral,Not target-taxon-focused
+23,Culicidae,Article,2021,mosquitoes,eid::2-s2.0-85101936718,2-s2.0-85101936718,10.1016/j.jviromet.2021.114119,DROP,KEEP,Not target-taxon-focused,Peripheral
+24,Culicidae,Article,2021,mosquitoes,eid::2-s2.0-85104442721,2-s2.0-85104442721,10.2987/20-6959,KEEP,DROP,Primary focus,Not target-taxon-focused
+25,Culicidae,Article,2021,mosquitoes,eid::2-s2.0-85112015835,2-s2.0-85112015835,10.1186/s12936-021-03867-z,KEEP,DROP,Primary focus,Not target-taxon-focused
+26,Culicidae,Article,2021,mosquitoes,eid::2-s2.0-85114399550,2-s2.0-85114399550,10.1016/j.bbrc.2021.08.052,DROP,KEEP,Not target-taxon-focused,Peripheral
+27,Culicidae,Article,2022,mosquitoes,eid::2-s2.0-85135166227,2-s2.0-85135166227,10.1186/s12936-022-04243-1,KEEP,DROP,Primary focus,Not target-taxon-focused
+28,Culicidae,Article,2022,mosquitoes,eid::2-s2.0-85137687084,2-s2.0-85137687084,10.3389/fcimb.2022.986314,DROP,KEEP,Not target-taxon-focused,Peripheral
+29,Culicidae,Article,2023,mosquitoes,eid::2-s2.0-85138455128,2-s2.0-85138455128,10.1016/j.cnsns.2022.106830,KEEP,DROP,Primary focus,Not target-taxon-focused
+30,Culicidae,Article,2023,mosquitoes,eid::2-s2.0-85163467223,2-s2.0-85163467223,10.52808/bmsa.8e7.63ee.001,KEEP,DROP,Primary focus,Not target-taxon-focused
+31,Culicidae,Article,2023,mosquitoes,eid::2-s2.0-85175614481,2-s2.0-85175614481,10.24321/0019.5138.202329,KEEP,DROP,Primary focus,Not target-taxon-focused
+32,Culicidae,Review,2023,mosquitoes,eid::2-s2.0-85178052141,2-s2.0-85178052141,10.5530/pj.2023.15.180,KEEP,DROP,Primary focus,Not target-taxon-focused
+33,Culicidae,Article,2024,mosquitoes,eid::2-s2.0-85181820114,2-s2.0-85181820114,10.1016/j.onehlt.2023.100670,KEEP,DROP,Primary focus,Not target-taxon-focused
+34,Culicidae,Article,2024,mosquitoes,eid::2-s2.0-85205275812,2-s2.0-85205275812,10.1038/s41467-024-52638-2,KEEP,DROP,Peripheral,Not target-taxon-focused
+35,Culicidae,Article,2025,mosquitoes,eid::2-s2.0-105001417320,2-s2.0-105001417320,10.30919/mm1424,DROP,KEEP,Not target-taxon-focused,Primary focus
+36,Culicidae,Article,2025,mosquitoes,eid::2-s2.0-85216886153,2-s2.0-85216886153,10.18280/mmep.120131,KEEP,DROP,Primary focus,Not target-taxon-focused
+37,Ephemeroptera,Article,2010,ephemeroptera,eid::2-s2.0-77953675379,2-s2.0-77953675379,10.2478/s11756-010-0067-x,KEEP,DROP,Primary focus,Not target-taxon-focused
+38,Ephemeroptera,Article,2010,ephemeroptera,eid::2-s2.0-77957771118,2-s2.0-77957771118,10.1127/1863-9135/2010/0176-0337,KEEP,DROP,Primary focus,Not target-taxon-focused
+39,Ephemeroptera,Article,2012,ephemeroptera,eid::2-s2.0-84863395180,2-s2.0-84863395180,10.1007/s10452-012-9388-x,KEEP,DROP,Peripheral,Not target-taxon-focused
+40,Ephemeroptera,Article,2012,ephemeroptera,eid::2-s2.0-84872297397,2-s2.0-84872297397,10.4149/ekol-2012-03-274,KEEP,DROP,Secondary mention,Not target-taxon-focused
+41,Ephemeroptera,Article,2013,ephemeroptera,eid::2-s2.0-84874812174,2-s2.0-84874812174,10.1007/s10452-013-9428-1,KEEP,DROP,Secondary mention,Not target-taxon-focused
+42,Ephemeroptera,Article,2014,ephemeroptera,eid::2-s2.0-84908504631,2-s2.0-84908504631,10.1016/j.limno.2014.09.002,KEEP,DROP,Secondary mention,Not target-taxon-focused
+43,Ephemeroptera,Article,2015,ephemeroptera,eid::2-s2.0-84939971880,2-s2.0-84939971880,10.1007/s10750-015-2189-1,DROP,KEEP,Not target-taxon-focused,Secondary mention
+44,Ephemeroptera,Article,2016,ephemeroptera,eid::2-s2.0-85057596205,2-s2.0-85057596205,10.1145/3005680,DROP,KEEP,Not target-taxon-focused,Peripheral
+45,Ephemeroptera,Article,2017,ephemeroptera,eid::2-s2.0-85010756882,2-s2.0-85010756882,10.1007/s00267-017-0819-2,DROP,KEEP,Not target-taxon-focused,Secondary mention
+46,Ephemeroptera,Article,2020,ephemeroptera,eid::2-s2.0-85085085956,2-s2.0-85085085956,10.1111/cobi.13477,DROP,KEEP,Not target-taxon-focused,Secondary mention
+47,Ephemeroptera,Conference Paper,2020,ephemeroptera,eid::2-s2.0-85102584853,2-s2.0-85102584853,10.1109/MLBDBI51377.2020.00051,DROP,KEEP,Not target-taxon-focused,Peripheral
+48,Ephemeroptera,Article,2021,ephemeroptera,eid::2-s2.0-85100606963,2-s2.0-85100606963,10.1007/s10750-021-04515-y,KEEP,DROP,Primary focus,Not target-taxon-focused
+49,Ephemeroptera,Article,2021,ephemeroptera,eid::2-s2.0-85119612484,2-s2.0-85119612484,10.1399/NuL.2021.11.03,DROP,KEEP,Not target-taxon-focused,Secondary mention
+50,Ephemeroptera,Article,2022,ephemeroptera,eid::2-s2.0-85123408754,2-s2.0-85123408754,10.1080/02626667.2021.2012182,DROP,KEEP,Not target-taxon-focused,Peripheral
+51,Ephemeroptera,Article,2022,ephemeroptera,eid::2-s2.0-85132878059,2-s2.0-85132878059,10.1016/j.compeleceng.2022.108176,DROP,KEEP,Not target-taxon-focused,Peripheral
+52,Ephemeroptera,Article,2022,ephemeroptera,eid::2-s2.0-85135205752,2-s2.0-85135205752,10.1109/JSEN.2022.3190469,DROP,KEEP,Not target-taxon-focused,Peripheral
+53,Ephemeroptera,Article,2022,ephemeroptera,eid::2-s2.0-85137557652,2-s2.0-85137557652,10.3390/s22176405,DROP,KEEP,Not target-taxon-focused,Peripheral
+54,Ephemeroptera,Article,2022,ephemeroptera,eid::2-s2.0-85142159772,2-s2.0-85142159772,10.19783/j.cnki.pspc.211224,DROP,KEEP,Not target-taxon-focused,Peripheral
+55,Ephemeroptera,Article,2023,ephemeroptera,eid::2-s2.0-105001434118,2-s2.0-105001434118,10.22055/jaree.2023.43803.1070,DROP,KEEP,Not target-taxon-focused,Peripheral
+56,Ephemeroptera,Article,2023,ephemeroptera,eid::2-s2.0-85148073217,2-s2.0-85148073217,10.3233/JIFS-221161,DROP,KEEP,Not target-taxon-focused,Peripheral
+57,Ephemeroptera,Article,2023,ephemeroptera,eid::2-s2.0-85150419402,2-s2.0-85150419402,10.1016/j.compeleceng.2023.108672,DROP,KEEP,Not target-taxon-focused,Peripheral
+58,Ephemeroptera,Article,2023,ephemeroptera,eid::2-s2.0-85153509803,2-s2.0-85153509803,10.3778/j.issn.1673-9418.2106011,DROP,KEEP,Not target-taxon-focused,Peripheral
+59,Ephemeroptera,Article,2023,ephemeroptera,eid::2-s2.0-85160277148,2-s2.0-85160277148,10.24112/jaes.070005,DROP,KEEP,Not target-taxon-focused,Peripheral
+60,Ephemeroptera,Article,2023,ephemeroptera,eid::2-s2.0-85162882943,2-s2.0-85162882943,10.1016/j.asoc.2023.110527,DROP,KEEP,Not target-taxon-focused,Peripheral
+61,Ephemeroptera,Conference Paper,2023,ephemeroptera,eid::2-s2.0-85173609704,2-s2.0-85173609704,10.1109/ICDSNS58469.2023.10245173,DROP,KEEP,Not target-taxon-focused,Peripheral
+62,Ephemeroptera,Conference Paper,2023,ephemeroptera,eid::2-s2.0-85196507127,2-s2.0-85196507127,10.1109/ICSTSN57873.2023.10151534,DROP,KEEP,Not target-taxon-focused,Peripheral
+63,Ephemeroptera,Conference Paper,2024,ephemeroptera,eid::2-s2.0-105002885776,2-s2.0-105002885776,10.1109/ICDSCNC62492.2024.10939927,DROP,KEEP,Not target-taxon-focused,Peripheral
+64,Ephemeroptera,Article,2024,ephemeroptera,eid::2-s2.0-85178621203,2-s2.0-85178621203,10.1016/j.chemosphere.2023.140706,KEEP,DROP,Secondary mention,Not target-taxon-focused
+65,Ephemeroptera,Article,2024,ephemeroptera,eid::2-s2.0-85178943915,2-s2.0-85178943915,10.1007/s10841-023-00539-y,DROP,KEEP,Not target-taxon-focused,Secondary mention
+66,Ephemeroptera,Review,2024,ephemeroptera,eid::2-s2.0-85195172872,2-s2.0-85195172872,10.1016/j.scitotenv.2024.173621,DROP,KEEP,Not target-taxon-focused,Secondary mention
+67,Ephemeroptera,Article,2024,ephemeroptera,eid::2-s2.0-85200277327,2-s2.0-85200277327,10.37391/IJEER.120212,DROP,KEEP,Not target-taxon-focused,Peripheral
+68,Ephemeroptera,Article,2024,ephemeroptera,eid::2-s2.0-85200849863,2-s2.0-85200849863,10.1007/s11273-024-10006-3,KEEP,DROP,Secondary mention,Not target-taxon-focused
+69,Ephemeroptera,Article,2024,ephemeroptera,eid::2-s2.0-85202290569,2-s2.0-85202290569,10.13336/j.1003-6520.hve.20221828,DROP,KEEP,Not target-taxon-focused,Peripheral
+70,Ephemeroptera,Article,2025,ephemeroptera,eid::2-s2.0-105002251641,2-s2.0-105002251641,10.1007/s10742-025-00341-0,DROP,KEEP,Not target-taxon-focused,Peripheral
+71,Ephemeroptera,Article,2025,ephemeroptera,eid::2-s2.0-105011585552,2-s2.0-105011585552,10.1088/2631-8695/adef97,DROP,KEEP,Not target-taxon-focused,Peripheral
+72,Ephemeroptera,Article,2025,ephemeroptera,eid::2-s2.0-85209779421,2-s2.0-85209779421,10.1007/s00027-024-01134-2,KEEP,DROP,Secondary mention,Not target-taxon-focused
+73,Odonata,Article,2012,odonata,eid::2-s2.0-84856054974,2-s2.0-84856054974,10.1016/j.aquatox.2011.12.019,KEEP,DROP,Primary focus,Not target-taxon-focused
+74,Odonata,Article,2012,odonata,eid::2-s2.0-84872297397,2-s2.0-84872297397,10.4149/ekol-2012-03-274,KEEP,DROP,Secondary mention,Not target-taxon-focused
+75,Odonata,Article,2014,odonata,eid::2-s2.0-84903896885,2-s2.0-84903896885,10.1007/s10841-014-9637-5,KEEP,DROP,Peripheral,Not target-taxon-focused
+76,Odonata,Article,2017,odonata,eid::2-s2.0-85030628200,2-s2.0-85030628200,10.6041/j.issn.1000-1298.2017.08.003,DROP,KEEP,Not target-taxon-focused,Primary focus
+77,Odonata,Article,2017,odonata,eid::2-s2.0-85033386632,2-s2.0-85033386632,10.1021/acs.langmuir.7b02291,DROP,KEEP,Not target-taxon-focused,Peripheral
+78,Odonata,Article,2018,odonata,eid::2-s2.0-85046710958,2-s2.0-85046710958,10.1002/ece3.4024,KEEP,DROP,Primary focus,Not target-taxon-focused
+79,Odonata,Article,2020,odonata,eid::2-s2.0-85089736258,2-s2.0-85089736258,10.3390/APP10155389,KEEP,DROP,Primary focus,Not target-taxon-focused
+80,Odonata,Article,2021,odonata,eid::2-s2.0-85112378523,2-s2.0-85112378523,10.1002/smll.202102579,DROP,KEEP,Not target-taxon-focused,Peripheral
+81,Odonata,Review,2021,odonata,eid::2-s2.0-85119072969,2-s2.0-85119072969,10.3390/s21227542,DROP,KEEP,Not target-taxon-focused,Peripheral
+82,Odonata,Article,2022,odonata,eid::2-s2.0-85121631689,2-s2.0-85121631689,10.1016/j.jtherbio.2021.103164,KEEP,DROP,Primary focus,Not target-taxon-focused
+83,Odonata,Conference Paper,2022,odonata,eid::2-s2.0-85140085379,2-s2.0-85140085379,10.1117/12.2629582,DROP,KEEP,Not target-taxon-focused,Peripheral
+84,Odonata,Article,2023,odonata,eid::2-s2.0-85150788795,2-s2.0-85150788795,10.1016/j.enconman.2023.116938,DROP,KEEP,Not target-taxon-focused,Peripheral
+85,Odonata,Article,2023,odonata,eid::2-s2.0-85151847068,2-s2.0-85151847068,10.3934/jimo.2022210,DROP,KEEP,Not target-taxon-focused,Peripheral
+86,Odonata,Article,2023,odonata,eid::2-s2.0-85173517674,2-s2.0-85173517674,10.32604/cmc.2023.034196,DROP,KEEP,Not target-taxon-focused,Peripheral
+87,Odonata,Article,2024,odonata,eid::2-s2.0-85181484659,2-s2.0-85181484659,10.1007/s00265-023-03420-9,KEEP,DROP,Primary focus,Not target-taxon-focused
+88,Odonata,Conference Paper,2024,odonata,eid::2-s2.0-85186681614,2-s2.0-85186681614,10.1007/978-981-99-5752-1_34,DROP,KEEP,Not target-taxon-focused,Peripheral
+89,Odonata,Article,2024,odonata,eid::2-s2.0-85199539822,2-s2.0-85199539822,10.62441/nano-ntp.v20iS2.24,DROP,KEEP,Not target-taxon-focused,Peripheral
+90,Odonata,Article,2024,odonata,eid::2-s2.0-85203129635,2-s2.0-85203129635,10.1039/d4dt01905a,KEEP,DROP,Peripheral,Not target-taxon-focused
+91,Odonata,Article,2025,odonata,eid::2-s2.0-105009820135,2-s2.0-105009820135,10.1002/adfm.202510053,DROP,KEEP,Not target-taxon-focused,Peripheral
+92,Odonata,Review,2025,odonata,eid::2-s2.0-105020850680,2-s2.0-105020850680,10.1016/j.asd.2025.101478,KEEP,DROP,Primary focus,Not target-taxon-focused
+93,Odonata,Conference Paper,2025,odonata,eid::2-s2.0-105034459253,2-s2.0-105034459253,10.1109/ICONSTEM65670.2025.11374840,DROP,KEEP,Not target-taxon-focused,Peripheral
+94,Plecoptera,Article,2010,plecoptera,eid::2-s2.0-77954175097,2-s2.0-77954175097,10.1007/s11355-010-0107-2,KEEP,DROP,Secondary mention,Not target-taxon-focused
+95,Plecoptera,Article,2011,plecoptera,eid::2-s2.0-80052067005,2-s2.0-80052067005,10.1890/ES10-00011.1,KEEP,DROP,Secondary mention,Not target-taxon-focused
+96,Plecoptera,Article,2013,plecoptera,eid::2-s2.0-84880700294,2-s2.0-84880700294,10.1016/j.limno.2013.04.003,DROP,KEEP,Not target-taxon-focused,Secondary mention
+97,Plecoptera,Article,2014,plecoptera,eid::2-s2.0-84896397448,2-s2.0-84896397448,10.1080/02705060.2013.876943,KEEP,DROP,Secondary mention,Not target-taxon-focused
+98,Plecoptera,Article,2016,plecoptera,eid::2-s2.0-84962582515,2-s2.0-84962582515,10.1242/jeb.127829,DROP,KEEP,Not target-taxon-focused,Peripheral
+99,Plecoptera,Article,2016,plecoptera,eid::2-s2.0-84966340330,2-s2.0-84966340330,10.7717/peerj.1966,DROP,KEEP,Not target-taxon-focused,Secondary mention
+100,Plecoptera,Article,2018,plecoptera,eid::2-s2.0-85046681885,2-s2.0-85046681885,10.1016/j.ecolind.2018.04.059,KEEP,DROP,Secondary mention,Not target-taxon-focused
+101,Plecoptera,Article,2019,plecoptera,eid::2-s2.0-85073518989,2-s2.0-85073518989,10.1080/23802359.2019.1674722,KEEP,DROP,Primary focus,Not target-taxon-focused
+102,Plecoptera,Article,2020,plecoptera,eid::2-s2.0-85076285019,2-s2.0-85076285019,10.1007/s10750-019-04149-1,KEEP,DROP,Primary focus,Not target-taxon-focused
+103,Plecoptera,Article,2020,plecoptera,eid::2-s2.0-85077504408,2-s2.0-85077504408,10.1016/j.ecolind.2019.106037,KEEP,DROP,Secondary mention,Not target-taxon-focused
+104,Plecoptera,Article,2020,plecoptera,eid::2-s2.0-85097510405,2-s2.0-85097510405,10.1590/S2179-975X10019,DROP,KEEP,Not target-taxon-focused,Peripheral
+105,Plecoptera,Article,2021,plecoptera,eid::2-s2.0-85102391189,2-s2.0-85102391189,10.1163/1876312X-bja10001,KEEP,DROP,Primary focus,Not target-taxon-focused
+106,Plecoptera,Article,2021,plecoptera,eid::2-s2.0-85119612484,2-s2.0-85119612484,10.1399/NuL.2021.11.03,DROP,KEEP,Not target-taxon-focused,Secondary mention
+107,Plecoptera,Article,2022,plecoptera,eid::2-s2.0-85127629672,2-s2.0-85127629672,10.1007/s10750-022-04867-z,DROP,KEEP,Not target-taxon-focused,Secondary mention
+108,Plecoptera,Article,2023,plecoptera,eid::2-s2.0-85170056301,2-s2.0-85170056301,10.13292/j.1000-4890.202308.021,DROP,KEEP,Not target-taxon-focused,Secondary mention
+109,Plecoptera,Article,2024,plecoptera,eid::2-s2.0-85184436197,2-s2.0-85184436197,10.1080/01650521.2024.2307070,KEEP,DROP,Secondary mention,Not target-taxon-focused
+110,Trichoptera,Article,2011,trichoptera,eid::2-s2.0-84860907902,2-s2.0-84860907902,10.1590/S1676-06032011000400002,KEEP,DROP,Secondary mention,Not target-taxon-focused
+111,Trichoptera,Article,2012,trichoptera,eid::2-s2.0-82655180712,2-s2.0-82655180712,10.1016/j.ecolind.2011.11.001,DROP,KEEP,Not target-taxon-focused,Secondary mention
+112,Trichoptera,Article,2012,trichoptera,eid::2-s2.0-84863833736,2-s2.0-84863833736,10.1016/j.asd.2012.05.001,DROP,KEEP,Not target-taxon-focused,Peripheral
+113,Trichoptera,Article,2014,trichoptera,eid::2-s2.0-84892164020,2-s2.0-84892164020,10.1016/j.limno.2013.10.001,DROP,KEEP,Not target-taxon-focused,Secondary mention
+114,Trichoptera,Article,2014,trichoptera,eid::2-s2.0-84896321562,2-s2.0-84896321562,10.1086/674578,KEEP,DROP,Primary focus,Not target-taxon-focused
+115,Trichoptera,Article,2015,trichoptera,eid::2-s2.0-84921916423,2-s2.0-84921916423,10.11113/jt.v72.3929,KEEP,DROP,Secondary mention,Not target-taxon-focused
+116,Trichoptera,Article,2015,trichoptera,eid::2-s2.0-84936761297,2-s2.0-84936761297,10.13198/j.issn.1001-6929.2015.06.17,DROP,KEEP,Not target-taxon-focused,Secondary mention
+117,Trichoptera,Article,2017,trichoptera,eid::2-s2.0-85032740760,2-s2.0-85032740760,10.1515/biolog-2017-0121,KEEP,DROP,Secondary mention,Not target-taxon-focused
+118,Trichoptera,Article,2018,trichoptera,eid::2-s2.0-85055008945,2-s2.0-85055008945,10.11646/zootaxa.4500.3.6,KEEP,DROP,Primary focus,Not target-taxon-focused
+119,Trichoptera,Article,2018,trichoptera,eid::2-s2.0-85055660480,2-s2.0-85055660480,10.11646/zootaxa.4504.4.6,KEEP,DROP,Primary focus,Not target-taxon-focused
+120,Trichoptera,Article,2019,trichoptera,eid::2-s2.0-85097864226,2-s2.0-85097864226,10.33736/bjrst.1355.2019,KEEP,DROP,Secondary mention,Not target-taxon-focused
+121,Trichoptera,Article,2021,trichoptera,eid::2-s2.0-85121011640,2-s2.0-85121011640,10.3390/w13243530,KEEP,DROP,Secondary mention,Not target-taxon-focused
+122,Trichoptera,Article,2024,trichoptera,eid::2-s2.0-85200057356,2-s2.0-85200057356,10.1007/s10841-024-00615-x,KEEP,DROP,Secondary mention,Not target-taxon-focused
+123,Trichoptera,Article,2025,trichoptera,eid::2-s2.0-105003095294,2-s2.0-105003095294,10.37828/em.2025.84.8,KEEP,DROP,Primary focus,Not target-taxon-focused
