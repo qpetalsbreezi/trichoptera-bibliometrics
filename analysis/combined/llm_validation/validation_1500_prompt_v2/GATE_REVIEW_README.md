@@ -8,4 +8,6 @@ Fill `your_decision`: KEEP or DROP for that `taxon`.
 
 KEEP = that taxon is part of the study. DROP = not (or name-only).
 
+If Abstract is blank, decide from Title alone.
+
 `gate_conflicts_keys.csv` is for analysis only (do not send to reviewers).
