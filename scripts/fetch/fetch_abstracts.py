@@ -1,7 +1,9 @@
 """Fetch abstracts for a combined Scopus API export.
 
 Cascade: OpenAlex -> Semantic Scholar -> CrossRef -> Europe PMC -> PubMed,
-with a title-based fallback for rows that have no usable DOI.
+then title fallback (CrossRef / Europe PMC), then Springer Nature Meta API v2 /
+Open Access (10.1007, 10.1038, 10.1186) and Elsevier Article Retrieval
+(META_ABS by DOI or Scopus ID) as last resort when the matching keys are set.
 
 Every fetcher returns (text, status) so that a genuine "this record has no
 abstract" is never confused with "the request failed". Only rows where every
@@ -44,6 +46,11 @@ EUROPE_PMC_SEARCH_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search
 CROSSREF_WORKS_URL = "https://api.crossref.org/works"
 PUBMED_ESEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 PUBMED_EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+ELSEVIER_ARTICLE_DOI_URL = "https://api.elsevier.com/content/article/doi/{doi}"
+ELSEVIER_ARTICLE_SCOPUS_URL = "https://api.elsevier.com/content/article/scopus_id/{scopus_id}"
+SPRINGER_METADATA_URL = "https://api.springernature.com/meta/v2/json"
+SPRINGER_OA_URL = "https://api.springernature.com/openaccess/json"
+SPRINGER_DOI_PREFIXES = ("10.1007/", "10.1038/", "10.1186/")
 
 # ---------------------------------------------------------------------------
 # Provenance / status vocabulary
@@ -51,6 +58,7 @@ PUBMED_EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
 SOURCE_ORDER = ["openalex", "semantic_scholar", "crossref", "europe_pmc", "pubmed"]
 SOURCE_TITLE_FALLBACK = ["crossref_title", "europe_pmc_title"]
+SOURCE_LAST_RESORT = ["springer", "elsevier"]
 SOURCE_PRESENT = "scopus"  # abstract was already in the input file
 SOURCE_NONE = "none"  # every source reported a hard miss
 
@@ -131,6 +139,16 @@ def _titles_match(a: str, b: str) -> bool:
     if not na or not nb:
         return False
     return SequenceMatcher(None, na, nb).ratio() >= TITLE_MATCH_THRESHOLD
+
+
+def _normalize_scopus_id(val) -> Optional[str]:
+    if val is None or (isinstance(val, float) and pd.isna(val)):
+        return None
+    s = str(val).strip()
+    if not s or s.lower() in {"nan", "none"}:
+        return None
+    s = re.sub(r"^(2-s2\.0-|SCOPUS_ID:)", "", s, flags=re.IGNORECASE).strip()
+    return s or None
 
 
 def _configure_output_streams() -> None:
@@ -429,6 +447,191 @@ def get_abstract_pubmed(
     return (None, ST_NETWORK)
 
 
+def _elsevier_article_request_parts(doi=None, scopus_id=None):
+    """Build Elsevier Article Retrieval URL/headers/params, or None if unusable."""
+    api_key = os.environ.get("SCOPUS_API_KEY")
+    if not api_key:
+        _warn_once(
+            "elsevier-key",
+            "SCOPUS_API_KEY not set; skipping Elsevier Article Retrieval last resort.",
+        )
+        return None
+
+    doi_norm = clean_doi(doi)
+    sid = _normalize_scopus_id(scopus_id)
+    if doi_norm:
+        url = ELSEVIER_ARTICLE_DOI_URL.format(doi=doi_norm)
+    elif sid:
+        url = ELSEVIER_ARTICLE_SCOPUS_URL.format(scopus_id=sid)
+    else:
+        return None
+
+    headers = {"X-ELS-APIKey": api_key, "Accept": "application/json"}
+    params = {"view": "META_ABS"}
+    inst_token = os.environ.get("SCOPUS_INST_TOKEN")
+    if inst_token:
+        params["insttoken"] = inst_token
+    return url, headers, params
+
+
+def _parse_elsevier_description(payload) -> str:
+    core = ((payload or {}).get("full-text-retrieval-response") or {}).get("coredata") or {}
+    desc = core.get("dc:description") or ""
+    if isinstance(desc, list):
+        parts = []
+        for item in desc:
+            if isinstance(item, dict):
+                parts.append(str(item.get("$") or ""))
+            else:
+                parts.append(str(item))
+        desc = " ".join(parts)
+    elif isinstance(desc, dict):
+        desc = desc.get("$") or ""
+    return _clean_text(desc)
+
+
+def get_abstract_elsevier(
+    doi,
+    session: requests.Session,
+    max_retries: int = 3,
+    scopus_id=None,
+) -> Tuple[Optional[str], str]:
+    """Last-resort Elsevier Article Retrieval (META_ABS) by DOI, then Scopus ID.
+
+    Needs SCOPUS_API_KEY. Institutional entitlement varies; 401/403 is a soft
+    miss so the row stays retryable. 404 / empty description are hard misses.
+    """
+    parts = _elsevier_article_request_parts(doi, scopus_id)
+    if parts is None:
+        if not os.environ.get("SCOPUS_API_KEY"):
+            return (None, ST_FORBIDDEN)
+        return (None, ST_NO_DOI)
+
+    url, headers, params = parts
+    doi_norm = clean_doi(doi)
+    sid = _normalize_scopus_id(scopus_id)
+
+    def _get(target_url: str) -> Tuple[Optional[str], str]:
+        for attempt in range(max_retries):
+            try:
+                r = session.get(target_url, headers=headers, params=params, timeout=30)
+                if r.status_code == 200:
+                    try:
+                        text = _parse_elsevier_description(r.json())
+                    except ValueError:
+                        return (None, ST_PARSE_ERROR)
+                    return (text, ST_OK) if text else (None, ST_NO_ABSTRACT)
+
+                terminal = _handle_non_200(r, attempt, max_retries, "Elsevier")
+                if terminal is not None:
+                    return terminal
+            except requests.exceptions.RequestException as exc:
+                terminal = _handle_exception(exc, attempt, max_retries)
+                if terminal is not None:
+                    return terminal
+        return (None, ST_NETWORK)
+
+    text, status = _get(url)
+    # DOI 404: fall through to Scopus ID when we have one.
+    if (
+        not text
+        and status == ST_NOT_FOUND
+        and doi_norm
+        and sid
+        and url != ELSEVIER_ARTICLE_SCOPUS_URL.format(scopus_id=sid)
+    ):
+        text, status = _get(ELSEVIER_ARTICLE_SCOPUS_URL.format(scopus_id=sid))
+    return text, status
+
+
+def _is_springer_nature_doi(doi) -> bool:
+    d = (clean_doi(doi) or "").lower()
+    return any(d.startswith(prefix) for prefix in SPRINGER_DOI_PREFIXES)
+
+
+def _parse_springer_records(payload) -> Tuple[Optional[str], str]:
+    records = (payload or {}).get("records") or []
+    if not records:
+        return (None, ST_NOT_FOUND)
+    rec = records[0] if isinstance(records[0], dict) else {}
+    raw = rec.get("abstract") or rec.get("Abstract") or ""
+    if isinstance(raw, list):
+        parts = []
+        for item in raw:
+            if isinstance(item, dict):
+                parts.append(str(item.get("p") or item.get("$") or item.get("value") or ""))
+            else:
+                parts.append(str(item))
+        raw = " ".join(parts)
+    elif isinstance(raw, dict):
+        raw = raw.get("p") or raw.get("$") or raw.get("value") or ""
+    text = _clean_text(raw)
+    return (text, ST_OK) if text else (None, ST_NO_ABSTRACT)
+
+
+def get_abstract_springer(
+    doi, session: requests.Session, max_retries: int = 3
+) -> Tuple[Optional[str], str]:
+    """Last-resort Springer Nature Meta API v2, then Open Access API.
+
+    Only called for 10.1007 / 10.1038 / 10.1186 DOIs. Needs
+    SPRINGER_NATURE_API_KEY and/or SPRINGER_OA_API_KEY.
+    """
+    doi_norm = clean_doi(doi)
+    if not doi_norm:
+        return (None, ST_NO_DOI)
+    if not _is_springer_nature_doi(doi_norm):
+        return (None, ST_NOT_FOUND)
+
+    meta_key = (os.environ.get("SPRINGER_NATURE_API_KEY") or "").strip()
+    oa_key = (os.environ.get("SPRINGER_OA_API_KEY") or "").strip()
+    if not meta_key and not oa_key:
+        _warn_once(
+            "springer-key",
+            "SPRINGER_NATURE_API_KEY / SPRINGER_OA_API_KEY not set; "
+            "skipping Springer Nature last resort.",
+        )
+        return (None, ST_FORBIDDEN)
+
+    def _query(url: str, api_key: str, source_label: str) -> Tuple[Optional[str], str]:
+        params = {"api_key": api_key, "q": f"doi:{doi_norm}"}
+        for attempt in range(max_retries):
+            try:
+                r = session.get(url, params=params, timeout=30)
+                if r.status_code == 200:
+                    try:
+                        return _parse_springer_records(r.json())
+                    except ValueError:
+                        return (None, ST_PARSE_ERROR)
+                terminal = _handle_non_200(r, attempt, max_retries, source_label)
+                if terminal is not None:
+                    return terminal
+            except requests.exceptions.RequestException as exc:
+                terminal = _handle_exception(exc, attempt, max_retries)
+                if terminal is not None:
+                    return terminal
+        return (None, ST_NETWORK)
+
+    last_hard = ST_NOT_FOUND
+    if meta_key:
+        text, status = _query(SPRINGER_METADATA_URL, meta_key, "Springer Meta")
+        if text:
+            return text, status
+        if status not in HARD_MISS_STATUSES:
+            return (None, status)
+        last_hard = status
+
+    if oa_key:
+        text, status = _query(SPRINGER_OA_URL, oa_key, "Springer OA")
+        if text:
+            return text, status
+        if status not in HARD_MISS_STATUSES:
+            return (None, status)
+        last_hard = status
+
+    return (None, last_hard)
+
+
 # ---------------------------------------------------------------------------
 # Title-based fallback for rows with no usable DOI
 # ---------------------------------------------------------------------------
@@ -523,8 +726,15 @@ TITLE_FETCHERS = [
     ("europe_pmc_title", get_abstract_europe_pmc_by_title),
 ]
 
+LAST_RESORT_FETCHERS = [
+    ("springer", get_abstract_springer),
+    ("elsevier", get_abstract_elsevier),
+]
 
-def _fetch_abstract_waterfall(doi, title, session: requests.Session, stats: dict):
+
+def _fetch_abstract_waterfall(
+    doi, title, session: requests.Session, stats: dict, scopus_id=None
+):
     """Try each source in order.
 
     Returns (text, source, exhausted, statuses):
@@ -564,6 +774,33 @@ def _fetch_abstract_waterfall(doi, title, session: requests.Session, stats: dict
         if status not in HARD_MISS_STATUSES:
             all_hard = False
 
+    # Last resort: Springer Nature (prefix-gated), then Elsevier Article Retrieval.
+    # Skip a source entirely when its key is missing so exhausted marking still
+    # works from free sources.
+    if (
+        (os.environ.get("SPRINGER_NATURE_API_KEY") or os.environ.get("SPRINGER_OA_API_KEY"))
+        and doi_norm
+        and _is_springer_nature_doi(doi_norm)
+    ):
+        text, status = get_abstract_springer(doi, session)
+        statuses["springer"] = status
+        stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
+        if text:
+            stats["springer"] += 1
+            return text, "springer", False, statuses
+        if status not in HARD_MISS_STATUSES:
+            all_hard = False
+
+    if os.environ.get("SCOPUS_API_KEY") and (doi_norm or _normalize_scopus_id(scopus_id)):
+        text, status = get_abstract_elsevier(doi, session, scopus_id=scopus_id)
+        statuses["elsevier"] = status
+        stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
+        if text:
+            stats["elsevier"] += 1
+            return text, "elsevier", False, statuses
+        if status not in HARD_MISS_STATUSES:
+            all_hard = False
+
     stats["failed"] += 1
     return None, None, all_hard, statuses
 
@@ -582,7 +819,7 @@ def run_diagnose(dois) -> None:
             print(f"\n{'='*74}\nDOI: {doi}\n{'='*74}")
             print(f"{'source':<20} {'status':<16} {'chars':>7}  preview")
             print("-" * 74)
-            for name, fetcher in DOI_FETCHERS:
+            for name, fetcher in DOI_FETCHERS + LAST_RESORT_FETCHERS:
                 text, status = fetcher(doi, session)
                 n = len(text) if text else 0
                 preview = (text[:60].replace("\n", " ") + "...") if text else ""
@@ -616,6 +853,8 @@ def run_fetch_abstracts(
         "pubmed": 0,
         "crossref_title": 0,
         "europe_pmc_title": 0,
+        "springer": 0,
+        "elsevier": 0,
         "already_had": 0,
         "failed": 0,
         "marked_none": 0,
@@ -689,7 +928,11 @@ def run_fetch_abstracts(
         "\nTrying sources in order: "
         "OpenAlex -> Semantic Scholar -> CrossRef -> Europe PMC -> PubMed"
     )
-    print("Fallback for rows without a usable DOI: CrossRef title -> Europe PMC title\n")
+    print("Fallback for rows without a usable DOI: CrossRef title -> Europe PMC title")
+    print(
+        "Last resort: Springer Nature (10.1007/10.1038/10.1186; needs "
+        "SPRINGER_NATURE_API_KEY) then Elsevier Article Retrieval (SCOPUS_API_KEY)\n"
+    )
 
     processed = 0
     session = requests.Session()
@@ -704,11 +947,18 @@ def run_fetch_abstracts(
             if _skip(idx):
                 continue
 
+            scopus_id = None
+            if "ScopusID" in df.columns:
+                scopus_id = df.at[idx, "ScopusID"]
+            elif "EID" in df.columns:
+                scopus_id = df.at[idx, "EID"]
+
             text, source, exhausted, statuses = _fetch_abstract_waterfall(
                 df.at[idx, "DOI"] if "DOI" in df.columns else None,
                 df.at[idx, "Title"] if "Title" in df.columns else None,
                 session,
                 stats,
+                scopus_id=scopus_id,
             )
 
             if text:
@@ -736,11 +986,15 @@ def run_fetch_abstracts(
             if processed % save_interval == 0:
                 output_csv.parent.mkdir(parents=True, exist_ok=True)
                 df.to_csv(output_csv, index=False)
-                found = sum(stats[s] for s in SOURCE_ORDER + SOURCE_TITLE_FALLBACK)
+                found = sum(
+                    stats[s]
+                    for s in SOURCE_ORDER + SOURCE_TITLE_FALLBACK + SOURCE_LAST_RESORT
+                )
                 tqdm.write(
                     f"Progress: {processed}/{needs_abstract} | Found: {found} | "
                     + ", ".join(
-                        f"{s}: {stats[s]}" for s in SOURCE_ORDER + SOURCE_TITLE_FALLBACK
+                        f"{s}: {stats[s]}"
+                        for s in SOURCE_ORDER + SOURCE_TITLE_FALLBACK + SOURCE_LAST_RESORT
                     )
                     + f" | Exhausted: {stats['marked_none']}"
                     f" | Retryable: {stats['left_open']}",
@@ -762,7 +1016,7 @@ def run_fetch_abstracts(
     print(f"Total papers: {total}")
     print(f"Rows already resolved at start: {stats['already_had']}")
     print("\nAbstracts fetched this run:")
-    for s in SOURCE_ORDER + SOURCE_TITLE_FALLBACK:
+    for s in SOURCE_ORDER + SOURCE_TITLE_FALLBACK + SOURCE_LAST_RESORT:
         print(f"  {s:<20} {stats[s]}")
     print(f"  {'no source had one':<20} {stats['failed']}")
     print(f"\nMarked '{SOURCE_NONE}' (all sources reachable, none had an abstract): "

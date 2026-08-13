@@ -45,7 +45,7 @@ NOTES:
   2. Standard view does NOT include abstracts (dc:description is empty)
 - RECOMMENDED WORKFLOW:
   1. Fetch papers with this script (gets metadata + first author)
-  2. Run scripts/fetch/fetch_abstracts.py to add abstracts (OpenAlex → Semantic Scholar → CrossRef → Europe PMC → PubMed)
+  2. Run scripts/fetch/fetch_abstracts.py to add abstracts (OpenAlex → Semantic Scholar → CrossRef → Europe PMC → PubMed → Springer Nature / Elsevier last resort)
   3. Run scripts/fetch/fetch_authors.py to add full author lists (uses OpenAlex)
 - The script handles pagination automatically using cursor-based navigation
 - Rate limiting: 0.5 second delay between requests (adjust if needed)
