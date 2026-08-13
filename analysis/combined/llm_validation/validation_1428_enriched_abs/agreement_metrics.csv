@@ -1,9 +1,9 @@
 scope,field,n,agreement_n,agreement_pct,cohens_kappa
-overall,Taxon_Relevance,1428,1162,81.37,0.7222
-overall,Research_Theme,1428,1117,78.22,0.7397
-overall,both_fields,1428,958,67.09,
-overall,binary_gate,1428,1313,91.95,0.665
-in_set_rate,Taxon_Relevance_A_in_set,1428,1228,85.99,
-in_set_rate,Taxon_Relevance_B_in_set,1428,1229,86.06,
+overall,Taxon_Relevance,1428,1167,81.72,0.7277
+overall,Research_Theme,1428,1112,77.87,0.7356
+overall,both_fields,1428,948,66.39,
+overall,binary_gate,1428,1310,91.74,0.6555
+in_set_rate,Taxon_Relevance_A_in_set,1428,1230,86.13,
+in_set_rate,Taxon_Relevance_B_in_set,1428,1228,85.99,
 ns_count,Taxon_Relevance_A_Not_Specified,1428,0,0.0,
 ns_count,Taxon_Relevance_B_Not_Specified,1428,0,0.0,
