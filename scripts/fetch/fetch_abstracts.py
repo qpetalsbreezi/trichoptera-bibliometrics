@@ -1,9 +1,9 @@
 """Fetch abstracts for a combined Scopus API export.
 
-Cascade: OpenAlex -> Semantic Scholar -> CrossRef -> Europe PMC -> PubMed,
-then title fallback (CrossRef / Europe PMC), then Springer Nature Meta API v2 /
-Open Access (10.1007, 10.1038, 10.1186) and Elsevier Article Retrieval
-(META_ABS by DOI or Scopus ID) as last resort when the matching keys are set.
+Cascade: Springer Nature (10.1007/10.1038/10.1186) and Elsevier (10.1016 /
+Scopus ID) first when keys are set, then OpenAlex -> Semantic Scholar ->
+CrossRef -> Europe PMC -> PubMed, then title fallback (CrossRef / Europe PMC),
+then leftover publisher last-resort. A 429 skips that source for 10 min.
 
 Every fetcher returns (text, status) so that a genuine "this record has no
 abstract" is never confused with "the request failed". Only rows where every
@@ -36,7 +36,6 @@ from lib.openalex import (  # noqa: E402
     crossref_mailto_ua,
     openalex_headers,
     openalex_work_url,
-    retry_after_seconds,
 )
 from lib.pipeline import PipelinePaths, add_query_arg, load_dotenv  # noqa: E402
 
@@ -86,12 +85,57 @@ TITLE_MATCH_THRESHOLD = 0.90
 # One-time warnings so a misconfigured key does not print once per row.
 _WARNED = set()
 
+# After a 429, skip that source for this many seconds instead of sleeping
+# Retry-After (often 1–12 min) on every subsequent row.
+_RATE_LIMIT_COOLDOWN_SEC = 600
+_SOURCE_COOLDOWN_UNTIL: dict = {}
+_LABEL_TO_SOURCE_KEY = {
+    "openalex": "openalex",
+    "semantic scholar": "semantic_scholar",
+    "crossref": "crossref",
+    "europe pmc": "europe_pmc",
+    "pubmed": "pubmed",
+    "elsevier": "elsevier",
+}
+
 
 def _warn_once(key: str, message: str) -> None:
     if key not in _WARNED:
         _WARNED.add(key)
         print(f"\n[WARN] {message}\n", file=sys.stderr)
         sys.stderr.flush()
+
+
+def _source_key_from_label(source: str) -> str:
+    low = (source or "").lower()
+    if low.startswith("springer"):
+        return "springer_oa" if "oa" in low else "springer_meta"
+    return _LABEL_TO_SOURCE_KEY.get(low, low.replace(" ", "_"))
+
+
+def _mark_rate_limited(source: str, cooldown_sec: Optional[float] = None) -> None:
+    key = _source_key_from_label(source)
+    wait = float(cooldown_sec or _RATE_LIMIT_COOLDOWN_SEC)
+    wait = max(_RATE_LIMIT_COOLDOWN_SEC, min(wait, 8 * 3600))
+    _SOURCE_COOLDOWN_UNTIL[key] = time.monotonic() + wait
+    mins = max(1, int(round(wait / 60)))
+    _warn_once(
+        f"{key}-429",
+        f"{source} rate-limited; skipping this source for {mins} min.",
+    )
+
+
+def _source_is_cooling(name: str) -> bool:
+    return time.monotonic() < _SOURCE_COOLDOWN_UNTIL.get(name, 0.0)
+
+
+def _springer_all_cooling() -> bool:
+    """True only when every configured Springer endpoint is cooling."""
+    has_meta = bool((os.environ.get("SPRINGER_NATURE_API_KEY") or "").strip())
+    has_oa = bool((os.environ.get("SPRINGER_OA_API_KEY") or "").strip())
+    meta_cool = (not has_meta) or _source_is_cooling("springer_meta")
+    oa_cool = (not has_oa) or _source_is_cooling("springer_oa")
+    return meta_cool and oa_cool
 
 
 # ---------------------------------------------------------------------------
@@ -190,10 +234,14 @@ def _handle_non_200(
         return (None, ST_FORBIDDEN)
 
     if code == 429:
-        wait = retry_after_seconds(response) or min(10.0 * (attempt + 1), 60.0)
-        if attempt < max_retries - 1:
-            time.sleep(wait)
-            return None  # retry
+        # Do not sleep Retry-After here: one miss was sleeping 4–12 min before
+        # Springer/Elsevier. Mark the source cooling and fall through.
+        raw = (response.headers.get("Retry-After") or "").strip()
+        try:
+            retry_after = float(raw)
+        except ValueError:
+            retry_after = float(_RATE_LIMIT_COOLDOWN_SEC)
+        _mark_rate_limited(source, cooldown_sec=retry_after)
         return (None, ST_RATE_LIMITED)
 
     if attempt < max_retries - 1:
@@ -613,23 +661,32 @@ def get_abstract_springer(
         return (None, ST_NETWORK)
 
     last_hard = ST_NOT_FOUND
-    if meta_key:
+    any_soft = False
+
+    if meta_key and not _source_is_cooling("springer_meta"):
         text, status = _query(SPRINGER_METADATA_URL, meta_key, "Springer Meta")
         if text:
             return text, status
         if status not in HARD_MISS_STATUSES:
-            return (None, status)
-        last_hard = status
+            any_soft = True
+        else:
+            last_hard = status
+    elif meta_key:
+        any_soft = True
 
-    if oa_key:
+    # Meta 429 / cooldown must not block Open Access — quota is separate.
+    if oa_key and not _source_is_cooling("springer_oa"):
         text, status = _query(SPRINGER_OA_URL, oa_key, "Springer OA")
         if text:
             return text, status
         if status not in HARD_MISS_STATUSES:
-            return (None, status)
-        last_hard = status
+            any_soft = True
+        else:
+            last_hard = status
+    elif oa_key:
+        any_soft = True
 
-    return (None, last_hard)
+    return (None, ST_RATE_LIMITED if any_soft else last_hard)
 
 
 # ---------------------------------------------------------------------------
@@ -737,6 +794,9 @@ def _fetch_abstract_waterfall(
 ):
     """Try each source in order.
 
+    Publisher APIs run first for DOIs they cover (Springer prefixes, Elsevier
+    10.1016 / Scopus ID) so an OpenAlex/S2 429 storm does not block them.
+
     Returns (text, source, exhausted, statuses):
       text      -- abstract text, or None
       source    -- which source supplied it, or None
@@ -749,23 +809,13 @@ def _fetch_abstract_waterfall(
     all_hard = True
 
     doi_norm = clean_doi(doi)
+    has_springer_key = bool(
+        os.environ.get("SPRINGER_NATURE_API_KEY") or os.environ.get("SPRINGER_OA_API_KEY")
+    )
+    has_elsevier_key = bool(os.environ.get("SCOPUS_API_KEY"))
 
-    if doi_norm:
-        for name, fetcher in DOI_FETCHERS:
-            text, status = fetcher(doi, session)
-            statuses[name] = status
-            stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
-            if text:
-                stats[name] += 1
-                return text, name, False, statuses
-            if status not in HARD_MISS_STATUSES:
-                all_hard = False
-    else:
-        statuses["doi"] = ST_NO_DOI
-
-    # No DOI, or the DOI resolved nowhere: try matching on title.
-    for name, fetcher in TITLE_FETCHERS:
-        text, status = fetcher(title, session)
+    def take(name, text, status):
+        nonlocal all_hard
         statuses[name] = status
         stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
         if text:
@@ -773,33 +823,87 @@ def _fetch_abstract_waterfall(
             return text, name, False, statuses
         if status not in HARD_MISS_STATUSES:
             all_hard = False
+        return None
 
-    # Last resort: Springer Nature (prefix-gated), then Elsevier Article Retrieval.
-    # Skip a source entirely when its key is missing so exhausted marking still
-    # works from free sources.
+    def skip_cooling(name):
+        nonlocal all_hard
+        statuses[name] = ST_RATE_LIMITED
+        all_hard = False
+
+    # Publisher first for DOIs they actually cover.
+    if doi_norm and _is_springer_nature_doi(doi_norm) and has_springer_key:
+        if _springer_all_cooling():
+            skip_cooling("springer")
+        else:
+            hit = take("springer", *get_abstract_springer(doi, session))
+            if hit:
+                return hit
+
     if (
-        (os.environ.get("SPRINGER_NATURE_API_KEY") or os.environ.get("SPRINGER_OA_API_KEY"))
+        has_elsevier_key
+        and (doi_norm or _normalize_scopus_id(scopus_id))
+        and (not doi_norm or doi_norm.lower().startswith("10.1016/"))
+    ):
+        if _source_is_cooling("elsevier"):
+            skip_cooling("elsevier")
+        else:
+            hit = take(
+                "elsevier",
+                *get_abstract_elsevier(doi, session, scopus_id=scopus_id),
+            )
+            if hit:
+                return hit
+
+    if doi_norm:
+        for name, fetcher in DOI_FETCHERS:
+            if _source_is_cooling(name):
+                skip_cooling(name)
+                continue
+            hit = take(name, *fetcher(doi, session))
+            if hit:
+                return hit
+    else:
+        statuses["doi"] = ST_NO_DOI
+
+    # No DOI, or the DOI resolved nowhere: try matching on title.
+    for name, fetcher in TITLE_FETCHERS:
+        upstream = "crossref" if name.startswith("crossref") else "europe_pmc"
+        if _source_is_cooling(upstream):
+            skip_cooling(name)
+            continue
+        hit = take(name, *fetcher(title, session))
+        if hit:
+            return hit
+
+    # Last resort if not already tried (e.g. non-10.1016 Elsevier, or Springer
+    # prefix where Springer was cooling at the start of the row).
+    if (
+        "springer" not in statuses
+        and has_springer_key
         and doi_norm
         and _is_springer_nature_doi(doi_norm)
     ):
-        text, status = get_abstract_springer(doi, session)
-        statuses["springer"] = status
-        stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
-        if text:
-            stats["springer"] += 1
-            return text, "springer", False, statuses
-        if status not in HARD_MISS_STATUSES:
-            all_hard = False
+        if _springer_all_cooling():
+            skip_cooling("springer")
+        else:
+            hit = take("springer", *get_abstract_springer(doi, session))
+            if hit:
+                return hit
 
-    if os.environ.get("SCOPUS_API_KEY") and (doi_norm or _normalize_scopus_id(scopus_id)):
-        text, status = get_abstract_elsevier(doi, session, scopus_id=scopus_id)
-        statuses["elsevier"] = status
-        stats["status_counts"][status] = stats["status_counts"].get(status, 0) + 1
-        if text:
-            stats["elsevier"] += 1
-            return text, "elsevier", False, statuses
-        if status not in HARD_MISS_STATUSES:
-            all_hard = False
+    if (
+        "elsevier" not in statuses
+        and has_elsevier_key
+        and (doi_norm or _normalize_scopus_id(scopus_id))
+    ):
+        if _source_is_cooling("elsevier"):
+            skip_cooling("elsevier")
+        else:
+            hit = take(
+                "elsevier",
+                *get_abstract_elsevier(doi, session, scopus_id=scopus_id),
+            )
+            if hit:
+                return hit
 
     stats["failed"] += 1
     return None, None, all_hard, statuses
@@ -925,13 +1029,13 @@ def run_fetch_abstracts(
     print(f"Already resolved (has text, or exhausted): {stats['already_had']}")
     print(f"Need abstract fetch attempts: {needs_abstract}")
     print(
-        "\nTrying sources in order: "
-        "OpenAlex -> Semantic Scholar -> CrossRef -> Europe PMC -> PubMed"
+        "\nTrying sources in order: Springer (10.1007/10.1038/10.1186) / "
+        "Elsevier (10.1016) first, then OpenAlex -> Semantic Scholar -> "
+        "CrossRef -> Europe PMC -> PubMed"
     )
     print("Fallback for rows without a usable DOI: CrossRef title -> Europe PMC title")
     print(
-        "Last resort: Springer Nature (10.1007/10.1038/10.1186; needs "
-        "SPRINGER_NATURE_API_KEY) then Elsevier Article Retrieval (SCOPUS_API_KEY)\n"
+        "Then leftover publisher last-resort. A 429 skips that source for 10 min.\n"
     )
 
     processed = 0
