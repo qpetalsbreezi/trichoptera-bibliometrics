@@ -4,6 +4,7 @@ Cross-taxon summary report (side-by-side).
 This intentionally mirrors the filtering logic used by the existing RQ2–RQ4
 scripts:
 - restrict to 2010–2025
+- keep Article and Review only (Scopus ``Type`` column)
 - exclude papers where the query taxon is not the study focus
   (Taxon_Relevance / legacy Trichoptera_Relevance label "Not target-taxon-focused"
    or legacy "Not Trichoptera-focused")
@@ -31,6 +32,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
 from lib.format_metrics import fmt_integerish, fmt_ratio_or_pct, round_one_decimal  # noqa: E402
 from lib.pipeline import (  # noqa: E402
     PipelinePaths,
+    filter_article_review,
     load_queries_config,
     normalize_research_theme,
     paper_query_order,
@@ -93,14 +95,14 @@ def _yearly_volume_single_query(query_id: str) -> pd.DataFrame:
 
 
 def filter_year_window_only(df: pd.DataFrame) -> pd.DataFrame:
-    """2010–2025 only; no relevance filter (denominator for 'raw' vs taxon-focused)."""
-    d = df.copy()
+    """2010–2025, Article/Review only; no relevance filter (denominator for raw vs taxon-focused)."""
+    d = filter_article_review(df)
     d["Year"] = pd.to_numeric(d["Year"], errors="coerce")
     return d[d["Year"].between(2010, 2025)]
 
 
 def filter_analysis_frame(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
+    df = filter_article_review(df)
     df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
     df = df[df["Year"].between(2010, 2025)]
 
@@ -587,6 +589,7 @@ def render_markdown(rows: list[dict]) -> str:
     out.append("")
     out.append("Generated from `data/processed/*/scopus_api_coded.csv` with the same filters as RQ2–RQ4:")
     out.append("- Years: 2010–2025")
+    out.append("- Document types: Article and Review only (`Type` column)")
     out.append("- Exclude non–taxon-focused papers (`Taxon_Relevance` not in {Not target-taxon-focused, Not Trichoptera-focused})")
     out.append("")
     out.append(

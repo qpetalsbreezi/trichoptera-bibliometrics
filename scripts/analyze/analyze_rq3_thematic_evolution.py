@@ -16,7 +16,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from lib.pipeline import PipelinePaths, add_query_arg, normalize_research_theme  # noqa: E402
+from lib.pipeline import PipelinePaths, add_query_arg, filter_article_review, normalize_research_theme  # noqa: E402
 
 
 def analyze_thematic_evolution(paths: PipelinePaths):
@@ -28,6 +28,7 @@ def analyze_thematic_evolution(paths: PipelinePaths):
     print(f"query_id={paths.query_id}")
     print("Loading data...")
     df = pd.read_csv(input_csv)
+    df = filter_article_review(df)
     
     # Clean and prepare data
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce')

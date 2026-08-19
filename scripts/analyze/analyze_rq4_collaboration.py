@@ -16,7 +16,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from lib.pipeline import PipelinePaths, add_query_arg, normalize_research_theme  # noqa: E402
+from lib.pipeline import PipelinePaths, add_query_arg, filter_article_review, normalize_research_theme  # noqa: E402
 
 
 def analyze_collaboration(paths: PipelinePaths):
@@ -29,6 +29,7 @@ def analyze_collaboration(paths: PipelinePaths):
     print(f"query_id={paths.query_id}")
     print(f"Loading coded data from: {input_csv}")
     df = pd.read_csv(input_csv)
+    df = filter_article_review(df)
     has_full_author_data = False
 
     if authors_csv.exists():

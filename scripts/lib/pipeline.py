@@ -74,6 +74,20 @@ _RELEVANCE_AS_THEME = {
 }
 
 
+# Scopus document types retained in RQ2–RQ4 / cross-taxon analysis (matches validation eval).
+ANALYSIS_DOCUMENT_TYPES = frozenset({"Article", "Review"})
+
+
+def filter_article_review(df: "pd.DataFrame") -> "pd.DataFrame":
+    """Keep Article and Review rows only; no-op if Type column is missing."""
+    import pandas as pd
+
+    if "Type" not in df.columns:
+        return df
+    types = df["Type"].astype(str).str.strip()
+    return df[types.isin(ANALYSIS_DOCUMENT_TYPES)].copy()
+
+
 def normalize_research_theme(value) -> str:
     """Map deprecated Silk theme to Physiology; strip relevance labels misused as themes."""
     if value is None:
