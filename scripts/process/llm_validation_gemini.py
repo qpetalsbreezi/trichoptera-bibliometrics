@@ -67,7 +67,8 @@ def get_gemini_client(api_key: str):
         raise SystemExit(
             "Missing dependency google-genai. Install with: pip install google-genai"
         ) from e
-    return genai.Client(api_key=api_key)
+    # 120s request timeout so a stalled Pro call cannot freeze the thread pool.
+    return genai.Client(api_key=api_key, http_options={"timeout": 120_000})
 
 
 def classify_gemini(
