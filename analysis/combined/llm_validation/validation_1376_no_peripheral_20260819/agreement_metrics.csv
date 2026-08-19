@@ -1,0 +1,9 @@
+scope,field,n,agreement_n,agreement_pct,cohens_kappa
+overall,Taxon_Relevance,1376,1196,86.92,0.7925
+overall,Research_Theme,1376,1048,76.16,0.715
+overall,both_fields,1376,958,69.62,
+overall,binary_gate,1376,1254,91.13,0.7225
+in_set_rate,Taxon_Relevance_A_in_set,1376,1126,81.83,
+in_set_rate,Taxon_Relevance_B_in_set,1376,1078,78.34,
+ns_count,Taxon_Relevance_A_Not_Specified,1376,0,0.0,
+ns_count,Taxon_Relevance_B_Not_Specified,1376,0,0.0,

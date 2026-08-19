@@ -50,7 +50,7 @@ save_lock = Lock()
 ALL_NS_RETRY_SUFFIX = (
     "\n\nIMPORTANT: Never use \"Not Specified\" for Taxon_Relevance. "
     "Choose a concrete tier "
-    "(Primary focus, Secondary mention, Peripheral, or Not target-taxon-focused). "
+    "(Primary focus, Secondary mention, or Not target-taxon-focused). "
     "If the taxon appears in the title, do not use Not target-taxon-focused. "
     "Use \"Not target-taxon-focused\" only when the taxon is absent/irrelevant, "
     "or when the abstract is unavailable AND the title does not name the taxon. "

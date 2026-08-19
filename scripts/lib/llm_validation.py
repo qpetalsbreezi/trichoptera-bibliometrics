@@ -22,7 +22,6 @@ ABSTRACT_UNAVAILABLE = "__ABSTRACT_UNAVAILABLE__"
 RELEVANCE_TIERS = (
     "Primary focus",
     "Secondary mention",
-    "Peripheral",
     "Not target-taxon-focused",
 )
 RELEVANCE_OFF_TARGET = "Not target-taxon-focused"

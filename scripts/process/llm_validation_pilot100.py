@@ -441,7 +441,7 @@ def compare_and_write(manifest: pd.DataFrame, gpt: pd.DataFrame, gemini: pd.Data
     merged["agree_theme"] = merged["Research_Theme_A"] == merged["Research_Theme_B"]
     merged["agree_both"] = merged["agree_relevance"] & merged["agree_theme"]
 
-    in_set = {"Primary focus", "Secondary mention", "Peripheral"}
+    in_set = {"Primary focus", "Secondary mention"}
     merged["in_set_A"] = merged["Taxon_Relevance_A"].isin(in_set)
     merged["in_set_B"] = merged["Taxon_Relevance_B"].isin(in_set)
     merged["agree_gate"] = merged["in_set_A"] == merged["in_set_B"]

@@ -206,7 +206,7 @@ Research_Theme:
 - Use "Physiology" for physiological studies, including caddisfly silk properties and silk-gland biochemistry.
 - Use "Conservation" for conservation-focused studies.
 - Use "Other" if none of the above apply.
-- NEVER copy {rel_field} values into Research_Theme (e.g. do not use "Not target-taxon-focused", "Primary focus", "Secondary mention", or "Peripheral" as a theme).
+- NEVER copy {rel_field} values into Research_Theme (e.g. do not use "Not target-taxon-focused", "Primary focus", or "Secondary mention" as a theme).
 
 Country:
 - Extract the PRIMARY country where the research was conducted (field site, study location, or primary geographic focus).
@@ -226,21 +226,19 @@ Region_Global:
 - Use "Not Specified" ONLY if neither country nor region can be determined.
 
 {rel_field} (JSON field name is fixed in the schema; interpret it as focus on {taxon} for this run):
-- Allowed values ONLY: Primary focus, Secondary mention, Peripheral, Not target-taxon-focused.
+- Allowed values ONLY: Primary focus, Secondary mention, Not target-taxon-focused.
 - "Primary focus": {taxon} (or a species in that group) are the main study organism.
 - "Secondary mention": {taxon} are studied alongside other taxa as a deliberate study component.
-- "Peripheral": {taxon} mentioned but not central to the study.
-- "Not target-taxon-focused": {taxon} are absent from / irrelevant to the paper.
+- "Not target-taxon-focused": {taxon} are absent from / irrelevant to the paper, or mentioned only incidentally (not part of studied material).
 - NEVER use "Not Specified" for {rel_field}.
 
 TITLE ANCHOR RULE:
-- If a scientific name, common name, or "{taxon}" (or clear synonym) appears in the TITLE, do NOT use "Not target-taxon-focused".
+- If a scientific name, common name, or "{taxon}" (or clear synonym) appears in the TITLE and the taxon is part of the study, do NOT use "Not target-taxon-focused".
 - Prefer "Primary focus" when that taxon/species is the study organism.
 - Use "Secondary mention" for multi-taxon communities that include it.
-- Use "Peripheral" only if the title mention is clearly incidental.
+- If the title uses the taxon name only metaphorically or incidentally with no studied material → "Not target-taxon-focused".
 
 UNCERTAINTY:
-- If the taxon is mentioned in the title or abstract, prefer "Peripheral" over "Not target-taxon-focused" when focus is unclear.
 - Use "Not target-taxon-focused" when the taxon is absent/irrelevant, OR when the abstract is unavailable AND the title does not name the taxon.
 
 COMMUNITY / EPT:
@@ -248,7 +246,7 @@ COMMUNITY / EPT:
 
 VECTOR / DISEASE (especially mosquitoes / Culicidae):
 - Mosquito biology, surveillance, control, vector competence, or vector ecology → "Primary focus" or "Secondary mention" as appropriate.
-- Human disease epidemiology / clinical papers with no mosquito biology → "Peripheral" or "Not target-taxon-focused".
+- Human disease epidemiology / clinical papers with no mosquito biology → "Not target-taxon-focused".
 
 OUTPUT FORMAT:
 - One JSON object
@@ -333,7 +331,7 @@ def run_llm_coding(
     qconf = get_query_config(paths.query_id)
     llm_cfg = qconf["llm"]
 
-    client = OpenAI(api_key=api_key)
+    client = OpenAI(api_key=api_key, timeout=120.0)
 
     input_csv = paths.with_abstracts
     authors_csv = paths.with_authors
@@ -368,7 +366,6 @@ def run_llm_coding(
         relevance_allowed_values = [
             "Primary focus",
             "Secondary mention",
-            "Peripheral",
             "Not target-taxon-focused",
         ]
 
