@@ -2,112 +2,112 @@
 THEMATIC EVOLUTION ANALYSIS (RQ3)
 ==================================
 
-Date: 2026-04-26
-Dataset: 1486 papers (2010-2025)
+Date: 2026-08-19
+Dataset: 3098 papers (2010-2025)
 
 Research Question: How have research themes in Trichoptera studies evolved 
 over time? What are the dominant themes and how have they shifted?
 
 OVERALL THEME DISTRIBUTION
 ---------------------------
-  Ecology/Behavior: 621 papers (41.8%)
-  Biomonitoring/Water Quality: 382 papers (25.7%)
-  Not Specified: 310 papers (20.9%)
-  Taxonomy/Systematics: 123 papers (8.3%)
-  Conservation: 17 papers (1.1%)
-  Other: 13 papers (0.9%)
-  Physiology: 9 papers (0.6%)
-  Applied Ecology: 5 papers (0.3%)
-  Evolution/Phylogeny: 5 papers (0.3%)
-  Materials Science (Silk): 1 papers (0.1%)
+  Ecology/Behavior: 973 papers (31.4%)
+  Biomonitoring/Water Quality: 964 papers (31.1%)
+  Taxonomy/Systematics: 836 papers (27.0%)
+  Evolution/Phylogeny: 124 papers (4.0%)
+  Applied Ecology: 80 papers (2.6%)
+  Physiology: 75 papers (2.4%)
+  Conservation: 33 papers (1.1%)
+  Other: 13 papers (0.4%)
 
 YEAR-BY-YEAR THEME DISTRIBUTION TABLE
 --------------------------------------
-Year   Total    Ecology           Biomonitor        Taxonomy          Conservation      Other             Unknown           
+Year   Total    Ecology           Biomonitor        Taxonomy          Evolution         Applied Ecology   Unknown           
 ------------------------------------------------------------------------------------------------------------------------
-2010   67        32 ( 47.8%)   29 ( 43.3%)    2 (  3.0%)    0 (  0.0%)    1 (  1.5%)    3 (  4.5%)  
-2011   69        31 ( 44.9%)   27 ( 39.1%)    7 ( 10.1%)    1 (  1.4%)    0 (  0.0%)    3 (  4.3%)  
-2012   64        30 ( 46.9%)   19 ( 29.7%)    6 (  9.4%)    2 (  3.1%)    0 (  0.0%)    6 (  9.4%)  
-2013   73        42 ( 57.5%)   17 ( 23.3%)    6 (  8.2%)    0 (  0.0%)    1 (  1.4%)    6 (  8.2%)  
-2014   57        39 ( 68.4%)    9 ( 15.8%)    4 (  7.0%)    0 (  0.0%)    0 (  0.0%)    1 (  1.8%)  
-2015   81        43 ( 53.1%)   18 ( 22.2%)   11 ( 13.6%)    1 (  1.2%)    0 (  0.0%)    7 (  8.6%)  
-2016   68        35 ( 51.5%)   17 ( 25.0%)    6 (  8.8%)    0 (  0.0%)    0 (  0.0%)   10 ( 14.7%)  
-2017   67        34 ( 50.7%)   16 ( 23.9%)    8 ( 11.9%)    2 (  3.0%)    3 (  4.5%)    4 (  6.0%)  
-2018   55        29 ( 52.7%)   15 ( 27.3%)    6 ( 10.9%)    0 (  0.0%)    0 (  0.0%)    5 (  9.1%)  
-2019   94        45 ( 47.9%)   28 ( 29.8%)    9 (  9.6%)    2 (  2.1%)    1 (  1.1%)    8 (  8.5%)  
-2020   97        43 ( 44.3%)   31 ( 32.0%)   11 ( 11.3%)    1 (  1.0%)    1 (  1.0%)    5 (  5.2%)  
-2021   131       51 ( 38.9%)   40 ( 30.5%)   12 (  9.2%)    4 (  3.1%)    0 (  0.0%)   23 ( 17.6%)  
-2022   125       42 ( 33.6%)   24 ( 19.2%)    6 (  4.8%)    0 (  0.0%)    1 (  0.8%)   52 ( 41.6%)  
-2023   154       41 ( 26.6%)   31 ( 20.1%)   13 (  8.4%)    2 (  1.3%)    0 (  0.0%)   64 ( 41.6%)  
-2024   135       31 ( 23.0%)   29 ( 21.5%)    5 (  3.7%)    2 (  1.5%)    4 (  3.0%)   61 ( 45.2%)  
-2025   149       53 ( 35.6%)   32 ( 21.5%)   11 (  7.4%)    0 (  0.0%)    1 (  0.7%)   52 ( 34.9%)  
+2010   158       61 ( 38.6%)   52 ( 32.9%)   32 ( 20.3%)    7 (  4.4%)    3 (  1.9%)    0 (  0.0%)  
+2011   164       56 ( 34.1%)   50 ( 30.5%)   44 ( 26.8%)    3 (  1.8%)    5 (  3.0%)    0 (  0.0%)  
+2012   149       51 ( 34.2%)   49 ( 32.9%)   33 ( 22.1%)    5 (  3.4%)    4 (  2.7%)    0 (  0.0%)  
+2013   178       78 ( 43.8%)   43 ( 24.2%)   41 ( 23.0%)    7 (  3.9%)    5 (  2.8%)    0 (  0.0%)  
+2014   162       61 ( 37.7%)   46 ( 28.4%)   35 ( 21.6%)    6 (  3.7%)    3 (  1.9%)    0 (  0.0%)  
+2015   179       63 ( 35.2%)   57 ( 31.8%)   48 ( 26.8%)    1 (  0.6%)    7 (  3.9%)    0 (  0.0%)  
+2016   187       65 ( 34.8%)   56 ( 29.9%)   45 ( 24.1%)    8 (  4.3%)    7 (  3.7%)    0 (  0.0%)  
+2017   197       69 ( 35.0%)   59 ( 29.9%)   48 ( 24.4%)    7 (  3.6%)    2 (  1.0%)    0 (  0.0%)  
+2018   163       41 ( 25.2%)   58 ( 35.6%)   41 ( 25.2%)    9 (  5.5%)    6 (  3.7%)    0 (  0.0%)  
+2019   198       66 ( 33.3%)   58 ( 29.3%)   50 ( 25.3%)   15 (  7.6%)    3 (  1.5%)    0 (  0.0%)  
+2020   230       63 ( 27.4%)   67 ( 29.1%)   72 ( 31.3%)   11 (  4.8%)   10 (  4.3%)    0 (  0.0%)  
+2021   256       70 ( 27.3%)   78 ( 30.5%)   74 ( 28.9%)   15 (  5.9%)   11 (  4.3%)    0 (  0.0%)  
+2022   210       61 ( 29.0%)   62 ( 29.5%)   66 ( 31.4%)   11 (  5.2%)    3 (  1.4%)    0 (  0.0%)  
+2023   221       52 ( 23.5%)   70 ( 31.7%)   78 ( 35.3%)    8 (  3.6%)    3 (  1.4%)    0 (  0.0%)  
+2024   218       54 ( 24.8%)   84 ( 38.5%)   55 ( 25.2%)    7 (  3.2%)    4 (  1.8%)    0 (  0.0%)  
+2025   228       62 ( 27.2%)   75 ( 32.9%)   74 ( 32.5%)    4 (  1.8%)    4 (  1.8%)    0 (  0.0%)  
 
 
 THEME BY REGION
 ---------------
 
 Afrotropical:
-  Biomonitoring/Water Quality: 27 papers (45.8%)
-  Ecology/Behavior: 22 papers (37.3%)
-  Taxonomy/Systematics: 7 papers (11.9%)
-  Conservation: 2 papers (3.4%)
-  Not Specified: 1 papers (1.7%)
+  Biomonitoring/Water Quality: 78 papers (50.6%)
+  Taxonomy/Systematics: 36 papers (23.4%)
+  Ecology/Behavior: 24 papers (15.6%)
+  Conservation: 5 papers (3.2%)
+  Applied Ecology: 4 papers (2.6%)
 
 Australasian:
-  Ecology/Behavior: 43 papers (74.1%)
-  Biomonitoring/Water Quality: 13 papers (22.4%)
-  Conservation: 1 papers (1.7%)
-  Taxonomy/Systematics: 1 papers (1.7%)
-  Applied Ecology: 0 papers (0.0%)
+  Ecology/Behavior: 56 papers (44.4%)
+  Biomonitoring/Water Quality: 37 papers (29.4%)
+  Taxonomy/Systematics: 14 papers (11.1%)
+  Applied Ecology: 10 papers (7.9%)
+  Evolution/Phylogeny: 4 papers (3.2%)
 
 East Palearctic:
-  Ecology/Behavior: 37 papers (57.8%)
-  Biomonitoring/Water Quality: 19 papers (29.7%)
-  Taxonomy/Systematics: 3 papers (4.7%)
-  Conservation: 2 papers (3.1%)
-  Not Specified: 2 papers (3.1%)
+  Ecology/Behavior: 95 papers (34.7%)
+  Taxonomy/Systematics: 67 papers (24.5%)
+  Biomonitoring/Water Quality: 63 papers (23.0%)
+  Evolution/Phylogeny: 34 papers (12.4%)
+  Physiology: 7 papers (2.6%)
 
 Global:
-  Ecology/Behavior: 4 papers (66.7%)
-  Biomonitoring/Water Quality: 1 papers (16.7%)
-  Other: 1 papers (16.7%)
+  Biomonitoring/Water Quality: 6 papers (50.0%)
+  Ecology/Behavior: 4 papers (33.3%)
+  Evolution/Phylogeny: 1 papers (8.3%)
+  Other: 1 papers (8.3%)
   Applied Ecology: 0 papers (0.0%)
-  Conservation: 0 papers (0.0%)
 
 Nearctic:
-  Ecology/Behavior: 144 papers (48.5%)
-  Biomonitoring/Water Quality: 116 papers (39.1%)
-  Taxonomy/Systematics: 16 papers (5.4%)
-  Not Specified: 5 papers (1.7%)
-  Physiology: 5 papers (1.7%)
+  Biomonitoring/Water Quality: 296 papers (45.7%)
+  Ecology/Behavior: 213 papers (32.9%)
+  Taxonomy/Systematics: 54 papers (8.3%)
+  Physiology: 39 papers (6.0%)
+  Applied Ecology: 30 papers (4.6%)
 
 Neotropical:
-  Ecology/Behavior: 123 papers (55.9%)
-  Biomonitoring/Water Quality: 60 papers (27.3%)
-  Taxonomy/Systematics: 32 papers (14.5%)
-  Not Specified: 3 papers (1.4%)
-  Conservation: 1 papers (0.5%)
+  Taxonomy/Systematics: 287 papers (43.2%)
+  Ecology/Behavior: 210 papers (31.6%)
+  Biomonitoring/Water Quality: 134 papers (20.2%)
+  Evolution/Phylogeny: 20 papers (3.0%)
+  Applied Ecology: 4 papers (0.6%)
 
 Oriental:
-  Biomonitoring/Water Quality: 46 papers (35.9%)
-  Ecology/Behavior: 41 papers (32.0%)
-  Taxonomy/Systematics: 35 papers (27.3%)
-  Not Specified: 3 papers (2.3%)
-  Other: 2 papers (1.6%)
+  Taxonomy/Systematics: 243 papers (63.8%)
+  Biomonitoring/Water Quality: 75 papers (19.7%)
+  Ecology/Behavior: 47 papers (12.3%)
+  Evolution/Phylogeny: 13 papers (3.4%)
+  Applied Ecology: 2 papers (0.5%)
 
 Palearctic:
-  Ecology/Behavior: 206 papers (58.2%)
-  Biomonitoring/Water Quality: 97 papers (27.4%)
-  Taxonomy/Systematics: 28 papers (7.9%)
-  Conservation: 7 papers (2.0%)
-  Other: 6 papers (1.7%)
+  Ecology/Behavior: 315 papers (38.8%)
+  Biomonitoring/Water Quality: 267 papers (32.9%)
+  Taxonomy/Systematics: 130 papers (16.0%)
+  Evolution/Phylogeny: 35 papers (4.3%)
+  Applied Ecology: 25 papers (3.1%)
 
 KEY FINDINGS
 ------------
 
+Emerging Themes (increased >3%):
+  - Taxonomy/Systematics: +7.2%
+
 Declining Themes (decreased >3%):
-  - Ecology/Behavior: -21.4%
-  - Biomonitoring/Water Quality: -6.5%
+  - Ecology/Behavior: -10.8%
 
 LIMITATIONS
 -----------

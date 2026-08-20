@@ -2,8 +2,8 @@
 TEMPORAL AND GEOGRAPHIC GROWTH ANALYSIS (RQ2)
 ============================================
 
-Date: 2026-04-26
-Dataset: 1057 papers (2010-2025)
+Date: 2026-08-19
+Dataset: 2032 papers (2010-2025)
 
 Research Question: How has the geographic distribution of Trichoptera research 
 changed over time? Has there been a shift from European and North American 
@@ -12,69 +12,69 @@ focus to more global distribution, particularly in South America and Asia?
 TEMPORAL VOLUME ANALYSIS
 -------------------------
 Total Publications by Period:
-  Early Period (2010-2015): 260 papers
-  Recent Period (2020-2025): 537 papers
-  Change: +277 papers (+106.5%)
+  Early Period (2010-2015): 607 papers
+  Recent Period (2020-2025): 919 papers
+  Change: +312 papers (+51.4%)
 
 TOP COUNTRIES (Overall 2010-2025)
 ----------------------------------
-  China: 185 papers
-  United States: 175 papers
-  Brazil: 84 papers
-  Not Specified: 44 papers
-  New Zealand: 38 papers
-  Canada: 37 papers
-  Japan: 30 papers
-  United Kingdom: 30 papers
-  Russia: 29 papers
-  Germany: 24 papers
-  Italy: 22 papers
-  Switzerland: 22 papers
-  Australia: 16 papers
-  Argentina: 16 papers
-  Spain: 16 papers
+  China: 443 papers
+  United States: 323 papers
+  Brazil: 180 papers
+  Russia: 62 papers
+  Canada: 61 papers
+  New Zealand: 59 papers
+  Japan: 58 papers
+  United Kingdom: 49 papers
+  Spain: 48 papers
+  Germany: 47 papers
+  Italy: 46 papers
+  Not Specified: 35 papers
+  Argentina: 33 papers
+  Switzerland: 29 papers
+  France: 29 papers
 
 YEAR-BY-YEAR GEOGRAPHIC DISTRIBUTION TABLE
 ------------------------------------------
 Year   Total    South Americ    Asia            Europe          North Americ    Other           Unknown         
 ----------------------------------------------------------------------------------------------------
-2010   40         4 ( 10.0%)    1 (  2.5%)   10 ( 25.0%)   19 ( 47.5%)    4 ( 10.0%)    2 (  5.0%)  
-2011   43         9 ( 20.9%)    3 (  7.0%)    5 ( 11.6%)   20 ( 46.5%)    5 ( 11.6%)    1 (  2.3%)  
-2012   43         3 (  7.0%)    9 ( 20.9%)   12 ( 27.9%)   12 ( 27.9%)    4 (  9.3%)    3 (  7.0%)  
-2013   43         4 (  9.3%)    3 (  7.0%)   16 ( 37.2%)   13 ( 30.2%)    6 ( 14.0%)    1 (  2.3%)  
-2014   42         8 ( 19.0%)    2 (  4.8%)   17 ( 40.5%)   13 ( 31.0%)    1 (  2.4%)    1 (  2.4%)  
-2015   49         6 ( 12.2%)    9 ( 18.4%)   10 ( 20.4%)   15 ( 30.6%)    5 ( 10.2%)    4 (  8.2%)  
-2016   43         7 ( 16.3%)    3 (  7.0%)   13 ( 30.2%)   13 ( 30.2%)    5 ( 11.6%)    2 (  4.7%)  
-2017   56        12 ( 21.4%)   14 ( 25.0%)   14 ( 25.0%)   12 ( 21.4%)    2 (  3.6%)    2 (  3.6%)  
-2018   63        10 ( 15.9%)    9 ( 14.3%)   18 ( 28.6%)   13 ( 20.6%)    7 ( 11.1%)    6 (  9.5%)  
-2019   98        19 ( 19.4%)   41 ( 41.8%)   14 ( 14.3%)   13 ( 13.3%)    7 (  7.1%)    4 (  4.1%)  
-2020   96        12 ( 12.5%)   51 ( 53.1%)   17 ( 17.7%)    9 (  9.4%)    5 (  5.2%)    2 (  2.1%)  
-2021   99         8 (  8.1%)   23 ( 23.2%)   41 ( 41.4%)   13 ( 13.1%)   13 ( 13.1%)    1 (  1.0%)  
-2022   92         7 (  7.6%)   42 ( 45.7%)   21 ( 22.8%)   12 ( 13.0%)    8 (  8.7%)    2 (  2.2%)  
-2023   77        16 ( 20.8%)   16 ( 20.8%)   25 ( 32.5%)   13 ( 16.9%)    4 (  5.2%)    3 (  3.9%)  
-2024   78        13 ( 16.7%)   22 ( 28.2%)   24 ( 30.8%)    9 ( 11.5%)    7 (  9.0%)    3 (  3.8%)  
-2025   95         9 (  9.5%)   35 ( 36.8%)   32 ( 33.7%)    9 (  9.5%)    5 (  5.3%)    5 (  5.3%)  
+2010   85         6 (  7.1%)   10 ( 11.8%)   32 ( 37.6%)   28 ( 32.9%)    9 ( 10.6%)    0 (  0.0%)  
+2011   93        17 ( 18.3%)   10 ( 10.8%)   23 ( 24.7%)   31 ( 33.3%)    8 (  8.6%)    4 (  4.3%)  
+2012   90         9 ( 10.0%)   21 ( 23.3%)   30 ( 33.3%)   25 ( 27.8%)    5 (  5.6%)    0 (  0.0%)  
+2013   109       18 ( 16.5%)   20 ( 18.3%)   35 ( 32.1%)   29 ( 26.6%)    7 (  6.4%)    0 (  0.0%)  
+2014   114       18 ( 15.8%)   23 ( 20.2%)   42 ( 36.8%)   27 ( 23.7%)    2 (  1.8%)    2 (  1.8%)  
+2015   116       17 ( 14.7%)   29 ( 25.0%)   29 ( 25.0%)   30 ( 25.9%)   10 (  8.6%)    1 (  0.9%)  
+2016   115       17 ( 14.8%)   21 ( 18.3%)   35 ( 30.4%)   30 ( 26.1%)   12 ( 10.4%)    0 (  0.0%)  
+2017   121       21 ( 17.4%)   39 ( 32.2%)   28 ( 23.1%)   22 ( 18.2%)   10 (  8.3%)    1 (  0.8%)  
+2018   107       17 ( 15.9%)   31 ( 29.0%)   27 ( 25.2%)   20 ( 18.7%)   10 (  9.3%)    2 (  1.9%)  
+2019   163       29 ( 17.8%)   71 ( 43.6%)   24 ( 14.7%)   24 ( 14.7%)   13 (  8.0%)    2 (  1.2%)  
+2020   162       24 ( 14.8%)   84 ( 51.9%)   28 ( 17.3%)   18 ( 11.1%)    7 (  4.3%)    1 (  0.6%)  
+2021   173       15 (  8.7%)   58 ( 33.5%)   60 ( 34.7%)   21 ( 12.1%)   16 (  9.2%)    3 (  1.7%)  
+2022   152       17 ( 11.2%)   66 ( 43.4%)   35 ( 23.0%)   20 ( 13.2%)    9 (  5.9%)    5 (  3.3%)  
+2023   128       23 ( 18.0%)   32 ( 25.0%)   41 ( 32.0%)   19 ( 14.8%)   10 (  7.8%)    3 (  2.3%)  
+2024   142       22 ( 15.5%)   51 ( 35.9%)   36 ( 25.4%)   18 ( 12.7%)   12 (  8.5%)    3 (  2.1%)  
+2025   162       21 ( 13.0%)   74 ( 45.7%)   39 ( 24.1%)   16 (  9.9%)   11 (  6.8%)    1 (  0.6%)  
 
 KEY FINDINGS
 --------------------------------------------------------
 
 1. Regional Distribution Averages (2010-2025):
-   - South America: 14.2% of papers on average
-   - Asia: 22.3% of papers on average
+   - South America: 14.3% of papers on average
+   - Asia: 29.2% of papers on average
    - Europe: 27.5% of papers on average
-   - North America: 23.3% of papers on average
+   - North America: 20.1% of papers on average
 
-2. Proportional Trends (Early 2010-2012 vs Recent 2023-2025):
-   - South America: 12.6% → 15.6% (+3.0%)
-   - Asia: 10.1% → 28.6% (+18.5%)
-   - Europe: 21.5% → 32.3% (+10.8%)
-   - North America: 40.6% → 12.6% (-28.0%)
+2. Proportional Trends (Early 2010-2015 vs Recent 2020-2025):
+   - South America: 13.7% → 13.5% (-0.2%)
+   - Asia: 18.2% → 39.2% (+21.0%)
+   - Europe: 31.6% → 26.1% (-5.5%)
+   - North America: 28.4% → 12.3% (-16.1%)
    
    Note: North America has decreased while South America, Asia, and Europe have increased.
 
 3. Geographic Data Completeness:
-   - Unknown region: 4.2% average (increasing trend)
-   - Geographic classification available for ~96% of papers on average
+   - Unknown region: 1.3% average (increasing trend)
+   - Geographic classification available for ~99% of papers on average
 
 LIMITATIONS
 -----------
