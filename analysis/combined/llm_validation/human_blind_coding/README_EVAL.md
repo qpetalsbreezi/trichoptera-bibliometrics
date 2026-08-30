@@ -1,7 +1,9 @@
 # Human vs LLM evaluation (n=1,376)
 
 Frozen dual-model sample: `../validation_1376_no_peripheral_20260819/`  
-Blind coding sheet: `human_blind_coding_1376.csv`  
+Blind coding sheet (blank): `human_blind_coding_1376.csv`  
+Completed human labels (2026-08-30): `human_labeled_1376_20260830.csv`  
+Original return file: `all_rows_for_human_review-NoLLM-260830.csv`  
 Prompt for validators: `PROMPT_WORDING_for_validators.txt`
 
 ## Join key
@@ -24,7 +26,8 @@ python scripts/process/llm_validation_human_eval.py --status
 3. Run full evaluation (all 1,376 labeled):
 
 ```bash
-python scripts/process/llm_validation_human_eval.py
+python scripts/process/llm_validation_human_eval.py \
+  --human analysis/combined/llm_validation/human_blind_coding/human_labeled_1376_20260830.csv
 ```
 
 4. Or score a partial return:
