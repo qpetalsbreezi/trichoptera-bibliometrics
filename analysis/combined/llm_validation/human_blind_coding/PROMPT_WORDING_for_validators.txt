@@ -1,0 +1,64 @@
+EXACT MODEL PROMPT WORDING (shared by GPT-4o-mini and Gemini)
+============================================================
+Source: scripts/process/llm_code_taxon.py → build_prompt()
+Schema allowed values: data/taxon_schema.json
+
+Humans should code the same two fields the model codes: FOCUS and THEME.
+(Geography is also coded by the model but is not part of this human validation.)
+
+KEEP / DROP is not a model field. After coding, it is derived from FOCUS:
+  KEEP = Primary focus OR Secondary mention
+  DROP = Not target-taxon-focused
+
+The model receives title, abstract (or a note that none is available), and author
+affiliations. {study} / {taxon} are filled per group (e.g. mosquitoes / Culicidae).
+
+-----------------------------------------------------------
+FOCUS field (Taxon_Relevance) — allowed values and definitions
+-----------------------------------------------------------
+Allowed values ONLY: Primary focus, Secondary mention, Not target-taxon-focused.
+
+"Primary focus": {taxon} (or a species in that group) are the main study organism.
+"Secondary mention": {taxon} are studied alongside other taxa as a deliberate study component.
+"Not target-taxon-focused": {taxon} are absent from / irrelevant to the paper, or mentioned only incidentally (not part of studied material).
+NEVER use "Not Specified" for this field.
+
+TITLE ANCHOR RULE:
+- If a scientific name, common name, or "{taxon}" (or clear synonym) appears in the TITLE and the taxon is part of the study, do NOT use "Not target-taxon-focused".
+- Prefer "Primary focus" when that taxon/species is the study organism.
+- Use "Secondary mention" for multi-taxon communities that include it.
+- If the title uses the taxon name only metaphorically or incidentally with no studied material → "Not target-taxon-focused".
+
+UNCERTAINTY:
+- Use "Not target-taxon-focused" when the taxon is absent/irrelevant, OR when the abstract is unavailable AND the title does not name the taxon.
+
+COMMUNITY / EPT:
+- Macroinvertebrate, benthic, or EPT papers that include {taxon} as a studied assemblage component → "Secondary mention" (not "Not target-taxon-focused").
+
+VECTOR / DISEASE (especially mosquitoes / Culicidae):
+- Mosquito biology, surveillance, control, vector competence, or vector ecology → "Primary focus" or "Secondary mention" as appropriate.
+- Human disease epidemiology / clinical papers with no mosquito biology → "Not target-taxon-focused".
+
+-----------------------------------------------------------
+THEME field (Research_Theme) — one primary theme only
+-----------------------------------------------------------
+Allowed: Taxonomy/Systematics; Ecology/Behavior; Biomonitoring/Water Quality;
+Evolution/Phylogeny; Conservation; Physiology; Applied Ecology; Other; Not Specified.
+
+From the model instructions:
+- Prefer a concrete theme from the title/abstract. Do NOT default to "Not Specified".
+- Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
+- If focus is "Not target-taxon-focused", still assign a real theme; use "Other" (not "Not Specified") when none fits.
+- Taxonomy/Systematics: species descriptions, revisions, or classifications.
+- Evolution/Phylogeny: phylogenetic / evolutionary analyses.
+- Ecology/Behavior: basic ecology, life history, behavior, distribution, traits, or community studies WITHOUT a management / intervention / bioassessment frame.
+- Applied Ecology: management, control, restoration, pest/vector intervention, applied land-use, or other applied interventions.
+- Biomonitoring/Water Quality: ONLY when the taxon (or assemblage including them) are used explicitly as bioindicators / for water-quality assessment.
+- Physiology: physiological studies, including caddisfly silk properties and silk-gland biochemistry.
+- Conservation: conservation-focused studies.
+- Other: if none of the above apply.
+- Assign ONE primary theme only (same as the model).
+
+CORE RULE used by the model:
+- Prefer the MOST SPECIFIC allowed value supported by the title and abstract.
+- Treat the title as a strong signal of study focus.

@@ -1,16 +1,16 @@
-country_a,country_b,n_papers,pct_of_intl_papers
-US,GB,645,7.7
-US,CN,375,4.5
-US,BR,313,3.7
-US,FR,306,3.7
-GB,FR,206,2.5
-US,IN,190,2.3
-GB,BR,103,1.2
-FR,BR,69,0.8
-GB,IN,61,0.7
-CN,IN,55,0.7
-GB,CN,50,0.6
-FR,CN,33,0.4
-FR,IN,26,0.3
-BR,CN,19,0.2
-BR,IN,19,0.2
+group,country_a,country_b,n_total,n_early_2010_2015,n_recent_2020_2025,pct_change,cell
+Culicidae,GB,US,1236,302,631,108.9,1236 (+108.9%)
+Culicidae,FR,US,522,158,234,48.1,522 (+48.1%)
+Culicidae,BR,US,587,88,334,279.5,587 (+279.5%)
+Culicidae,CN,US,605,144,284,97.2,605 (+97.2%)
+Culicidae,AU,US,424,100,196,96.0,424 (+96.0%)
+Culicidae,FR,GB,384,114,169,48.2,384 (+48.2%)
+Culicidae,BR,GB,244,43,119,176.7,244 (+176.7%)
+Culicidae,CN,GB,89,17,49,188.2,89 (+188.2%)
+Culicidae,AU,GB,251,58,123,112.1,251 (+112.1%)
+Culicidae,BR,FR,126,22,61,177.3,126 (+177.3%)
+Culicidae,CN,FR,59,6,37,516.7,59 (+516.7%)
+Culicidae,AU,FR,81,12,45,275.0,81 (+275.0%)
+Culicidae,BR,CN,28,3,17,466.7,28 (+466.7%)
+Culicidae,AU,BR,73,12,41,241.7,73 (+241.7%)
+Culicidae,AU,CN,59,7,31,342.9,59 (+342.9%)

@@ -1,15 +1,16 @@
-country_a,country_b,n_papers,pct_of_intl_papers
-CN,HU,20,7.5
-US,CN,13,4.9
-US,DE,8,3.0
-US,ES,6,2.3
-US,GB,6,2.3
-ES,GB,6,2.3
-DE,GB,5,1.9
-CN,ES,4,1.5
-US,HU,3,1.1
-CN,DE,3,1.1
-CN,GB,3,1.1
-DE,ES,3,1.1
-DE,HU,1,0.4
-ES,HU,1,0.4
+group,country_a,country_b,n_total,n_early_2010_2015,n_recent_2020_2025,pct_change,cell
+Plecoptera,CN,US,24,7,11,57.1,24 (+57.1%)
+Plecoptera,DE,US,20,9,9,0.0,20 (0%)
+Plecoptera,ES,US,12,1,6,500.0,12 (+500.0%)
+Plecoptera,HU,US,5,1,3,200.0,5 (+200.0%)
+Plecoptera,GB,US,16,9,6,-33.3,16 (-33.3%)
+Plecoptera,CN,DE,9,5,3,-40.0,9 (-40.0%)
+Plecoptera,CN,ES,7,0,7,,7 (n/a)
+Plecoptera,CN,HU,53,9,35,288.9,53 (+288.9%)
+Plecoptera,CN,GB,9,0,8,,9 (n/a)
+Plecoptera,DE,ES,7,1,4,300.0,7 (+300.0%)
+Plecoptera,DE,HU,4,0,4,,4 (n/a)
+Plecoptera,DE,GB,10,1,6,500.0,10 (+500.0%)
+Plecoptera,ES,HU,4,0,4,,4 (n/a)
+Plecoptera,ES,GB,10,2,7,250.0,10 (+250.0%)
+Plecoptera,GB,HU,2,0,2,,2 (n/a)

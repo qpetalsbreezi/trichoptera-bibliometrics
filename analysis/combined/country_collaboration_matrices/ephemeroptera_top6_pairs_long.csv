@@ -1,15 +1,16 @@
-country_a,country_b,n_papers,pct_of_intl_papers
-US,CA,18,4.8
-US,DE,12,3.2
-US,ES,11,2.9
-US,GB,8,2.1
-US,IN,8,2.1
-DE,GB,6,1.6
-GB,CA,6,1.6
-DE,ES,4,1.1
-DE,CA,4,1.1
-GB,ES,4,1.1
-ES,IN,2,0.5
-ES,CA,2,0.5
-DE,IN,1,0.3
-IN,CA,1,0.3
+group,country_a,country_b,n_total,n_early_2010_2015,n_recent_2020_2025,pct_change,cell
+Ephemeroptera,DE,US,36,9,15,66.7,36 (+66.7%)
+Ephemeroptera,BR,US,51,9,26,188.9,51 (+188.9%)
+Ephemeroptera,CH,US,24,3,12,300.0,24 (+300.0%)
+Ephemeroptera,GB,US,30,10,15,50.0,30 (+50.0%)
+Ephemeroptera,ES,US,25,6,11,83.3,25 (+83.3%)
+Ephemeroptera,BR,DE,12,0,8,,12 (n/a)
+Ephemeroptera,CH,DE,22,6,8,33.3,22 (+33.3%)
+Ephemeroptera,DE,GB,16,3,8,166.7,16 (+166.7%)
+Ephemeroptera,DE,ES,14,1,7,600.0,14 (+600.0%)
+Ephemeroptera,BR,CH,12,2,5,150.0,12 (+150.0%)
+Ephemeroptera,BR,GB,6,1,5,400.0,6 (+400.0%)
+Ephemeroptera,BR,ES,11,0,10,,11 (n/a)
+Ephemeroptera,CH,GB,9,0,5,,9 (n/a)
+Ephemeroptera,CH,ES,10,1,6,500.0,10 (+500.0%)
+Ephemeroptera,ES,GB,17,5,9,80.0,17 (+80.0%)

@@ -468,7 +468,8 @@ def fig_rq3_theme_shift_delta_grouped_bars(
     labels: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
-    themes = list(xtax.RQ3_THEME_SHIFT_THEMES)
+    # Drop Not Specified: post-recode share is ~0% in both windows (empty panel).
+    themes = [t for t in xtax.RQ3_THEME_SHIFT_THEMES if t != "Not Specified"]
     pivot = theme_shift.pivot(index="theme", columns="query_id", values="delta_pp")
     pivot = pivot.reindex(themes).reindex(columns=query_ids)
     fig, ax = plt.subplots(figsize=(11, 4.5))
@@ -508,7 +509,8 @@ def fig_rq3_theme_shift_delta_facets(
     colors: dict[str, str],
     out_dir: Path,
 ) -> dict[str, str]:
-    themes = list(xtax.RQ3_THEME_SHIFT_THEMES)
+    # Drop Not Specified: post-recode share is ~0% in both windows (empty panel).
+    themes = [t for t in xtax.RQ3_THEME_SHIFT_THEMES if t != "Not Specified"]
     pivot = theme_shift.pivot(index="theme", columns="query_id", values="delta_pp")
     pivot = pivot.reindex(themes).reindex(columns=query_ids)
     n = len(themes)
