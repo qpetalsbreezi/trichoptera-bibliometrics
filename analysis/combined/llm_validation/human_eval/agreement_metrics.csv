@@ -1,0 +1,21 @@
+comparison,metric,n,agreement_n,agreement_pct,cohens_kappa
+GPT-4o-mini vs human,Keep vs drop,1376,1265,91.93,0.7316
+GPT-4o-mini vs human,Taxon focus label,1376,1170,85.03,0.7619
+GPT-4o-mini vs human,Research theme,1376,1027,74.64,0.6931
+GPT-4o-mini vs human,Focus label and theme both,1376,935,67.95,
+Gemini Pro vs human,Keep vs drop,1376,1249,90.77,0.7138
+Gemini Pro vs human,Taxon focus label,1376,1205,87.57,0.8055
+Gemini Pro vs human,Research theme,1376,1004,72.97,0.6752
+Gemini Pro vs human,Focus label and theme both,1376,936,68.02,
+GPT∩Gemini agree vs human,Keep vs drop,958,926,96.66,0.8845
+GPT∩Gemini agree vs human,Taxon focus label,958,900,93.95,0.9018
+GPT∩Gemini agree vs human,Research theme,958,826,86.22,0.8325
+GPT∩Gemini agree vs human,Focus label and theme both,958,795,82.99,
+GPT∩Gemini gate-agree vs human,Keep vs drop,1254,1196,95.37,0.8354
+GPT∩Gemini gate-agree vs human,Taxon focus label,1254,1118,89.15,0.8247
+GPT∩Gemini gate-agree vs human,Research theme,1254,956,76.24,0.711
+GPT∩Gemini gate-agree vs human,Focus label and theme both,1254,887,70.73,
+Gemini Pro vs GPT-4o-mini (labeled subset),Keep vs drop,1376,1254,91.13,0.7225
+Gemini Pro vs GPT-4o-mini (labeled subset),Taxon focus label,1376,1196,86.92,0.7925
+Gemini Pro vs GPT-4o-mini (labeled subset),Research theme,1376,1048,76.16,0.715
+Gemini Pro vs GPT-4o-mini (labeled subset),Focus label and theme both,1376,958,69.62,
