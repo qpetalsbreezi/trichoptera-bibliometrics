@@ -22,7 +22,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
@@ -34,7 +33,6 @@ if str(_SCRIPTS_DIR) not in sys.path:
 
 from lib.llm_validation import (  # noqa: E402
     RELEVANCE_OFF_TARGET,
-    abstract_snippet,
     cohens_kappa,
     normalize_taxon_relevance,
     validation_dir,
@@ -119,6 +117,10 @@ def is_keep(focus: str) -> bool:
     return focus in FOCUS_KEEP
 
 
+def keep_or_drop(focus: str) -> str:
+    return "keep" if is_keep(focus) else "drop"
+
+
 def load_human(path: Path) -> pd.DataFrame:
     if path.suffix.lower() in {".xlsx", ".xls"}:
         df = pd.read_excel(path)
@@ -148,9 +150,9 @@ def load_human(path: Path) -> pd.DataFrame:
     if missing:
         raise SystemExit(f"Human file missing columns: {sorted(missing)}")
     df["coding_row_id"] = pd.to_numeric(df["coding_row_id"], errors="coerce").astype("Int64")
-    df["focus_H"] = df["taxon_focus"].map(normalize_human_focus)
-    df["theme_H"] = df["research_theme"].map(normalize_human_theme)
-    df["labeled"] = (df["focus_H"] != "") & (df["theme_H"] != "")
+    df["focus_Human"] = df["taxon_focus"].map(normalize_human_focus)
+    df["theme_Human"] = df["research_theme"].map(normalize_human_theme)
+    df["labeled"] = (df["focus_Human"] != "") & (df["theme_Human"] != "")
     return df
 
 
@@ -175,10 +177,10 @@ def load_model_run(run_dir: Path) -> pd.DataFrame:
 
     merged = keys.copy()
     merged["coding_row_id"] = merged["id"].astype(int)
-    merged["focus_GPT"] = merged["Taxon_Relevance_A"].map(normalize_taxon_relevance)
-    merged["theme_GPT"] = merged["Research_Theme_A"].map(normalize_research_theme)
-    merged["focus_GEM"] = merged["Taxon_Relevance_B"].map(normalize_taxon_relevance)
-    merged["theme_GEM"] = merged["Research_Theme_B"].map(normalize_research_theme)
+    merged["focus_gpt"] = merged["Taxon_Relevance_A"].map(normalize_taxon_relevance)
+    merged["theme_gpt"] = merged["Research_Theme_A"].map(normalize_research_theme)
+    merged["focus_gemini"] = merged["Taxon_Relevance_B"].map(normalize_taxon_relevance)
+    merged["theme_gemini"] = merged["Research_Theme_B"].map(normalize_research_theme)
 
     # Attach title from GPT file via (query_id, row_key) — unique within sample
     gpt_path = run_dir / "gpt_coded.csv"
@@ -194,7 +196,7 @@ def load_model_run(run_dir: Path) -> pd.DataFrame:
             else v
         )
     else:
-        merged["models_agree_focus"] = merged["focus_GPT"] == merged["focus_GEM"]
+        merged["models_agree_focus"] = merged["focus_gpt"] == merged["focus_gemini"]
 
     theme_agree_src = merged["models_agree_theme"] if "models_agree_theme" in merged.columns else None
     if theme_agree_src is not None:
@@ -204,7 +206,7 @@ def load_model_run(run_dir: Path) -> pd.DataFrame:
             else v
         )
     else:
-        merged["models_agree_theme"] = merged["theme_GPT"] == merged["theme_GEM"]
+        merged["models_agree_theme"] = merged["theme_gpt"] == merged["theme_gemini"]
 
     merged["models_agree_both"] = merged["models_agree_focus"] & merged["models_agree_theme"]
 
@@ -216,7 +218,7 @@ def load_model_run(run_dir: Path) -> pd.DataFrame:
             else v
         )
     else:
-        merged["models_agree_gate"] = merged["focus_GPT"].map(is_keep) == merged["focus_GEM"].map(
+        merged["models_agree_gate"] = merged["focus_gpt"].map(is_keep) == merged["focus_gemini"].map(
             is_keep
         )
     return merged
@@ -284,46 +286,41 @@ def pair_metrics(
     ]
 
 
-def confusion(df: pd.DataFrame, left: str, right: str) -> pd.DataFrame:
-    return (
-        pd.crosstab(df[left], df[right], rownames=[left], colnames=[right], dropna=False)
-        .reset_index()
-    )
+def export_human_llm(df: pd.DataFrame, out_path: Path) -> pd.DataFrame:
+    """Single audit table: human review fields + H/GPT/Gemini labels grouped by field."""
+    title = df["article_title"] if "article_title" in df.columns else df.get("Title", "")
+    if isinstance(title, pd.Series):
+        if "Title" in df.columns:
+            title = title.fillna(df["Title"])
+    else:
+        title = df["Title"]
 
+    doi = df["DOI"] if "DOI" in df.columns else df.get("article_doi", "")
+    if isinstance(doi, pd.Series) and "article_doi" in df.columns:
+        doi = doi.fillna(df["article_doi"])
 
-def build_disagreements(df: pd.DataFrame, model_focus: str, model_theme: str, tag: str) -> pd.DataFrame:
-    focus_dis = df["focus_H"] != df[model_focus]
-    theme_dis = df["theme_H"] != df[model_theme]
-    dis = df[focus_dis | theme_dis].copy()
-    if dis.empty:
-        return pd.DataFrame()
-    title_col = "Title" if "Title" in dis.columns else "article_title"
-    abs_col = "article_abstract" if "article_abstract" in dis.columns else None
     out = pd.DataFrame(
         {
-            "comparison": tag,
-            "coding_row_id": dis["coding_row_id"],
-            "query_id": dis.get("query_id", ""),
-            "target_taxon": dis.get("target_taxon", dis.get("taxon_label", "")),
-            "Year": dis.get("Year", ""),
-            "DOI": dis.get("DOI", dis.get("article_doi", "")),
-            "Title": dis[title_col] if title_col in dis.columns else "",
-            "abstract_snippet": (
-                dis[abs_col].map(lambda x: abstract_snippet(x, 400))
-                if abs_col
-                else ""
-            ),
-            "focus_H": dis["focus_H"],
-            "focus_model": dis[model_focus],
-            "agree_focus": ~focus_dis.loc[dis.index],
-            "theme_H": dis["theme_H"],
-            "theme_model": dis[model_theme],
-            "agree_theme": ~theme_dis.loc[dis.index],
-            "gate_H": dis["focus_H"].map(is_keep).map({True: "keep", False: "drop"}),
-            "gate_model": dis[model_focus].map(is_keep).map({True: "keep", False: "drop"}),
+            "coding_row_id": df["coding_row_id"],
+            "target_taxon": df["target_taxon"],
+            "article_title": title,
+            "article_abstract": df.get("article_abstract", ""),
+            "doi": doi,
+            "year": df["Year"] if "Year" in df.columns else df.get("year", ""),
+            "focus_Human": df["focus_Human"],
+            "focus_gpt": df["focus_gpt"],
+            "focus_gemini": df["focus_gemini"],
+            "keep_or_drop_Human": df["focus_Human"].map(keep_or_drop),
+            "keep_or_drop_gpt": df["focus_gpt"].map(keep_or_drop),
+            "keep_or_drop_gemini": df["focus_gemini"].map(keep_or_drop),
+            "theme_Human": df["theme_Human"],
+            "theme_gpt": df["theme_gpt"],
+            "theme_gemini": df["theme_gemini"],
         }
     )
-    return out.sort_values(["query_id", "coding_row_id"]).reset_index(drop=True)
+    out = out.sort_values("coding_row_id").reset_index(drop=True)
+    out.to_csv(out_path, index=False)
+    return out
 
 
 def print_table(metrics: pd.DataFrame, comparison: str) -> None:
@@ -347,12 +344,12 @@ def status_report(human: pd.DataFrame, models: pd.DataFrame) -> None:
         extra_ids = set(human["coding_row_id"].dropna().astype(int)) - set(models["coding_row_id"])
         print(f"IDs in model sample missing from human file: {len(missing_ids)}")
         print(f"Extra IDs in human file: {len(extra_ids)}")
-    bad_focus = human.loc[human["focus_H"] != "", "focus_H"]
+    bad_focus = human.loc[human["focus_Human"] != "", "focus_Human"]
     bad_focus = bad_focus[~bad_focus.isin(FOCUS_ALLOWED)]
     if len(bad_focus):
         print(f"\nUnexpected focus labels ({len(bad_focus)}):")
         print(bad_focus.value_counts().head(10).to_string())
-    bad_theme = human.loc[human["theme_H"] != "", "theme_H"]
+    bad_theme = human.loc[human["theme_Human"] != "", "theme_Human"]
     bad_theme = bad_theme[~bad_theme.isin(THEME_ALLOWED)]
     if len(bad_theme):
         print(f"\nUnexpected theme labels ({len(bad_theme)}):")
@@ -390,8 +387,8 @@ def run_eval(
                 c
                 for c in [
                     "coding_row_id",
-                    "focus_H",
-                    "theme_H",
+                    "focus_Human",
+                    "theme_Human",
                     "labeled",
                     "target_taxon",
                     "article_title",
@@ -417,7 +414,7 @@ def run_eval(
         )
 
     # Flag invalid labels that slipped through
-    invalid_focus = ~labeled["focus_H"].isin(FOCUS_ALLOWED)
+    invalid_focus = ~labeled["focus_Human"].isin(FOCUS_ALLOWED)
     if invalid_focus.any():
         print(
             f"WARNING: {invalid_focus.sum()} rows have focus labels outside schema; "
@@ -427,21 +424,21 @@ def run_eval(
     metrics_rows: list[dict] = []
     # 1) GPT vs human
     metrics_rows.extend(
-        pair_metrics(labeled, "focus_GPT", "theme_GPT", "focus_H", "theme_H", "GPT-4o-mini vs human")
+        pair_metrics(labeled, "focus_gpt", "theme_gpt", "focus_Human", "theme_Human", "GPT-4o-mini vs human")
     )
     # 2) Gemini vs human
     metrics_rows.extend(
-        pair_metrics(labeled, "focus_GEM", "theme_GEM", "focus_H", "theme_H", "Gemini Pro vs human")
+        pair_metrics(labeled, "focus_gemini", "theme_gemini", "focus_Human", "theme_Human", "Gemini Pro vs human")
     )
     # 3) Models agree vs human
     agree_both = labeled[labeled["models_agree_both"]].copy()
     metrics_rows.extend(
         pair_metrics(
             agree_both,
-            "focus_GPT",
-            "theme_GPT",
-            "focus_H",
-            "theme_H",
+            "focus_gpt",
+            "theme_gpt",
+            "focus_Human",
+            "theme_Human",
             "GPT∩Gemini agree vs human",
         )
     )
@@ -450,10 +447,10 @@ def run_eval(
     metrics_rows.extend(
         pair_metrics(
             agree_gate,
-            "focus_GPT",
-            "theme_GPT",
-            "focus_H",
-            "theme_H",
+            "focus_gpt",
+            "theme_gpt",
+            "focus_Human",
+            "theme_Human",
             "GPT∩Gemini gate-agree vs human",
         )
     )
@@ -461,115 +458,23 @@ def run_eval(
     metrics_rows.extend(
         pair_metrics(
             labeled,
-            "focus_GPT",
-            "theme_GPT",
-            "focus_GEM",
-            "theme_GEM",
+            "focus_gpt",
+            "theme_gpt",
+            "focus_gemini",
+            "theme_gemini",
             "Gemini Pro vs GPT-4o-mini (labeled subset)",
         )
     )
 
     metrics = pd.DataFrame(metrics_rows)
     out_dir.mkdir(parents=True, exist_ok=True)
-    metrics.to_csv(out_dir / "agreement_metrics.csv", index=False)
 
-    # Summary markdown table (email format)
-    lines = [
-        "# Human vs LLM agreement",
-        "",
-        f"Human file: `{human_path}`",
-        f"Model run: `{run_dir.name}`",
-        f"Labeled rows scored: **{n_lab}** / {len(joined)}",
-        "",
-    ]
-    for comp in metrics["comparison"].unique():
-        sub = metrics[metrics["comparison"] == comp]
-        lines.append(f"## {comp}")
-        lines.append("")
-        lines.append("| Metric | Agreement | κ |")
-        lines.append("|---|---:|---:|")
-        for _, r in sub.iterrows():
-            k = "—" if pd.isna(r["cohens_kappa"]) else f"{r['cohens_kappa']:.2f}"
-            lines.append(f"| {r['metric']} | {r['agreement_pct']:.1f}% | {k} |")
-        lines.append("")
-    (out_dir / "agreement_summary.md").write_text("\n".join(lines), encoding="utf-8")
-
-    # Confusion matrices
-    confusion(labeled, "focus_H", "focus_GPT").to_csv(
-        out_dir / "confusion_focus_human_vs_gpt.csv", index=False
-    )
-    confusion(labeled, "focus_H", "focus_GEM").to_csv(
-        out_dir / "confusion_focus_human_vs_gemini.csv", index=False
-    )
-    confusion(labeled, "theme_H", "theme_GPT").to_csv(
-        out_dir / "confusion_theme_human_vs_gpt.csv", index=False
-    )
-    confusion(labeled, "theme_H", "theme_GEM").to_csv(
-        out_dir / "confusion_theme_human_vs_gemini.csv", index=False
-    )
-
-    # Disagreement sheets
-    dis_parts = [
-        build_disagreements(labeled, "focus_GPT", "theme_GPT", "GPT-4o-mini vs human"),
-        build_disagreements(labeled, "focus_GEM", "theme_GEM", "Gemini Pro vs human"),
-    ]
-    dis = pd.concat([d for d in dis_parts if len(d)], ignore_index=True)
-    dis.to_csv(out_dir / "disagreements_vs_human.csv", index=False)
-
-    # Joined labeled frame for audit
-    keep_cols = [
-        c
-        for c in [
-            "coding_row_id",
-            "query_id",
-            "target_taxon",
-            "Year",
-            "year_band",
-            "abstract_available",
-            "DOI",
-            "Title",
-            "focus_H",
-            "theme_H",
-            "focus_GPT",
-            "theme_GPT",
-            "focus_GEM",
-            "theme_GEM",
-            "models_agree_focus",
-            "models_agree_theme",
-            "models_agree_both",
-            "models_agree_gate",
-        ]
-        if c in labeled.columns
-    ]
-    labeled[keep_cols].to_csv(out_dir / "joined_labeled.csv", index=False)
-
-    manifest = {
-        "human_path": str(human_path),
-        "run_dir": str(run_dir),
-        "n_sample": len(joined),
-        "n_labeled": n_lab,
-        "n_models_agree_both": int(labeled["models_agree_both"].sum()),
-        "n_models_agree_gate": int(labeled["models_agree_gate"].sum()),
-        "outputs": [
-            "agreement_metrics.csv",
-            "agreement_summary.md",
-            "disagreements_vs_human.csv",
-            "joined_labeled.csv",
-            "confusion_focus_human_vs_gpt.csv",
-            "confusion_focus_human_vs_gemini.csv",
-            "confusion_theme_human_vs_gpt.csv",
-            "confusion_theme_human_vs_gemini.csv",
-        ],
-    }
-    (out_dir / "eval_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    human_llm = export_human_llm(labeled, out_dir / "human_llm.csv")
 
     for comp in metrics["comparison"].unique():
         print_table(metrics, comp)
 
-    print(f"\nWrote: {out_dir}")
-    print(f"  - agreement_summary.md")
-    print(f"  - agreement_metrics.csv")
-    print(f"  - disagreements_vs_human.csv ({len(dis)} rows)")
+    print(f"\nWrote {out_dir / 'human_llm.csv'} ({len(human_llm)} rows)")
 
 
 def main() -> None:
