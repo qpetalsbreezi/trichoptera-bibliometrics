@@ -140,6 +140,19 @@ def normalize_classified_output(parsed: dict, llm_schema: dict) -> dict:
     return out
 
 
+MOSQUITO_TITLE_ANCHOR_EXCEPTION = """
+- Exception: genus (*Aedes*, *Anopheles*, *Culex*) or "mosquito" in title does NOT require Primary focus if the paper mainly studies pathogen, disease, treatment, or repellent chemistry — use Not target or Secondary as appropriate."""
+
+MOSQUITO_VECTOR_GUIDANCE = """
+VECTOR / DISEASE (Culicidae):
+- Mosquito biology, surveillance, control, vector competence, or vector ecology → Primary or Secondary as appropriate.
+- Papers mainly about mosquito-borne pathogens, human disease, or clinical/epidemiological outcomes → Not target, even if mosquitoes are named as vectors.
+- Use Primary only when mosquito biology, ecology, physiology, or control on the insect is the main subject; if the main subject is a pathogen, disease, Wolbachia/symbiont, or multi-vector program → Secondary at most.
+- Do not use Not target when mosquitoes are a deliberate part of methods or sampled assemblage (trap catches, competence assays, vector surveillance) — use Secondary instead.
+- Plant essential oils, repellent chemistry, or GIS disease-receptivity studies without mosquito biology → Not target.
+- Rodent/bird/human-only serology, GIS territory-receptivity or disease-risk mapping, LLIN or antimalarial drug trials, and spillover-risk assessments without mosquito trapping → Not target."""
+
+
 def build_prompt(
     title: str,
     abstract: str,
@@ -150,6 +163,8 @@ def build_prompt(
     study = llm_cfg["study_descriptor"]
     taxon = llm_cfg["taxon_name"]
     rel_field = RELEVANCE_FIELD
+    is_mosquito = taxon.lower() == "mosquitoes"
+    mosquito_vector = MOSQUITO_VECTOR_GUIDANCE if is_mosquito else ""
 
     return f"""
 You are coding academic papers for a bibliometric study on {study}.
@@ -236,17 +251,14 @@ TITLE ANCHOR RULE:
 - If a scientific name, common name, or "{taxon}" (or clear synonym) appears in the TITLE and the taxon is part of the study, do NOT use "Not target-taxon-focused".
 - Prefer "Primary focus" when that taxon/species is the study organism.
 - Use "Secondary mention" for multi-taxon communities that include it.
-- If the title uses the taxon name only metaphorically or incidentally with no studied material → "Not target-taxon-focused".
+- If the title uses the taxon name only metaphorically or incidentally with no studied material → "Not target-taxon-focused".{MOSQUITO_TITLE_ANCHOR_EXCEPTION}
 
 UNCERTAINTY:
 - Use "Not target-taxon-focused" when the taxon is absent/irrelevant, OR when the abstract is unavailable AND the title does not name the taxon.
 
 COMMUNITY / EPT:
 - Macroinvertebrate, benthic, or EPT papers that include {taxon} as a studied assemblage component → "Secondary mention" (not "Not target-taxon-focused").
-
-VECTOR / DISEASE (especially mosquitoes / Culicidae):
-- Mosquito biology, surveillance, control, vector competence, or vector ecology → "Primary focus" or "Secondary mention" as appropriate.
-- Human disease epidemiology / clinical papers with no mosquito biology → "Not target-taxon-focused".
+{mosquito_vector}
 
 OUTPUT FORMAT:
 - One JSON object

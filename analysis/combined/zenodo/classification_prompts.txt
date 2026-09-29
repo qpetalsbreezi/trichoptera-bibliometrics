@@ -1,0 +1,341 @@
+Classification prompts used for LLM labeling
+========================================================================
+
+MODELS AND SETTINGS
+------------------------------------------------------------------------
+Production labeling (full record sets):
+  Model string: gpt-4o-mini (OpenAI)
+  Temperature: 0
+
+Cross-model / human-validation labeling (stratified n = 1,376):
+  Model A string: gpt-4o-mini (OpenAI)
+  Model B string: gemini-3.1-pro-preview (Google)
+  Temperature: 0 (both models)
+
+Both models received the same prompt text, schema, and category definitions.
+Only the study/taxon name in the prompt changed by group.
+Source: scripts/process/llm_code_taxon.py :: build_prompt();
+         scripts/process/llm_validation_gemini.py (same prompt for Gemini).
+Schema allowed values: data/taxon_schema.json (LLM-coded fields only).
+
+SCHEMA (allowed values) embedded in every prompt:
+{
+  "Country": "short free-text",
+  "Region_Global": [
+    "Oriental",
+    "Neotropical",
+    "Nearctic",
+    "Palearctic",
+    "East Palearctic",
+    "Afrotropical",
+    "Australasian",
+    "Global",
+    "Not Specified"
+  ],
+  "Research_Theme": [
+    "Taxonomy/Systematics",
+    "Ecology/Behavior",
+    "Biomonitoring/Water Quality",
+    "Evolution/Phylogeny",
+    "Conservation",
+    "Physiology",
+    "Applied Ecology",
+    "Other",
+    "Not Specified"
+  ],
+  "Taxon_Relevance": [
+    "Primary focus",
+    "Secondary mention",
+    "Not target-taxon-focused"
+  ]
+}
+
+========================================================================
+PROMPT TEMPLATE — non-Culicidae groups
+(example filled for Ephemeroptera / mayflies;
+ replace study_descriptor and taxon_name per group as in config/queries.json)
+========================================================================
+You are coding academic papers for a bibliometric study on Ephemeroptera (mayflies).
+
+Your task is to assign values ONLY for the fields listed below, using the predefined schema.
+
+Schema (allowed values):
+{
+  "Country": "short free-text",
+  "Region_Global": [
+    "Oriental",
+    "Neotropical",
+    "Nearctic",
+    "Palearctic",
+    "East Palearctic",
+    "Afrotropical",
+    "Australasian",
+    "Global",
+    "Not Specified"
+  ],
+  "Research_Theme": [
+    "Taxonomy/Systematics",
+    "Ecology/Behavior",
+    "Biomonitoring/Water Quality",
+    "Evolution/Phylogeny",
+    "Conservation",
+    "Physiology",
+    "Applied Ecology",
+    "Other",
+    "Not Specified"
+  ],
+  "Taxon_Relevance": [
+    "Primary focus",
+    "Secondary mention",
+    "Not target-taxon-focused"
+  ]
+}
+
+Paper title:
+[PAPER TITLE]
+
+Paper abstract:
+[PAPER ABSTRACT, or a note that none is available]
+
+Author affiliations:
+[AUTHOR AFFILIATION TEXT, when available]
+
+CORE RULES (follow strictly):
+- Prefer the MOST SPECIFIC allowed value supported by the title and abstract.
+- Treat the title as a strong signal of study focus (see TITLE ANCHOR RULE below).
+- Use "Other" when no other allowed Research_Theme value fits.
+- For Country: If information is missing, leave empty (do NOT use "Not Specified").
+- For Taxon_Relevance: NEVER use "Not Specified". Use "Not target-taxon-focused" only when the taxon is absent/irrelevant, or when the abstract is unavailable AND the title does not name the taxon (see UNCERTAINTY below).
+- For Region_Global: If information is missing, use "Not Specified".
+- For Research_Theme: Prefer a concrete theme. Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
+- Do NOT invent taxa, locations, methods, or conclusions.
+- Output VALID JSON only. No explanations.
+
+GEOGRAPHIC EXTRACTION PRIORITY:
+1. Explicit country/state/city names -> extract country
+2. Species names with geographic indicators (japonica->Japan, sinensis->China, etc.) -> infer country
+3. Author affiliations or institutional names -> infer country
+4. Rivers/lakes/regions -> infer country if context is clear
+5. If none of the above, leave Country empty (not "Not Specified")
+
+FOCUS DISCIPLINE RULE:
+Before assigning fields, determine whether Ephemeroptera are:
+- the PRIMARY study organism
+- studied alongside other taxa (including community/EPT/macroinvertebrate samples)
+- mentioned incidentally
+- absent or irrelevant to the paper
+
+Only assign Ephemeroptera-specific taxonomy or themes if supported.
+
+FIELD-SPECIFIC GUIDANCE:
+
+Research_Theme:
+- Prefer a concrete theme from the title/abstract. Do NOT default to "Not Specified".
+- Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
+- If Taxon_Relevance is "Not target-taxon-focused", still assign a real theme from the list; use "Other" (not "Not Specified") when none fits.
+- Use "Taxonomy/Systematics" for species descriptions, revisions, or classifications.
+- Use "Evolution/Phylogeny" for phylogenetic / evolutionary analyses.
+- Use "Ecology/Behavior" for basic ecology, life history, behavior, distribution, traits, or community studies WITHOUT a management / intervention / bioassessment frame.
+- Use "Applied Ecology" for management, control, restoration, pest/vector intervention, applied land-use, or other applied interventions.
+- Use "Biomonitoring/Water Quality" ONLY when Ephemeroptera (or the assemblage including them) are used explicitly as bioindicators / for water-quality assessment.
+- Use "Physiology" for physiological studies, including caddisfly silk properties and silk-gland biochemistry.
+- Use "Conservation" for conservation-focused studies.
+- Use "Other" if none of the above apply.
+- NEVER copy Taxon_Relevance values into Research_Theme (e.g. do not use "Not target-taxon-focused", "Primary focus", or "Secondary mention" as a theme).
+
+Country:
+- Extract the PRIMARY country where the research was conducted (field site, study location, or primary geographic focus).
+- PRIORITY ORDER (use first available):
+  1. Explicit country/state/city in abstract or title (highest priority)
+  2. Study location mentioned in abstract (rivers, lakes, regions)
+  3. Species names with geographic indicators (japonica -> Japan, sinensis -> China, etc.)
+  4. Author affiliations (if provided) - infer country from institution names
+- Use standard country names: "United States" (not "USA"), "United Kingdom" (not "UK"), "South Korea" (not "Korea").
+- If multiple countries mentioned, choose the PRIMARY study location (where fieldwork/data collection occurred).
+- If country cannot be determined from title/abstract, leave empty (do NOT use "Not Specified").
+
+Region_Global:
+- Map the Country to its biogeographic region (Nearctic, Neotropical, Oriental, Palearctic, East Palearctic, Afrotropical, Australasian).
+- If Country is empty but region can be inferred from geographic context, assign region.
+- Use "Global" ONLY for meta-analyses, global syntheses, or multi-continent studies.
+- Use "Not Specified" ONLY if neither country nor region can be determined.
+
+Taxon_Relevance (JSON field name is fixed in the schema; interpret it as focus on Ephemeroptera for this run):
+- Allowed values ONLY: Primary focus, Secondary mention, Not target-taxon-focused.
+- "Primary focus": Ephemeroptera (or a species in that group) are the main study organism.
+- "Secondary mention": Ephemeroptera are studied alongside other taxa as a deliberate study component.
+- "Not target-taxon-focused": Ephemeroptera are absent from / irrelevant to the paper, or mentioned only incidentally (not part of studied material).
+- NEVER use "Not Specified" for Taxon_Relevance.
+
+TITLE ANCHOR RULE:
+- If a scientific name, common name, or "Ephemeroptera" (or clear synonym) appears in the TITLE and the taxon is part of the study, do NOT use "Not target-taxon-focused".
+- Prefer "Primary focus" when that taxon/species is the study organism.
+- Use "Secondary mention" for multi-taxon communities that include it.
+- If the title uses the taxon name only metaphorically or incidentally with no studied material → "Not target-taxon-focused".
+- Exception: genus (*Aedes*, *Anopheles*, *Culex*) or "mosquito" in title does NOT require Primary focus if the paper mainly studies pathogen, disease, treatment, or repellent chemistry — use Not target or Secondary as appropriate.
+
+UNCERTAINTY:
+- Use "Not target-taxon-focused" when the taxon is absent/irrelevant, OR when the abstract is unavailable AND the title does not name the taxon.
+
+COMMUNITY / EPT:
+- Macroinvertebrate, benthic, or EPT papers that include Ephemeroptera as a studied assemblage component → "Secondary mention" (not "Not target-taxon-focused").
+
+
+OUTPUT FORMAT:
+- One JSON object
+- One value per field
+
+========================================================================
+PROMPT TEMPLATE — Culicidae / mosquitoes
+(includes TITLE ANCHOR pathogen/disease exception and VECTOR/DISEASE block)
+========================================================================
+You are coding academic papers for a bibliometric study on mosquitoes (family Culicidae).
+
+Your task is to assign values ONLY for the fields listed below, using the predefined schema.
+
+Schema (allowed values):
+{
+  "Country": "short free-text",
+  "Region_Global": [
+    "Oriental",
+    "Neotropical",
+    "Nearctic",
+    "Palearctic",
+    "East Palearctic",
+    "Afrotropical",
+    "Australasian",
+    "Global",
+    "Not Specified"
+  ],
+  "Research_Theme": [
+    "Taxonomy/Systematics",
+    "Ecology/Behavior",
+    "Biomonitoring/Water Quality",
+    "Evolution/Phylogeny",
+    "Conservation",
+    "Physiology",
+    "Applied Ecology",
+    "Other",
+    "Not Specified"
+  ],
+  "Taxon_Relevance": [
+    "Primary focus",
+    "Secondary mention",
+    "Not target-taxon-focused"
+  ]
+}
+
+Paper title:
+[PAPER TITLE]
+
+Paper abstract:
+[PAPER ABSTRACT, or a note that none is available]
+
+Author affiliations:
+[AUTHOR AFFILIATION TEXT, when available]
+
+CORE RULES (follow strictly):
+- Prefer the MOST SPECIFIC allowed value supported by the title and abstract.
+- Treat the title as a strong signal of study focus (see TITLE ANCHOR RULE below).
+- Use "Other" when no other allowed Research_Theme value fits.
+- For Country: If information is missing, leave empty (do NOT use "Not Specified").
+- For Taxon_Relevance: NEVER use "Not Specified". Use "Not target-taxon-focused" only when the taxon is absent/irrelevant, or when the abstract is unavailable AND the title does not name the taxon (see UNCERTAINTY below).
+- For Region_Global: If information is missing, use "Not Specified".
+- For Research_Theme: Prefer a concrete theme. Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
+- Do NOT invent taxa, locations, methods, or conclusions.
+- Output VALID JSON only. No explanations.
+
+GEOGRAPHIC EXTRACTION PRIORITY:
+1. Explicit country/state/city names -> extract country
+2. Species names with geographic indicators (japonica->Japan, sinensis->China, etc.) -> infer country
+3. Author affiliations or institutional names -> infer country
+4. Rivers/lakes/regions -> infer country if context is clear
+5. If none of the above, leave Country empty (not "Not Specified")
+
+FOCUS DISCIPLINE RULE:
+Before assigning fields, determine whether mosquitoes are:
+- the PRIMARY study organism
+- studied alongside other taxa (including community/EPT/macroinvertebrate samples)
+- mentioned incidentally
+- absent or irrelevant to the paper
+
+Only assign mosquitoes-specific taxonomy or themes if supported.
+
+FIELD-SPECIFIC GUIDANCE:
+
+Research_Theme:
+- Prefer a concrete theme from the title/abstract. Do NOT default to "Not Specified".
+- Use "Not Specified" ONLY when both title and abstract are empty/unavailable.
+- If Taxon_Relevance is "Not target-taxon-focused", still assign a real theme from the list; use "Other" (not "Not Specified") when none fits.
+- Use "Taxonomy/Systematics" for species descriptions, revisions, or classifications.
+- Use "Evolution/Phylogeny" for phylogenetic / evolutionary analyses.
+- Use "Ecology/Behavior" for basic ecology, life history, behavior, distribution, traits, or community studies WITHOUT a management / intervention / bioassessment frame.
+- Use "Applied Ecology" for management, control, restoration, pest/vector intervention, applied land-use, or other applied interventions.
+- Use "Biomonitoring/Water Quality" ONLY when mosquitoes (or the assemblage including them) are used explicitly as bioindicators / for water-quality assessment.
+- Use "Physiology" for physiological studies, including caddisfly silk properties and silk-gland biochemistry.
+- Use "Conservation" for conservation-focused studies.
+- Use "Other" if none of the above apply.
+- NEVER copy Taxon_Relevance values into Research_Theme (e.g. do not use "Not target-taxon-focused", "Primary focus", or "Secondary mention" as a theme).
+
+Country:
+- Extract the PRIMARY country where the research was conducted (field site, study location, or primary geographic focus).
+- PRIORITY ORDER (use first available):
+  1. Explicit country/state/city in abstract or title (highest priority)
+  2. Study location mentioned in abstract (rivers, lakes, regions)
+  3. Species names with geographic indicators (japonica -> Japan, sinensis -> China, etc.)
+  4. Author affiliations (if provided) - infer country from institution names
+- Use standard country names: "United States" (not "USA"), "United Kingdom" (not "UK"), "South Korea" (not "Korea").
+- If multiple countries mentioned, choose the PRIMARY study location (where fieldwork/data collection occurred).
+- If country cannot be determined from title/abstract, leave empty (do NOT use "Not Specified").
+
+Region_Global:
+- Map the Country to its biogeographic region (Nearctic, Neotropical, Oriental, Palearctic, East Palearctic, Afrotropical, Australasian).
+- If Country is empty but region can be inferred from geographic context, assign region.
+- Use "Global" ONLY for meta-analyses, global syntheses, or multi-continent studies.
+- Use "Not Specified" ONLY if neither country nor region can be determined.
+
+Taxon_Relevance (JSON field name is fixed in the schema; interpret it as focus on mosquitoes for this run):
+- Allowed values ONLY: Primary focus, Secondary mention, Not target-taxon-focused.
+- "Primary focus": mosquitoes (or a species in that group) are the main study organism.
+- "Secondary mention": mosquitoes are studied alongside other taxa as a deliberate study component.
+- "Not target-taxon-focused": mosquitoes are absent from / irrelevant to the paper, or mentioned only incidentally (not part of studied material).
+- NEVER use "Not Specified" for Taxon_Relevance.
+
+TITLE ANCHOR RULE:
+- If a scientific name, common name, or "mosquitoes" (or clear synonym) appears in the TITLE and the taxon is part of the study, do NOT use "Not target-taxon-focused".
+- Prefer "Primary focus" when that taxon/species is the study organism.
+- Use "Secondary mention" for multi-taxon communities that include it.
+- If the title uses the taxon name only metaphorically or incidentally with no studied material → "Not target-taxon-focused".
+- Exception: genus (*Aedes*, *Anopheles*, *Culex*) or "mosquito" in title does NOT require Primary focus if the paper mainly studies pathogen, disease, treatment, or repellent chemistry — use Not target or Secondary as appropriate.
+
+UNCERTAINTY:
+- Use "Not target-taxon-focused" when the taxon is absent/irrelevant, OR when the abstract is unavailable AND the title does not name the taxon.
+
+COMMUNITY / EPT:
+- Macroinvertebrate, benthic, or EPT papers that include mosquitoes as a studied assemblage component → "Secondary mention" (not "Not target-taxon-focused").
+
+VECTOR / DISEASE (Culicidae):
+- Mosquito biology, surveillance, control, vector competence, or vector ecology → Primary or Secondary as appropriate.
+- Papers mainly about mosquito-borne pathogens, human disease, or clinical/epidemiological outcomes → Not target, even if mosquitoes are named as vectors.
+- Use Primary only when mosquito biology, ecology, physiology, or control on the insect is the main subject; if the main subject is a pathogen, disease, Wolbachia/symbiont, or multi-vector program → Secondary at most.
+- Do not use Not target when mosquitoes are a deliberate part of methods or sampled assemblage (trap catches, competence assays, vector surveillance) — use Secondary instead.
+- Plant essential oils, repellent chemistry, or GIS disease-receptivity studies without mosquito biology → Not target.
+- Rodent/bird/human-only serology, GIS territory-receptivity or disease-risk mapping, LLIN or antimalarial drug trials, and spillover-risk assessments without mosquito trapping → Not target.
+
+OUTPUT FORMAT:
+- One JSON object
+- One value per field
+
+========================================================================
+NOTES
+========================================================================
+- Placeholders [PAPER TITLE], [PAPER ABSTRACT...], [AUTHOR AFFILIATION TEXT...]
+  are replaced per record at run time.
+- When no abstract is available, the abstract slot carries a note that none is available.
+- Author affiliations are appended only when present.
+- Output format: one JSON object with keys Country, Region_Global,
+  Research_Theme, Taxon_Relevance (one value per field).
+- Geographic decision order and theme disambiguation cues appear in the prompt
+  under GEOGRAPHIC EXTRACTION PRIORITY / Country PRIORITY ORDER and Research_Theme.
+- Manuscript Table 1 displays Applied Ecology as Vector Management;
+  the prompt and raw model labels use Applied Ecology.

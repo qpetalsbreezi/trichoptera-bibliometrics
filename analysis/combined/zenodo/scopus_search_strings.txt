@@ -1,0 +1,84 @@
+Scopus search strings used for this study
+========================================================================
+Retrieval date: 12 April 2026.
+
+API endpoint: https://api.elsevier.com/content/search/scopus
+Field scope: TITLE-ABS-KEY (title, abstract, and author keywords).
+Date limits: fetched year-by-year with PUBYEAR = YYYY for YYYY = 2010..2025.
+  (Large years were split by month/quarter when needed for the 5,000-hit API cap.)
+Document-type filter: NOT applied in the Scopus query string.
+  Article and Review records were retained downstream in analysis
+  (scripts/lib/pipeline.py :: filter_article_review / ANALYSIS_DOCUMENT_TYPES).
+Language filter: NOT applied at retrieval (no LANGUAGE() clause).
+Source of query strings: config/queries.json
+
+------------------------------------------------------------------------
+Group: Culicidae
+query_id: mosquitoes
+
+Executable query template (as sent to Scopus Search API):
+  TITLE-ABS-KEY("mosquito" OR "mosquitoes" OR "Culicidae") AND (PUBYEAR = YYYY)
+  with YYYY replaced by each integer year from 2010 through 2025.
+
+Base TITLE-ABS-KEY clause:
+  TITLE-ABS-KEY("mosquito" OR "mosquitoes" OR "Culicidae")
+
+Example for 2020:
+  TITLE-ABS-KEY("mosquito" OR "mosquitoes" OR "Culicidae") AND (PUBYEAR = 2020)
+
+------------------------------------------------------------------------
+Group: Ephemeroptera
+query_id: ephemeroptera
+
+Executable query template (as sent to Scopus Search API):
+  TITLE-ABS-KEY("Ephemeroptera" OR "mayfly" OR "mayflies") AND (PUBYEAR = YYYY)
+  with YYYY replaced by each integer year from 2010 through 2025.
+
+Base TITLE-ABS-KEY clause:
+  TITLE-ABS-KEY("Ephemeroptera" OR "mayfly" OR "mayflies")
+
+Example for 2020:
+  TITLE-ABS-KEY("Ephemeroptera" OR "mayfly" OR "mayflies") AND (PUBYEAR = 2020)
+
+------------------------------------------------------------------------
+Group: Plecoptera
+query_id: plecoptera
+
+Executable query template (as sent to Scopus Search API):
+  TITLE-ABS-KEY("Plecoptera" OR "stonefly" OR "stoneflies") AND (PUBYEAR = YYYY)
+  with YYYY replaced by each integer year from 2010 through 2025.
+
+Base TITLE-ABS-KEY clause:
+  TITLE-ABS-KEY("Plecoptera" OR "stonefly" OR "stoneflies")
+
+Example for 2020:
+  TITLE-ABS-KEY("Plecoptera" OR "stonefly" OR "stoneflies") AND (PUBYEAR = 2020)
+
+------------------------------------------------------------------------
+Group: Trichoptera
+query_id: trichoptera
+
+Executable query template (as sent to Scopus Search API):
+  TITLE-ABS-KEY("Trichoptera" OR "caddisfly" OR "caddisflies" OR "caddis fly" OR "caddis flies") AND (PUBYEAR = YYYY)
+  with YYYY replaced by each integer year from 2010 through 2025.
+
+Base TITLE-ABS-KEY clause:
+  TITLE-ABS-KEY("Trichoptera" OR "caddisfly" OR "caddisflies" OR "caddis fly" OR "caddis flies")
+
+Example for 2020:
+  TITLE-ABS-KEY("Trichoptera" OR "caddisfly" OR "caddisflies" OR "caddis fly" OR "caddis flies") AND (PUBYEAR = 2020)
+
+------------------------------------------------------------------------
+Group: Odonata
+query_id: odonata
+
+Executable query template (as sent to Scopus Search API):
+  TITLE-ABS-KEY("Odonata" OR "dragonfly" OR "dragonflies" OR "damselfly" OR "damselflies") AND (PUBYEAR = YYYY)
+  with YYYY replaced by each integer year from 2010 through 2025.
+
+Base TITLE-ABS-KEY clause:
+  TITLE-ABS-KEY("Odonata" OR "dragonfly" OR "dragonflies" OR "damselfly" OR "damselflies")
+
+Example for 2020:
+  TITLE-ABS-KEY("Odonata" OR "dragonfly" OR "dragonflies" OR "damselfly" OR "damselflies") AND (PUBYEAR = 2020)
+

@@ -1,0 +1,139 @@
+{
+  "n_total": 1376,
+  "subset_n_agree": {
+    "ALL": 985,
+    "Culicidae only": 186,
+    "Rest (no Culicidae)": 799
+  },
+  "note": "Culicidae updated with new prompt; Rest unchanged",
+  "tables": {
+    "Table 1. Keep vs drop agreement": {
+      "headers": [
+        "Scope",
+        "GPT-4o-mini vs human",
+        "Gemini Pro vs human",
+        "GPT\u2229Gemini agree vs human",
+        "GPT-4o-mini vs Gemini Pro"
+      ],
+      "rows": [
+        {
+          "scope": "ALL",
+          "gpt_vs_human": "92.5% (\u03ba 0.77)",
+          "gemini_vs_human": "91.1% (\u03ba 0.73)",
+          "both_vs_human": "95.4% (\u03ba 0.86)",
+          "gpt_vs_gemini": "93.9% (\u03ba 0.82)"
+        },
+        {
+          "scope": "Culicidae only",
+          "gpt_vs_human": "79.9% (\u03ba 0.59)",
+          "gemini_vs_human": "79.6% (\u03ba 0.58)",
+          "both_vs_human": "83.9% (\u03ba 0.67)",
+          "gpt_vs_gemini": "93.7% (\u03ba 0.87)"
+        },
+        {
+          "scope": "Rest (no Culicidae)",
+          "gpt_vs_human": "95.6% (\u03ba 0.83)",
+          "gemini_vs_human": "93.9% (\u03ba 0.77)",
+          "both_vs_human": "98.1% (\u03ba 0.93)",
+          "gpt_vs_gemini": "93.9% (\u03ba 0.78)"
+        }
+      ]
+    },
+    "Table 2. Taxon focus label agreement": {
+      "headers": [
+        "Scope",
+        "GPT-4o-mini vs human",
+        "Gemini Pro vs human",
+        "GPT\u2229Gemini agree vs human",
+        "GPT-4o-mini vs Gemini Pro"
+      ],
+      "rows": [
+        {
+          "scope": "ALL",
+          "gpt_vs_human": "86.9% (\u03ba 0.80)",
+          "gemini_vs_human": "87.9% (\u03ba 0.81)",
+          "both_vs_human": "93.3% (\u03ba 0.89)",
+          "gpt_vs_gemini": "89.2% (\u03ba 0.83)"
+        },
+        {
+          "scope": "Culicidae only",
+          "gpt_vs_human": "71.4% (\u03ba 0.53)",
+          "gemini_vs_human": "71.0% (\u03ba 0.54)",
+          "both_vs_human": "76.9% (\u03ba 0.61)",
+          "gpt_vs_gemini": "86.2% (\u03ba 0.76)"
+        },
+        {
+          "scope": "Rest (no Culicidae)",
+          "gpt_vs_human": "90.7% (\u03ba 0.85)",
+          "gemini_vs_human": "92.1% (\u03ba 0.87)",
+          "both_vs_human": "97.1% (\u03ba 0.95)",
+          "gpt_vs_gemini": "89.9% (\u03ba 0.84)"
+        }
+      ]
+    },
+    "Table 3. Research theme agreement": {
+      "headers": [
+        "Scope",
+        "GPT-4o-mini vs human",
+        "Gemini Pro vs human",
+        "GPT\u2229Gemini agree vs human",
+        "GPT-4o-mini vs Gemini Pro"
+      ],
+      "rows": [
+        {
+          "scope": "ALL",
+          "gpt_vs_human": "75.3% (\u03ba 0.70)",
+          "gemini_vs_human": "73.3% (\u03ba 0.68)",
+          "both_vs_human": "84.9% (\u03ba 0.82)",
+          "gpt_vs_gemini": "77.9% (\u03ba 0.74)"
+        },
+        {
+          "scope": "Culicidae only",
+          "gpt_vs_human": "58.4% (\u03ba 0.44)",
+          "gemini_vs_human": "63.6% (\u03ba 0.50)",
+          "both_vs_human": "67.2% (\u03ba 0.55)",
+          "gpt_vs_gemini": "78.4% (\u03ba 0.71)"
+        },
+        {
+          "scope": "Rest (no Culicidae)",
+          "gpt_vs_human": "79.4% (\u03ba 0.74)",
+          "gemini_vs_human": "75.6% (\u03ba 0.70)",
+          "both_vs_human": "89.0% (\u03ba 0.86)",
+          "gpt_vs_gemini": "77.8% (\u03ba 0.73)"
+        }
+      ]
+    },
+    "Table 4. Focus label and theme both": {
+      "headers": [
+        "Scope",
+        "GPT-4o-mini vs human",
+        "Gemini Pro vs human",
+        "GPT\u2229Gemini agree vs human",
+        "GPT-4o-mini vs Gemini Pro"
+      ],
+      "rows": [
+        {
+          "scope": "ALL",
+          "gpt_vs_human": "68.6%",
+          "gemini_vs_human": "68.2%",
+          "both_vs_human": "81.7%",
+          "gpt_vs_gemini": "71.6%"
+        },
+        {
+          "scope": "Culicidae only",
+          "gpt_vs_human": "45.7%",
+          "gemini_vs_human": "51.3%",
+          "both_vs_human": "58.1%",
+          "gpt_vs_gemini": "69.1%"
+        },
+        {
+          "scope": "Rest (no Culicidae)",
+          "gpt_vs_human": "74.2%",
+          "gemini_vs_human": "72.3%",
+          "both_vs_human": "87.2%",
+          "gpt_vs_gemini": "72.2%"
+        }
+      ]
+    }
+  }
+}

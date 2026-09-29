@@ -1,0 +1,85 @@
+comparison,variable,grouping,n,n_group_total,percent_agreement,kappa
+GPT-4o-mini cf. human coder,inclusion decision (2-level),overall,1376,1376,92.5,0.77
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),overall,1376,1376,91.1,0.73
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),overall,1376,1376,93.9,0.82
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),overall,985,1376,95.4,0.86
+GPT-4o-mini cf. human coder,group relevance (3-level),overall,1376,1376,86.9,0.8
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),overall,1376,1376,87.9,0.81
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),overall,1376,1376,89.2,0.83
+both-models-agreeing subset cf. human coder,group relevance (3-level),overall,985,1376,93.3,0.89
+GPT-4o-mini cf. human coder,research theme,overall,1376,1376,75.3,0.7
+Gemini 3.1 Pro cf. human coder,research theme,overall,1376,1376,73.3,0.68
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,overall,1376,1376,77.9,0.74
+both-models-agreeing subset cf. human coder,research theme,overall,985,1376,84.9,0.82
+GPT-4o-mini cf. human coder,inclusion decision (2-level),Culicidae,269,269,79.9,0.59
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),Culicidae,269,269,79.6,0.58
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),Culicidae,269,269,93.7,0.87
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),Culicidae,186,269,83.9,0.67
+GPT-4o-mini cf. human coder,group relevance (3-level),Culicidae,269,269,71.4,0.53
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),Culicidae,269,269,71.0,0.54
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),Culicidae,269,269,86.2,0.76
+both-models-agreeing subset cf. human coder,group relevance (3-level),Culicidae,186,269,76.9,0.61
+GPT-4o-mini cf. human coder,research theme,Culicidae,269,269,58.4,0.44
+Gemini 3.1 Pro cf. human coder,research theme,Culicidae,269,269,63.6,0.5
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,Culicidae,269,269,78.4,0.71
+both-models-agreeing subset cf. human coder,research theme,Culicidae,186,269,67.2,0.55
+GPT-4o-mini cf. human coder,inclusion decision (2-level),Ephemeroptera,286,286,93.4,0.78
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),Ephemeroptera,286,286,88.8,0.66
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),Ephemeroptera,286,286,89.9,0.71
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),Ephemeroptera,205,286,97.1,0.91
+GPT-4o-mini cf. human coder,group relevance (3-level),Ephemeroptera,286,286,85.7,0.77
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),Ephemeroptera,286,286,85.7,0.77
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),Ephemeroptera,286,286,83.9,0.75
+both-models-agreeing subset cf. human coder,group relevance (3-level),Ephemeroptera,205,286,94.6,0.92
+GPT-4o-mini cf. human coder,research theme,Ephemeroptera,286,286,77.3,0.71
+Gemini 3.1 Pro cf. human coder,research theme,Ephemeroptera,286,286,68.2,0.61
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,Ephemeroptera,286,286,79.4,0.75
+both-models-agreeing subset cf. human coder,research theme,Ephemeroptera,205,286,83.4,0.79
+GPT-4o-mini cf. human coder,inclusion decision (2-level),Plecoptera,284,284,96.5,0.74
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),Plecoptera,284,284,94.4,0.57
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),Plecoptera,284,284,95.1,0.62
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),Plecoptera,198,284,98.5,0.72
+GPT-4o-mini cf. human coder,group relevance (3-level),Plecoptera,284,284,92.6,0.87
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),Plecoptera,284,284,94.0,0.89
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),Plecoptera,284,284,91.2,0.84
+both-models-agreeing subset cf. human coder,group relevance (3-level),Plecoptera,198,284,98.5,0.97
+GPT-4o-mini cf. human coder,research theme,Plecoptera,284,284,84.9,0.8
+Gemini 3.1 Pro cf. human coder,research theme,Plecoptera,284,284,76.8,0.71
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,Plecoptera,284,284,74.3,0.68
+both-models-agreeing subset cf. human coder,research theme,Plecoptera,198,284,93.4,0.91
+GPT-4o-mini cf. human coder,inclusion decision (2-level),Trichoptera,279,279,97.1,0.76
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),Trichoptera,279,279,97.5,0.8
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),Trichoptera,279,279,96.8,0.73
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),Trichoptera,212,279,99.1,0.87
+GPT-4o-mini cf. human coder,group relevance (3-level),Trichoptera,279,279,92.8,0.87
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),Trichoptera,279,279,96.4,0.94
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),Trichoptera,279,279,92.8,0.87
+both-models-agreeing subset cf. human coder,group relevance (3-level),Trichoptera,212,279,98.6,0.97
+GPT-4o-mini cf. human coder,research theme,Trichoptera,279,279,79.6,0.73
+Gemini 3.1 Pro cf. human coder,research theme,Trichoptera,279,279,79.6,0.73
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,Trichoptera,279,279,80.3,0.74
+both-models-agreeing subset cf. human coder,research theme,Trichoptera,212,279,90.1,0.86
+GPT-4o-mini cf. human coder,inclusion decision (2-level),Odonata,258,258,95.3,0.89
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),Odonata,258,258,95.0,0.88
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),Odonata,258,258,94.2,0.87
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),Odonata,184,258,97.8,0.95
+GPT-4o-mini cf. human coder,group relevance (3-level),Odonata,258,258,91.9,0.86
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),Odonata,258,258,92.2,0.87
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),Odonata,258,258,91.9,0.86
+both-models-agreeing subset cf. human coder,group relevance (3-level),Odonata,184,258,96.7,0.94
+GPT-4o-mini cf. human coder,research theme,Odonata,258,258,75.6,0.69
+Gemini 3.1 Pro cf. human coder,research theme,Odonata,258,258,78.3,0.72
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,Odonata,258,258,77.1,0.71
+both-models-agreeing subset cf. human coder,research theme,Odonata,184,258,89.1,0.86
+GPT-4o-mini cf. human coder,inclusion decision (2-level),EPT groups and Odonata combined,1107,1107,95.6,0.83
+Gemini 3.1 Pro cf. human coder,inclusion decision (2-level),EPT groups and Odonata combined,1107,1107,93.9,0.77
+GPT-4o-mini cf. Gemini 3.1 Pro,inclusion decision (2-level),EPT groups and Odonata combined,1107,1107,93.9,0.78
+both-models-agreeing subset cf. human coder,inclusion decision (2-level),EPT groups and Odonata combined,799,1107,98.1,0.93
+GPT-4o-mini cf. human coder,group relevance (3-level),EPT groups and Odonata combined,1107,1107,90.7,0.85
+Gemini 3.1 Pro cf. human coder,group relevance (3-level),EPT groups and Odonata combined,1107,1107,92.1,0.87
+GPT-4o-mini cf. Gemini 3.1 Pro,group relevance (3-level),EPT groups and Odonata combined,1107,1107,89.9,0.84
+both-models-agreeing subset cf. human coder,group relevance (3-level),EPT groups and Odonata combined,799,1107,97.1,0.95
+GPT-4o-mini cf. human coder,research theme,EPT groups and Odonata combined,1107,1107,79.4,0.74
+Gemini 3.1 Pro cf. human coder,research theme,EPT groups and Odonata combined,1107,1107,75.6,0.7
+GPT-4o-mini cf. Gemini 3.1 Pro,research theme,EPT groups and Odonata combined,1107,1107,77.8,0.73
+both-models-agreeing subset cf. human coder,research theme,EPT groups and Odonata combined,799,1107,89.0,0.86

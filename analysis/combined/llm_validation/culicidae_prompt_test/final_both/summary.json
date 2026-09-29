@@ -1,0 +1,59 @@
+{
+  "n": 269,
+  "gpt_model": null,
+  "gemini_model": "gemini-3.1-pro-preview",
+  "old": {
+    "subset_n_agree_both": 159,
+    "table1_gate": {
+      "gpt_vs_human": "77.0% (\u03ba 0.45)",
+      "gemini_vs_human": "78.1% (\u03ba 0.53)",
+      "both_vs_human": "89.3% (\u03ba 0.74)",
+      "gpt_vs_gemini": "79.6% (\u03ba 0.54)"
+    },
+    "table2_focus": {
+      "gpt_vs_human": "61.7% (\u03ba 0.35)",
+      "gemini_vs_human": "69.1% (\u03ba 0.50)",
+      "both_vs_human": "78.0% (\u03ba 0.60)",
+      "gpt_vs_gemini": "74.7% (\u03ba 0.51)"
+    },
+    "table3_theme": {
+      "gpt_vs_human": "55.0% (\u03ba 0.40)",
+      "gemini_vs_human": "62.1% (\u03ba 0.48)",
+      "both_vs_human": "72.3% (\u03ba 0.61)",
+      "gpt_vs_gemini": "69.5% (\u03ba 0.58)"
+    },
+    "table4_both": {
+      "gpt_vs_human": "42.4%",
+      "gemini_vs_human": "50.6%",
+      "both_vs_human": "61.6%",
+      "gpt_vs_gemini": "59.1%"
+    }
+  },
+  "new": {
+    "subset_n_agree_both": 186,
+    "table1_gate": {
+      "gpt_vs_human": "79.9% (\u03ba 0.59)",
+      "gemini_vs_human": "79.6% (\u03ba 0.58)",
+      "both_vs_human": "83.9% (\u03ba 0.67)",
+      "gpt_vs_gemini": "93.7% (\u03ba 0.87)"
+    },
+    "table2_focus": {
+      "gpt_vs_human": "71.4% (\u03ba 0.53)",
+      "gemini_vs_human": "71.0% (\u03ba 0.54)",
+      "both_vs_human": "76.9% (\u03ba 0.61)",
+      "gpt_vs_gemini": "86.2% (\u03ba 0.76)"
+    },
+    "table3_theme": {
+      "gpt_vs_human": "58.4% (\u03ba 0.44)",
+      "gemini_vs_human": "63.6% (\u03ba 0.50)",
+      "both_vs_human": "67.2% (\u03ba 0.55)",
+      "gpt_vs_gemini": "78.4% (\u03ba 0.71)"
+    },
+    "table4_both": {
+      "gpt_vs_human": "45.7%",
+      "gemini_vs_human": "51.3%",
+      "both_vs_human": "58.1%",
+      "gpt_vs_gemini": "69.1%"
+    }
+  }
+}

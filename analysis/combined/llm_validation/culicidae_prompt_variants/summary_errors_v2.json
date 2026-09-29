@@ -1,0 +1,24 @@
+{
+  "v3_balanced": {
+    "n": 54,
+    "focus_agree_pct": 22.2,
+    "focus_kappa": -0.112,
+    "gate_agree_pct": 33.3,
+    "gate_kappa": -0.361,
+    "human_drop_gpt_keep": 11,
+    "human_keep_gpt_drop": 25,
+    "sec_to_not": 22,
+    "sec_to_pri": 4
+  },
+  "v3_minimal": {
+    "n": 54,
+    "focus_agree_pct": 9.3,
+    "focus_kappa": -0.267,
+    "gate_agree_pct": 14.8,
+    "gate_kappa": -0.489,
+    "human_drop_gpt_keep": 12,
+    "human_keep_gpt_drop": 34,
+    "sec_to_not": 27,
+    "sec_to_pri": 2
+  }
+}

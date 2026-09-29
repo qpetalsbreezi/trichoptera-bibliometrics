@@ -1,0 +1,13 @@
+{
+  "n": 269,
+  "focus_agree_old_pct": 61.7,
+  "focus_agree_new_pct": 67.3,
+  "focus_kappa_old": 0.351,
+  "focus_kappa_new": 0.457,
+  "gate_agree_old_pct": 77.0,
+  "gate_agree_new_pct": 79.6,
+  "gate_kappa_old": 0.45,
+  "gate_kappa_new": 0.542,
+  "human_drop_gpt_keep_old": 43,
+  "human_drop_gpt_keep_new": 28
+}

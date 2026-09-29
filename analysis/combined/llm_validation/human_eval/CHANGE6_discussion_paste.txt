@@ -1,0 +1,8 @@
+CHANGE 6 — Discussion §4.5
+
+FIND the paragraph that starts:
+To assess whether the labels depended on the model used, we reclassified a stratified sample of 1,376 articles with a second model…
+
+REPLACE the whole paragraph with:
+
+We checked the labels in two ways (section 2.3). Cross-model agreement showed that the inclusion decision and group-relevance labels were largely robust to the choice of model. The human check went further: it asked whether those labels match an expert reading of the same titles and abstracts. Agreement with the human coder was high overall and especially high for the EPT groups and Odonata, which supports using the language-model labels for the cross-group comparisons in this paper. Culicidae remained the weaker case, mainly because disease- and pathogen-centered papers are easy to confuse with mosquito-focused work when only titles and abstracts are available. The Culicidae-specific instructions improved GPT-4o-mini’s alignment with the human coder and with Gemini, but theme agreement stayed lower than relevance agreement in every comparison. Classification of the full datasets also remained single-pass: each record was labeled once by GPT-4o-mini and that label accepted as final, so theme and location labels can still be wrong even when a concrete category is assigned.
