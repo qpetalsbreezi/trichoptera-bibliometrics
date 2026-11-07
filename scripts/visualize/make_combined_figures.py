@@ -153,7 +153,7 @@ def _setup_rc() -> None:
     plt.rcParams.update(
         {
             "figure.dpi": 120,
-            "savefig.dpi": 300,
+            "savefig.dpi": 600,
             "font.size": 9,
             "figure.titlesize": _PAPER_TITLE_SIZE,
             "axes.titlesize": _PAPER_TITLE_SIZE,
