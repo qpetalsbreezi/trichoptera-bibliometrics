@@ -1,0 +1,34 @@
+topic_key,Topic,block,Culicidae_n_tagged,Culicidae_N,Ephemeroptera_n_tagged,Ephemeroptera_N,Plecoptera_n_tagged,Plecoptera_N,Trichoptera_n_tagged,Trichoptera_N,Odonata_n_tagged,Odonata_N
+population_size,Population size,biotic,5644,34717,440,3098,256,2032,441,3099,597,4878
+community_structure,Community structure,biotic,2667,34717,1464,3098,983,2032,1487,3099,1228,4878
+species_richness,Species richness,biotic,3637,34717,1225,3098,811,2032,1406,3099,1446,4878
+diversity,Diversity,biotic,1975,34717,857,3098,571,2032,905,3099,891,4878
+predation_by_fish,Predation by fish,biotic,200,34717,195,3098,42,2032,138,3099,162,4878
+predation_by_invertebrates,Predation by invertebrates,biotic,578,34717,271,3098,105,2032,278,3099,757,4878
+grazers_scrapers,Grazers/scrapers,biotic,16,34717,190,3098,88,2032,198,3099,54,4878
+collectors,Collectors,biotic,25,34717,143,3098,86,2032,250,3099,32,4878
+herbivores,Herbivores,biotic,13,34717,16,3098,7,2032,18,3099,32,4878
+shredders,Shredders,biotic,13,34717,142,3098,197,2032,431,3099,30,4878
+filter_feeders,Filter feeders,biotic,28,34717,92,3098,51,2032,152,3099,25,4878
+deposit_feeders,Deposit feeders,biotic,17,34717,24,3098,10,2032,27,3099,6,4878
+detritus,Detritus,biotic,121,34717,102,3098,83,2032,186,3099,61,4878
+competition,Competition,biotic,538,34717,57,3098,23,2032,55,3099,187,4878
+parasites_of_the_insect,Parasites,biotic,654,34717,29,3098,21,2032,24,3099,144,4878
+disease_of_the_insect,Disease,biotic,29,34717,0,3098,3,2032,1,3099,5,4878
+secondary_production,Secondary production,biotic,406,34717,115,3098,70,2032,162,3099,79,4878
+lake,Lake,abiotic,2808,34717,348,3098,114,2032,337,3099,824,4878
+stream,Stream,abiotic,116,34717,1503,3098,1052,2032,1480,3099,562,4878
+river,River,abiotic,336,34717,889,3098,517,2032,818,3099,446,4878
+wetland,Wetland,abiotic,585,34717,72,3098,18,2032,68,3099,320,4878
+springs,Springs,abiotic,21,34717,38,3098,41,2032,73,3099,32,4878
+hyporheic,Hyporheic,abiotic,27,34717,30,3098,23,2032,28,3099,8,4878
+temperature,Temperature,abiotic,3507,34717,356,3098,254,2032,334,3099,518,4878
+flow_rate,Flow rate,abiotic,41,34717,251,3098,179,2032,242,3099,63,4878
+current,Current,abiotic,1,34717,55,3098,30,2032,65,3099,19,4878
+dissolved_oxygen,Dissolved oxygen,abiotic,109,34717,187,3098,120,2032,177,3099,103,4878
+ph,pH,abiotic,275,34717,169,3098,107,2032,159,3099,95,4878
+substrate_type,Substrate type,abiotic,330,34717,348,3098,190,2032,335,3099,136,4878
+nutrients,Nutrients,abiotic,308,34717,277,3098,178,2032,283,3099,129,4878
+water_chemistry,Water chemistry,abiotic,368,34717,653,3098,368,2032,555,3099,317,4878
+pollution,Pollution,abiotic,770,34717,770,3098,435,2032,684,3099,484,4878
+climate_change,Climate change,abiotic,2046,34717,192,3098,160,2032,201,3099,415,4878
