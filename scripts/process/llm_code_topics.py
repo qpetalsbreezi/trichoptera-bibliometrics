@@ -126,6 +126,18 @@ EXPECTED_N = {
     "odonata": 4878,
 }
 
+# Early (2010–2015) and recent (2020–2025) Group-focused N (matches manuscript Table 5).
+EARLY_YEARS = range(2010, 2016)
+RECENT_YEARS = range(2020, 2026)
+EN_DASH = "\u2013"
+EXPECTED_PERIOD_N = {
+    "mosquitoes": (8966, 17226),
+    "ephemeroptera": (990, 1363),
+    "plecoptera": (607, 919),
+    "trichoptera": (999, 1356),
+    "odonata": (1404, 2186),
+}
+
 progress_lock = Lock()
 save_lock = Lock()
 
@@ -483,9 +495,14 @@ def pilot_summary(csv_path: Path) -> None:
 
 
 def build_tables() -> None:
-    """Build Table A/B percent CSVs + raw counts from full (non-pilot) topic files."""
+    """Build Table A/B percent CSVs + raw counts from full (non-pilot) topic files.
+
+    Percent cells are early (2010–2015)–recent (2020–2025) using each period's
+    Group-focused N as denominator (en dash), matching manuscript Table 5 style.
+    """
     base = out_dir()
     frames = {}
+    period_frames = {}  # label -> (early_df, recent_df)
     report = []
     for qid in PAPER_QUERY_ORDER:
         path = base / f"{qid}_topics.csv"
@@ -497,33 +514,55 @@ def build_tables() -> None:
         n = len(df)
         exp = EXPECTED_N[qid]
         n_fail = int((df["topic_status"] != "ok").sum()) if "topic_status" in df.columns else 0
+        years = pd.to_numeric(df["Year"], errors="coerce")
+        early = df[years.isin(EARLY_YEARS)].copy()
+        recent = df[years.isin(RECENT_YEARS)].copy()
+        exp_e, exp_r = EXPECTED_PERIOD_N[qid]
+        period_ok = len(early) == exp_e and len(recent) == exp_r
         report.append(
             f"{label}: N={n:,} expected={exp:,} "
-            f"{'OK' if n == exp else 'MISMATCH'}  failed/invalid={n_fail}"
+            f"{'OK' if n == exp else 'MISMATCH'}  failed/invalid={n_fail}; "
+            f"early={len(early):,} recent={len(recent):,} "
+            f"(expected {exp_e:,}{EN_DASH}{exp_r:,}) "
+            f"{'OK' if period_ok else 'PERIOD MISMATCH'}"
         )
         frames[label] = df
+        period_frames[label] = (early, recent)
         if n_fail:
             raise SystemExit(
                 "Refusing to build tables while any rows are not ok.\n" + "\n".join(report)
+            )
+        if not period_ok:
+            raise SystemExit(
+                "Refusing to build tables: period N does not match Table 5.\n"
+                + "\n".join(report)
             )
 
     print("\n".join(report))
     if len(frames) != 5:
         raise SystemExit("Need all five *_topics.csv files to build tables.")
 
+    def pct_pair(series_sum: float, n: int) -> str:
+        pct = 100.0 * series_sum / n if n else 0.0
+        return f"{pct:.1f}%"
+
     def pct_table(topics: list[str]) -> pd.DataFrame:
         rows = []
         for t in topics:
             row = {"Topic": TOPIC_LABELS[t]}
             for label in PAPER_TAXON_LABELS.values():
-                d = frames[label]
-                n = len(d)
-                pct = 100.0 * d[t].sum() / n if n else 0.0
-                row[label] = f"{pct:.1f}%"
+                early, recent = period_frames[label]
+                cell = (
+                    f"{pct_pair(early[t].sum(), len(early))}"
+                    f"{EN_DASH}"
+                    f"{pct_pair(recent[t].sum(), len(recent))}"
+                )
+                row[label] = cell
             rows.append(row)
         n_row = {"Topic": "N (Group-focused)"}
         for label in PAPER_TAXON_LABELS.values():
-            n_row[label] = f"{len(frames[label]):,}"
+            early, recent = period_frames[label]
+            n_row[label] = f"{len(early):,}{EN_DASH}{len(recent):,}"
         rows.append(n_row)
         cols = ["Topic"] + list(PAPER_TAXON_LABELS.values())
         return pd.DataFrame(rows)[cols]
@@ -531,11 +570,20 @@ def build_tables() -> None:
     def count_table() -> pd.DataFrame:
         rows = []
         for t in ALL_TOPICS:
-            row = {"topic_key": t, "Topic": TOPIC_LABELS[t], "block": "biotic" if t in BIOTIC_TOPICS else "abiotic"}
+            row = {
+                "topic_key": t,
+                "Topic": TOPIC_LABELS[t],
+                "block": "biotic" if t in BIOTIC_TOPICS else "abiotic",
+            }
             for label in PAPER_TAXON_LABELS.values():
                 d = frames[label]
+                early, recent = period_frames[label]
                 row[f"{label}_n_tagged"] = int(d[t].sum())
                 row[f"{label}_N"] = len(d)
+                row[f"{label}_early_n_tagged"] = int(early[t].sum())
+                row[f"{label}_early_N"] = len(early)
+                row[f"{label}_recent_n_tagged"] = int(recent[t].sum())
+                row[f"{label}_recent_N"] = len(recent)
             rows.append(row)
         return pd.DataFrame(rows)
 
